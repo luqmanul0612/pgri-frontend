@@ -105,7 +105,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   return (
     <div
-      className={`fixed h-screen bg-[#17191C] text-white transition-all duration-500 ${isSidebarOpen ? "w-[247px]" : "w-[63px]"}`}
+      className={`fixed h-screen bg-[#17191C] text-white transition-all duration-500 z-10 ${isSidebarOpen ? "w-[247px]" : "w-[63px]"}`}
     >
       <div className="flex h-[80px] items-center gap-4 pl-3 opacity-100 transition-all duration-300">
         <Image src={"/logo/logo.png"} alt="logo" width={40} height={40} />

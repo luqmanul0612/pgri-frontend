@@ -26,7 +26,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
       >
         {label}
       </label>
-      <div className="relative">
+      <div className="relative z-0">
         <select
           id={id}
           value={value}

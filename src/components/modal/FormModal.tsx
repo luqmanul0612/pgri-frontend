@@ -12,7 +12,7 @@ export default function FormModal({
   isOpen,
   onClose,
   children, 
-  maxWidth = 'max-w-[400px]'
+  maxWidth = 'max-w-[450px]'
 }: MyModalProps) {
   return (
     <>
@@ -41,7 +41,7 @@ export default function FormModal({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <DialogPanel className={`w-full max-w-[400px] ${maxWidth} transform overflow-hidden rounded-lg bg-white shadow-xl transition-all`}>
+                <DialogPanel className={`w-full max-w-[450px] ${maxWidth} transform overflow-hidden rounded-2xl bg-white shadow-xl transition-all`}>
                   {children}
                 </DialogPanel>
               </TransitionChild>

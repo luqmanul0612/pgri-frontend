@@ -51,11 +51,11 @@ const columns: Column<IMember>[] = [
     accessor: "profile",
     Cell: ({ value }) => (
       <div className="flex items-center justify-center">
-        <div className="relative h-[24px] w-[24px] rounded-md border border-primary flex justify-center items-center">
+        <div className="relative flex h-[24px] w-[24px] items-center justify-center rounded-md border border-primary">
           <img
             src={value ?? dummyProfile}
             alt="Foto"
-            className="h-[23px] w-[23px] object-cover rounded-md border-transparent"
+            className="h-[23px] w-[23px] rounded-md border-transparent object-cover"
             // layout="fill"
             // objectFit="cover"
           />
@@ -68,11 +68,11 @@ const columns: Column<IMember>[] = [
     accessor: "qr",
     Cell: ({ value }) => (
       <div className="flex items-center justify-center">
-        <div className="relative h-[24px] w-[24px] rounded-md border border-primary flex justify-center items-center">
+        <div className="relative flex h-[24px] w-[24px] items-center justify-center rounded-md border border-primary">
           <img
             src={value}
             alt="QR Code"
-            className="h-[23px] w-[23px] object-cover rounded-md border-transparent"
+            className="h-[23px] w-[23px] rounded-md border-transparent object-cover"
             //  layout="fill"
             //  objectFit="cover"
           />
@@ -190,10 +190,11 @@ const Table: React.FC = () => {
               <span>Cetak</span> <MdOutlineLocalPrintshop size={18} />
             </button>
             <button
-            onClick={() => {
-              setIsModalAddOpen(true)
-            }}
-            className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary">
+              onClick={() => {
+                setIsModalAddOpen(true);
+              }}
+              className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary"
+            >
               <span>Tambah Anggota</span> <FaPlus />
             </button>
           </div>
@@ -310,7 +311,6 @@ const Table: React.FC = () => {
                 border: "1px solid lightgray",
                 "&:hover": {
                   backgroundColor: "#e0f7fa", // Warna saat hover
-                  
                 },
               },
               "& .Mui-selected": {
@@ -335,8 +335,8 @@ const Table: React.FC = () => {
       </Card>
       {
         <TambahAnggotaModal
-        isOpen={isModalAddOpen}
-        onClose={()=> setIsModalAddOpen(false)}
+          isOpen={isModalAddOpen}
+          onClose={() => setIsModalAddOpen(false)}
         />
       }
     </div>
