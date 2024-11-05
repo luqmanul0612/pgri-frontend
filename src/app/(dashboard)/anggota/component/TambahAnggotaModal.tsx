@@ -34,7 +34,11 @@ const TambahAnggotaModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           <div className="text-xs text-primary">Tambah Anggota Langsung</div>
           <div><PlusCyanSVG/></div>
         </div>
-        
+
+        <div className="rounded-xl p-4 hover:opacity-70 transition-all duration-300 cursor-pointer mt-4 bg-[#D4D4D4] text-[##919191] flex justify-center items-center text-sm">
+          Tambah Sekarang
+        </div>
+
       </div>
     </FormModal>
   );
