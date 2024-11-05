@@ -1,0 +1,264 @@
+/* eslint-disable @next/next/no-img-element */
+"use client";
+import BannerSlider from "@/app/components/BannerSlider";
+import CardDashboard from "@/app/components/CardDashboard";
+import Image, { StaticImageData } from "next/image";
+import { ChangeEvent, FC, useEffect, useState } from "react";
+import { IoIosArrowBack } from "react-icons/io";
+import { MdDashboard } from "react-icons/md";
+import { RiGroup2Fill } from "react-icons/ri";
+import { IoIosArrowForward } from "react-icons/io";
+import Card from "@/app/components/Card";
+import { FormField } from "@/app/components/FormField";
+import SelectField from "@/app/components/SelectField";
+import { Button } from "@/components/ui/button";
+import { IoIosArrowDown } from "react-icons/io";
+import Cookies from "js-cookie";
+// import { getDataProfile } from "./serverActions/getDataProfile";
+import dummyChartLine from "@/../public/dummy/dummy-chart-line.png";
+import dummyIconStat from "@/../public/icon/group-white.png";
+import { Filter } from "../components/Filter";
+
+interface pageProps {
+  params: {};
+}
+
+const Page: FC<pageProps> = ({ params: {} }) => {
+  const banners = [
+    { src: "/banner/banner1.png", alt: "Banner 1" },
+    { src: "/banner/banner1.png", alt: "Banner 2" },
+    { src: "/banner/banner1.png", alt: "Banner 3" },
+  ];
+
+  useEffect(() => {
+    const token = Cookies.get("token");
+
+    const getUserData = async () => {
+      if (token) {
+        try {
+          // const data = await getDataProfile(token);
+          // console.log("datanya=-->", data);
+          // setUserData(data);
+        } catch (err) {
+          // setError('Failed to fetch user data');
+          console.error(err);
+        }
+      } else {
+        // setError('No token found');
+      }
+    };
+
+    getUserData();
+  }, []);
+
+  return (
+    <div>
+      {/* Card dashboard test tes tes */}
+      <div className="flex gap-6">
+        <CardDashboard name="Data Anggota" total={1000} />
+        <CardDashboard name="Karya Guru" total={200} />
+        <CardDashboard name="Aspirasi Guru" total={230} />
+        <CardDashboard name="Lindungi Guru" total={400} />
+      </div>
+
+      {/* Banner */}
+      <div className="mt-5 flex flex-col items-center justify-center">
+        <BannerSlider banners={banners} />
+      </div>
+
+      {/* Filter berdasarkan provinsi, kota, kec, status pegawai */}
+      <div className="mt-10">
+        <Filter />
+      </div>
+
+      {/* Ending Filter berdasarkan provinsi, kota, kec, status pegawai */}
+
+      {/* pie chart statistik */}
+      <div className="mt-5 flex flex-row gap-4">
+        <Card className="w-full p-6">
+          <div className="flex flex-row justify-between">
+            <div>
+              <h2 className="text-[16px] font-semibold text-primaryBlack">
+                Pelatihan Anggota PGRI
+              </h2>
+              <h4 className="text-xs font-normal">
+                Data pelatihan periode: Januari - Desember 2024
+              </h4>
+            </div>
+            <div className="flex justify-center text-primary">
+              <span className="text-xs font-semibold">Berbayar</span>
+              <IoIosArrowDown />
+            </div>
+          </div>
+
+          <div className="mt-4 flex justify-between">
+            <div className="flex flex-col justify-between">
+              <div>
+                <h1 className="mb-4 text-2xl font-bold text-primary">
+                  2.500 Pelatihan
+                </h1>
+                <h4>Pelatihan Kabupaten/Kota</h4>
+                <h4>Pelatihan Provinsi</h4>
+                <h4>Pelatihan Nasional</h4>
+              </div>
+
+              <Button className="w-[124px] rounded-xl bg-primary">
+                Lihat Detail
+              </Button>
+            </div>
+            <div>
+              <img
+                src={"/dummy/dummy-chart-pie.png"}
+                alt="chart-pie"
+                width={200}
+                height={200}
+              />
+            </div>
+          </div>
+        </Card>
+
+        <Card className="w-full p-6">
+          <div className="flex flex-row justify-between">
+            <div>
+              <h2 className="text-[16px] font-semibold text-primaryBlack">
+                Iuran Anggota PGRI
+              </h2>
+              <h4 className="text-xs font-normal">
+                Iuran dari Daerah, Kabupaten/Kota, Provinsi dan Pusat
+              </h4>
+            </div>
+            <div className="flex justify-center text-primary">
+              <span className="text-xs font-semibold">Sudah Bayar</span>
+              <IoIosArrowDown />
+            </div>
+          </div>
+          <div className="mt-4 flex justify-between">
+            <div className="flex flex-col justify-between">
+              <div>
+                <h1 className="mb-4 text-2xl font-bold text-primary">
+                  Rp. 1.500.000
+                </h1>
+                <h4>Pelatihan Kabupaten/Kota</h4>
+                <h4>Pelatihan Provinsi</h4>
+                <h4>Pelatihan Nasional</h4>
+              </div>
+
+              <Button className="w-[124px] rounded-xl bg-primary">
+                Lihat Detail
+              </Button>
+            </div>
+            <div>
+              <img
+                src={"/dummy/dummy-chart-pie.png"}
+                alt="chart-pie"
+                width={200}
+                height={200}
+                // fill
+              />
+            </div>
+          </div>
+        </Card>
+      </div>
+      {/* Ending pie chart statistik */}
+
+      {/* Data statistik */}
+
+      <div className="mt-5 flex gap-5">
+        {/* statistik */}
+        <Card className="w-[30%]">
+          <div className="flex justify-between border-b border-primary-light px-6 py-4">
+            <div className="flex">
+              <img
+                src={"/icon/chart-bar.png"}
+                alt="chart-bar"
+                height={24}
+                width={24}
+                // fill
+              />
+              <h4 className="ml-1 text-[16px] font-bold text-primary">
+                Statistik
+              </h4>
+            </div>
+            <div className="text-primary">500000</div>
+          </div>
+          <div className="px-6 py-4">
+            <div className="flex justify-between">
+              <h4>Pengunjung hari ini</h4>
+              <h4>: 500</h4>
+            </div>
+            <div className="flex justify-between">
+              <h4>Total Pengunjung</h4>
+              <h4>: 500</h4>
+            </div>
+            <div className="flex justify-between">
+              <h4>Pengunjung Online</h4>
+              <h4>: 500</h4>
+            </div>
+            <div className="flex justify-between">
+              <h4>Total Hits</h4>
+              <h4>: 500</h4>
+            </div>
+            <div className="flex justify-between">
+              <h4>Hits Hari ini</h4>
+              <h4>: 500</h4>
+            </div>
+          </div>
+        </Card>
+        {/* ending statistik */}
+
+        <div className="flex w-[70%] gap-5">
+          <PertumbuhanStat
+            icon={dummyIconStat}
+            iconStat={dummyChartLine}
+            title="Total Pendaftar"
+          />
+          <PertumbuhanStat
+            icon={dummyIconStat}
+            iconStat={dummyChartLine}
+            title="Total Guru ASN"
+          />
+          <PertumbuhanStat
+            icon={dummyIconStat}
+            iconStat={dummyChartLine}
+            title="Total Guru Non ASN"
+          />
+        </div>
+      </div>
+      {/* End Data statistik */}
+    </div>
+  );
+};
+
+export default Page;
+
+interface props {
+  icon: StaticImageData;
+  title: string;
+  iconStat: StaticImageData;
+}
+
+const PertumbuhanStat: FC<props> = ({}) => {
+  return (
+    <Card className="w-full">
+      <div className="flex flex-col items-center justify-center rounded-t-xl bg-primary py-5">
+        <img
+          src={"/icon/group-white.png"}
+          alt="grup"
+          height={44}
+          width={44}
+          // priority
+          className="h-[44px] w-[44px]"
+          // fill
+        />
+        <h2 className="text-white">Total Pendaftar</h2>
+      </div>
+      <div className="py-4">
+        <p className="text-center text-lg font-bold text-[#17a2b8]">334.850</p>
+        {/* <img src={dummyChartLine} alt="chart-line" layout="responsive"/> */}
+        <div className="-mt-4 text-center text-xs font-normal text-[#0ec516]">
+          +12% selama 28 hari
+        </div>
+      </div>
+    </Card>
+  );
+};
