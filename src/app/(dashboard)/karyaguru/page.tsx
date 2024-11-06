@@ -1,8 +1,15 @@
 import React from 'react'
+import HeaderKaryaGuru from './HeaderKaryaGuru'
+import ListKaryaGuru from './ListKaryaGuru'
 
 const KaryaGuru = () => {
   return (
-    <div>KaryaGuru</div>
+    <div>
+      <HeaderKaryaGuru/>
+      <div>
+        <ListKaryaGuru/>
+      </div>
+    </div>
   )
 }
 
