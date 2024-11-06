@@ -32,6 +32,7 @@ import { MdOutlineLocalPrintshop } from "react-icons/md";
 import Pagination from "@mui/material/Pagination";
 import { PaginationItem } from "@mui/material";
 import TambahAnggotaModal from "./TambahAnggotaModal";
+import Link from "next/link";
 
 const initialPageSize = 10;
 
@@ -96,7 +97,7 @@ const columns: Column<IMember>[] = [
   },
   {
     Header: "Opsi",
-    Cell: () => (
+    Cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -109,15 +110,14 @@ const columns: Column<IMember>[] = [
           className="space-y-2 rounded-l-2xl rounded-r-none p-3"
         >
           <div className="flex items-center justify-center">
-            <span className="text-sm font-bold">Opsi</span>
+            <span className="text-sm font-bold mb-1">Opsi</span>
           </div>
-          <DropdownMenuItem
-            // onClick={handleViewDetails}
-            className="flex justify-between rounded-lg bg-green-500 px-3 py-3 text-xs text-white hover:!bg-green-400 hover:!text-white/90"
-          >
-            <span>Lihat</span>
-            <MdOutlineRemoveRedEye className="" size={18} />
-          </DropdownMenuItem>
+          <Link href={`/anggota/${row.original.id}`} passHref>
+            <DropdownMenuItem className="flex justify-between rounded-lg bg-green-500 px-3 py-3 text-xs text-white hover:!bg-green-400 hover:!text-white/90 cursor-pointer">
+              <span>Lihat</span>
+              <MdOutlineRemoveRedEye className="" size={18} />
+            </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem
             // onClick={() => {
             //   setIsUpdateModalOpen(true);
