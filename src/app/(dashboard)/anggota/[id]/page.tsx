@@ -60,13 +60,13 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
     </div>
 
 {/* info profile header */}
-    <div className="bg-primary rounded-xl flex justify-between mt-4 p-3">
+    <div className="bg-primary rounded-xl flex justify-between mt-5 p-3">
       <div className="flex items-center">
         <div className="flex justify-center items-center h-[80px] w-[80px] mr-4 bg-white rounded-xl">
         <FiUser size={50} className="text-primary" />
         </div>
         <div className="text-white gap-1 flex flex-col">
-          <div>{memberData?.data?.user?.name} ({memberData?.data?.user?.npa_number}) </div>
+          <div>{memberData?.data?.user?.name} {memberData?.data?.user?.npa_number ? "("+memberData?.data?.user.npa_number+")" : ""} </div>
           <div className="text-xs">{memberData?.data?.user?.email}</div>
           <div className="text-xs">{memberData?.data?.institution?.city}, {memberData?.data?.institution?.province}</div>
         </div>
@@ -83,7 +83,84 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
       </div>
     </div>
 
+    {/* Data pribadi card */}
+    <div className="border border-primary rounded-xl mt-5 p-4">
+      <div className="text-primary font-bold mb-5">Data Pribadi</div>
+      <div className="flex">
+        <div className="w-1/3">
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Nama & Gelar</span>
+          <span className="text-sm">{memberData?.data?.user?.name || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">NIK</span>
+          <span className="text-sm">{memberData?.data?.user?.nik || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">NPA (Nomor Pokok Anggota)</span>
+          <span className="text-sm">{memberData?.data?.user?.npa_number || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Email</span>
+          <span className="text-sm">{memberData?.data?.user?.email || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Tempat Lahir</span>
+          <span className="text-sm">{memberData?.data?.user?.birth_place || "-"}</span>
+        </div>
+        </div>
 
+        <div className="w-1/3">
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Tanggal Lahir</span>
+          <span className="text-sm">{memberData?.data?.user?.dob || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Pendidikan/Ijazah Terakhir</span>
+          <span className="text-sm">{memberData?.data?.user?.latest_education || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Jenis Kelamin</span>
+          <span className="text-sm">{memberData?.data?.user?.gender || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Agama</span>
+          <span className="text-sm">{memberData?.data?.user?.religion || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Golongan Darat</span>
+          <span className="text-sm">{memberData?.data?.user?.blood_type || "-"}</span>
+        </div>
+        </div>
+
+        <div className="w-1/3">
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Alamat KTP</span>
+          <span className="text-sm">{memberData?.data?.user?.address || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Kode Pos</span>
+          <span className="text-sm">{memberData?.data?.user?.postal_code || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Nomor Handphone</span>
+          <span className="text-sm">{memberData?.data?.user?.phone_number || "-"}</span>
+        </div>
+        </div>
+
+      </div>
+
+    </div>
+
+      {/* button verify */}
+      <div className="mt-5 space-x-4 flex">
+        <button className="border border-primary rounded-xl text-sm text-primary px-4 py-3 w-[250px]">
+          Verifikasi
+        </button>
+        <button className=" bg-red-500 rounded-xl text-sm text-white px-4 py-3 w-[250px]">
+          Tolak
+        </button>
+      </div>
 
     </div>
   );
