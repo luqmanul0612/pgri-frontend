@@ -3,6 +3,7 @@ import React, { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { IMemberByIdResponse } from "@/interfaces/IMemberById";
 import { getMemberById } from "../serverActions/member";
+import { FaArrowLeft } from "react-icons/fa6";
 
 interface pageProps {
   params: {
@@ -37,6 +38,10 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
   }, [id]);
   return (
     <div>
+      <div className="flex items-center gap-2 mb-4 font-bold">
+        <div><FaArrowLeft /></div>
+        <span>Detail Data Anggota</span>
+      </div>
       <div>
         Data Pribadi
         {memberData?.data?.user?.name}
