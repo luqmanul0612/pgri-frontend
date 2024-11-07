@@ -7,7 +7,7 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { FiUser } from "react-icons/fi";
 import { MdOutlineLocalPrintshop } from "react-icons/md";
 import { IoIosCloseCircle } from "react-icons/io";
-
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 
 interface pageProps {
   params: {
@@ -49,18 +49,35 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
         <span>Detail Data Anggota</span>
       </div>
 
-    {/* tab header */}
-    <div className=" flex justify-between border-b border-black/50">
-      <div className="text-xs">
+      <TabGroup>
+      <TabList className=" flex justify-between border-b border-black/50">
+      <div className="flex justify-center items-center">      
+        <div className="text-xs">
         <span className="text-gray-500">Dashboard / Anggota / </span><span className="text-primary">Detail Data Anggota</span>
       </div>
-    <div>
-      Tab
-    </div>
-    </div>
+      </div>
+      <div>
+      <Tab className={({ selected }) =>
+          selected ? " text-primary p-2 border-b-2 border-primary focus:outline-none" : " text-gray-600 p-2 rounded border-b-2 border-transparent focus:outline-none"
+        }>
+          Data Pribadi
+        </Tab>
+        <Tab className={({ selected }) =>
+          selected ? " text-primary p-2 border-b-2 border-primary focus:outline-none" : " text-gray-600 p-2 rounded border-b-2 border-transparent  focus:outline-none"
+        }>
+          Data Pekerjaan
+        </Tab>
+        <Tab className={({ selected }) =>
+          selected ? " text-primary p-2 border-b-2 border-primary focus:outline-none" : " text-gray-600 p-2 rounded focus:outline-none border-b-2 border-transparent "
+        }>
+          Foto
+        </Tab>
+      </div>
+
+      </TabList>
 
 {/* info profile header */}
-    <div className="bg-primary rounded-xl flex justify-between mt-5 p-3">
+<div className="bg-primary rounded-xl flex justify-between mt-5 p-3">
       <div className="flex items-center">
         <div className="flex justify-center items-center h-[80px] w-[80px] mr-4 bg-white rounded-xl">
         <FiUser size={50} className="text-primary" />
@@ -83,8 +100,10 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
       </div>
     </div>
 
-    {/* Data pribadi card */}
-    <div className="border border-primary rounded-xl mt-5 p-4">
+      <TabPanels className="mt-2">
+        {/* Data pribadi */}
+        <TabPanel className="border border-primary rounded-xl mt-5 p-4">
+        <div className="">
       <div className="text-primary font-bold mb-5">Data Pribadi</div>
       <div className="flex">
         <div className="w-1/3">
@@ -151,9 +170,88 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
       </div>
 
     </div>
+        </TabPanel>
+        {/* Data pekerjaan */}
+        <TabPanel className="border border-primary rounded-xl mt-5 p-4">
+        <div className="">
+        <div className="text-primary font-bold mb-5">Data Pekerjaan</div>
+        <div className="flex">
+        <div className="w-1/3">
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Provinsi Tempat Tugas</span>
+          <span className="text-sm">{memberData?.data?.institution?.province || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Kabupaten/Kota/Kota Adm Tempat Tugas</span>
+          <span className="text-sm">{memberData?.data?.institution?.city || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Kecamatan/Cabang/Distrik Tempat Tugas</span>
+          <span className="text-sm">{memberData?.data?.institution?.district || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Desa/Kelurahan</span>
+          <span className="text-sm">{memberData?.data?.institution?.sub_district || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Nama Instansi Tempat Tugas</span>
+          <span className="text-sm">{memberData?.data?.institution?.name || "-"}</span>
+        </div>
+        </div>
+        <div className="w-1/3">
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Alamat Tempat Tugas</span>
+          <span className="text-sm">{memberData?.data?.institution?.address || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Pekerjaan</span>
+          <span className="text-sm">{memberData?.data?.institution?.job_title || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Status Kepegawaian</span>
+          <span className="text-sm">{memberData?.data?.institution?.employee_status || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Pangkat/Golongan</span>
+          <span className="text-sm">{memberData?.data?.institution?.grade || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Sertifikasi Pendidik</span>
+          <span className="text-sm">{memberData?.data?.institution?.educator_certificate??"-"}</span>
+        </div>
+        </div>
+        <div className="w-1/3">
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Jenjang Mengajar</span>
+          <span className="text-sm">{memberData?.data?.institution?.stage || "-"}</span>
+        </div>
+        <div className="flex flex-col mb-3">
+          <span className="text-gray-500 text-xs">Mata Pelajaran</span>
+          <span className="text-sm">{memberData?.data?.institution?.study_subjects || "-"}</span>
+        </div>
+        </div>
+        </div>
+        </div>
+          </TabPanel>
+          {/* Foto */}
+        <TabPanel className="border border-primary rounded-xl mt-5 p-4">
+        <div className="">
+        <div className="text-primary font-bold mb-5">Foto & E-KTP</div>
+        <div className="flex gap-4">
+        <div className="bg-gray-300 rounded-xl w-[200px] h-[220px]">
+  <img src={Array.isArray(memberData?.data?.photo?.profile) ? memberData.data.photo.profile[0] : memberData?.data?.photo?.profile} alt="foto" />
+</div>
+<div className="bg-gray-300 rounded-xl w-[300px] h-[220px]">
+  <img src={Array.isArray(memberData?.data?.photo?.ktp) ? memberData.data.photo.ktp[0] : memberData?.data?.photo?.ktp} alt="foto" />
+</div>
+        </div>
+        </div>
+          </TabPanel>
+      </TabPanels>
+    </TabGroup>
 
-      {/* button verify */}
-      <div className="mt-5 space-x-4 flex">
+          {/* button verify */}
+          <div className="mt-5 space-x-4 flex">
         <button className="border border-primary rounded-xl text-sm text-primary px-4 py-3 w-[250px]">
           Verifikasi
         </button>
