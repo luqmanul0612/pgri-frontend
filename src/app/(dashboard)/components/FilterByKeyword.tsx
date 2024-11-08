@@ -3,6 +3,8 @@ import SelectFieldWithBg from "@/app/components/SelectFieldWithBg";
 import { FC, useState } from "react";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from "@headlessui/react";
 import { Fragment } from "react";
+import { IoMdArrowDropdown } from "react-icons/io";
+
 
 interface FilterByKeywordProps {}
 
@@ -17,17 +19,24 @@ export const FilterByKeyword: FC<FilterByKeywordProps> = ({}) => {
   const [formData, setFormData] = useState<{ filterByStatus: string }>({
     filterByStatus: "",
   });
+  const [isOpen, setIsOpen] = useState(false);
+
 
   const handleSelectChange = (value: string) => {
     setFormData({ filterByStatus: value });
+    setIsOpen(false);
   };
 
   return (
-<div className="w-52 h-[37px]">
+<div className="w-48 h-[37px]">
       <Listbox value={formData.filterByStatus} onChange={handleSelectChange}>
         <div className="relative">
-          <ListboxButton className="w-full cursor-pointer rounded-lg  h-[37px] px-4 text-left focus:outline-none sm:text-sm border border-primary bg-primary text-white">
-            {options.find((option) => option.value === formData.filterByStatus)?.label || "Pilih Status"}
+          <ListboxButton className="w-full cursor-pointer rounded-lg h-[37px] px-4 text-left focus:outline-none sm:text-sm border border-primary bg-primary text-white flex items-center justify-between">
+            <span>
+              {options.find((option) => option.value === formData.filterByStatus)?.label ||
+                "Pilih Status"}
+            </span>
+            <IoMdArrowDropdown className="ml-2 h-5 w-5 text-white" />
           </ListboxButton>
           <Transition
             as={Fragment}
