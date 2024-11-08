@@ -33,6 +33,9 @@ import Pagination from "@mui/material/Pagination";
 import { PaginationItem } from "@mui/material";
 import TambahAnggotaModal from "./TambahAnggotaModal";
 import Link from "next/link";
+import { FaRegHand } from "react-icons/fa6";
+import ActionOptions from "./ActionOptions";
+
 
 const initialPageSize = 10;
 
@@ -98,52 +101,7 @@ const columns: Column<IMember>[] = [
   {
     Header: "Opsi",
     Cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <SlOptionsVertical size={12} className="h-4 w-4 text-gray-500" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          className="space-y-2 rounded-l-2xl rounded-r-none p-3"
-        >
-          <div className="flex items-center justify-center">
-            <span className="text-sm font-bold mb-1">Opsi</span>
-          </div>
-          <Link href={`/anggota/${row.original.id}`} passHref>
-            <DropdownMenuItem className="flex justify-between rounded-lg bg-green-500 px-3 py-3 text-xs text-white hover:!bg-green-400 hover:!text-white/90 cursor-pointer">
-              <span>Lihat</span>
-              <MdOutlineRemoveRedEye className="" size={18} />
-            </DropdownMenuItem>
-          </Link>
-          <DropdownMenuItem
-            // onClick={() => {
-            //   setIsUpdateModalOpen(true);
-            // }}
-            className="flex justify-between rounded-lg bg-blue-500 px-3 py-3 text-xs text-white hover:!bg-blue-400 hover:!text-white/90"
-          >
-            <span>Ubah</span>
-            <PiPencilSimpleLine className="" size={18} />
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            // onClick={() => setIsModaDeletelOpen(true)}
-            className="flex justify-between rounded-lg bg-red-500 px-3 py-3 text-xs text-white hover:!bg-red-400 hover:!text-white/90"
-          >
-            <span>Hapus</span>
-            <FaRegTrashAlt className="" size={18} />
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-        {/* <DeleteConfirmationModal
-        isOpen={isModalDeleteOpen}
-        onClose={() => setIsModaDeletelOpen(false)}
-        onConfirm={() => {
-          handleDelete(voucher.id.toString());
-          setIsModaDeletelOpen(false);
-        }}
-      /> */}
-      </DropdownMenu>
+      <ActionOptions row={row}/>
     ),
   },
 ];
