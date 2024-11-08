@@ -8,6 +8,8 @@ import { FiUser } from "react-icons/fi";
 import { MdOutlineLocalPrintshop } from "react-icons/md";
 import { IoIosCloseCircle } from "react-icons/io";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
+import VerifikasiModal from "../component/VerifikasiModal";
+import TolakModal from "../component/TolakModal";
 
 interface pageProps {
   params: {
@@ -22,6 +24,8 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isModalVerifikasiOpen, setIsModalVerifikasiOpen] = useState(false);
+  const [isModalTolakOpen, setIsModalTolakOpen] = useState(false);
 
   useEffect(() => {
     const fetchMemberData = async () => {
@@ -63,8 +67,8 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
             <Tab
               className={({ selected }) =>
                 selected
-                  ? "border-b-2 font-bold border-primary p-2 text-primary focus:outline-none text-sm"
-                  : "rounded border-b-2 font-bold border-transparent p-2 text-gray-600 focus:outline-none text-sm"
+                  ? "border-b-2 border-primary p-2 text-sm font-bold text-primary focus:outline-none"
+                  : "rounded border-b-2 border-transparent p-2 text-sm font-bold text-gray-600 focus:outline-none"
               }
             >
               Data Pribadi
@@ -72,8 +76,8 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
             <Tab
               className={({ selected }) =>
                 selected
-                  ? "border-b-2 border-primary font-bold text-sm p-2 text-primary focus:outline-none"
-                  : "rounded border-b-2 border-transparent p-2 text-gray-600 focus:outline-none font-bold text-sm"
+                  ? "border-b-2 border-primary p-2 text-sm font-bold text-primary focus:outline-none"
+                  : "rounded border-b-2 border-transparent p-2 text-sm font-bold text-gray-600 focus:outline-none"
               }
             >
               Data Pekerjaan
@@ -81,8 +85,8 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
             <Tab
               className={({ selected }) =>
                 selected
-                  ? "border-b-2 font-bold text-sm border-primary p-2 text-primary focus:outline-none"
-                  : "rounded border-b-2 border-transparent p-2 text-gray-600 focus:outline-none font-bold text-sm"
+                  ? "border-b-2 border-primary p-2 text-sm font-bold text-primary focus:outline-none"
+                  : "rounded border-b-2 border-transparent p-2 text-sm font-bold text-gray-600 focus:outline-none"
               }
             >
               Foto
@@ -367,13 +371,39 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
 
       {/* button verify */}
       <div className="mt-5 flex space-x-4">
-        <button className="w-[250px] rounded-xl border border-primary px-4 py-3 text-sm text-primary">
+        <button
+          onClick={() => {
+            setIsModalVerifikasiOpen(true);
+          }}
+          className="w-[250px] rounded-xl border border-primary px-4 py-3 text-sm text-primary"
+        >
           Verifikasi
         </button>
-        <button className="w-[250px] rounded-xl bg-red-500 px-4 py-3 text-sm text-white">
+        <button
+          onClick={() => {
+            setIsModalTolakOpen(true);
+          }}
+          className="w-[250px] rounded-xl bg-red-500 px-4 py-3 text-sm text-white"
+        >
           Tolak
         </button>
       </div>
+      {memberData && (
+        <VerifikasiModal
+          isOpen={isModalVerifikasiOpen}
+          onClose={() => setIsModalVerifikasiOpen(false)}
+          data={memberData}
+        />
+      )}
+      {
+        memberData && (
+          <TolakModal
+          isOpen={isModalTolakOpen}
+          onClose={()=> setIsModalTolakOpen(false)}
+          data={memberData}
+          />
+        )
+      }
     </div>
   );
 };
