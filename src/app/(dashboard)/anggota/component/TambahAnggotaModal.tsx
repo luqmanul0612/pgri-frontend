@@ -4,6 +4,7 @@ import React from "react";
 import UploadGraySVG from "../../../../../public/icon/upload-gray";
 import CloseRedSVG from "../../../../../public/icon/close-red";
 import PlusCyanSVG from "../../../../../public/icon/plus-cyan";
+import { useRouter } from 'next/navigation';
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,6 +12,12 @@ interface ModalProps {
 }
 
 const TambahAnggotaModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+  const router = useRouter();
+
+  const handleTambahAnggota = () => {
+    router.push('/register'); 
+  };
+
   return (
     <FormModal isOpen={isOpen} onClose={onClose}>
       <div className="p-6">
@@ -30,7 +37,9 @@ const TambahAnggotaModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           <div className="text-xs mt-4">Tarik & Masukan file Excel untuk di Upload</div>
         </div>
 
-        <div className="border rounded-xl border-primary p-4 flex justify-between hover:opacity-70 transition-all duration-300 cursor-pointer">
+        <div 
+        onClick={handleTambahAnggota}
+        className="border rounded-xl border-primary p-4 flex justify-between hover:opacity-70 transition-all duration-300 cursor-pointer">
           <div className="text-xs text-primary">Tambah Anggota Langsung</div>
           <div><PlusCyanSVG/></div>
         </div>

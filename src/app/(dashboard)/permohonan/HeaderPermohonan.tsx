@@ -1,8 +1,14 @@
-import React from 'react'
-import CardSVG from '../../../../public/icon/card'
-import CardBlackSVG from '../../../../public/icon/cardBlack'
+"use client"
+import React, { useState } from 'react'
+import { FaRegAddressCard } from "react-icons/fa";
+
 
 const HeaderPermohonan = () => {
+  const [activeButton, setActiveButton] = useState('kta-biasa');
+
+  const handleButtonClick = (buttonType: string) => {
+    setActiveButton(buttonType);
+  };
   return (
     <div className='p-4 flex items-center rounded-xl border border-custom-aqua bg-white gap-3'>
     <div className='flex-1'>
@@ -10,29 +16,47 @@ const HeaderPermohonan = () => {
       <div className='text-[42px] text-primary font-bold'>4</div>
     </div>
 
-    <div className='bg-primary rounded-xl w-[200px] p-4'>
-      <div className='flex justify-between'>
-        <div className='text-white text-lg  font-semibold'>2</div>
-        <div><CardSVG/></div>
-      </div>
+    <button
+        onClick={() => handleButtonClick('kta-biasa')}
+        className={`kta-biasa ${
+          activeButton === 'kta-biasa' ? 'bg-primary text-white' : 'bg-white text-[#919191]'
+        } rounded-xl w-[200px] p-4 border transition-all ${
+          activeButton === 'kta-biasa' ? '' : 'border-custom-aqua'
+        }`}
+      >
+        <div className="flex justify-between">
+          <div className="text-lg font-semibold">2</div>
+          <div>
+            <FaRegAddressCard size={20} />
+          </div>
+        </div>
 
-      <div>
-        <div className='font-bold text-[16px] text-white'>Permohonan</div>
-        <div className='text-xs text-white'>Cetak KTA Biasa</div>
-      </div>
-    </div>
+        <div className="flex flex-col">
+          <div className="font-bold text-[16px] text-left">Permohonan</div>
+          <div className="text-xs text-left">Cetak KTA Biasa</div>
+        </div>
+      </button>
 
-    <div className='bg-white border border-custom-aqua rounded-xl w-[200px] p-4'>
-      <div className='flex justify-between'>
-        <div className=' text-lg  font-semibold'>2</div>
-        <div><CardBlackSVG/></div>
-      </div>
+      <button
+        onClick={() => handleButtonClick('kta-smart')}
+        className={`kta-smart ${
+          activeButton === 'kta-smart' ? 'bg-primary text-white' : 'bg-white text-[#919191]'
+        } rounded-xl w-[200px] p-4 border ${
+          activeButton === 'kta-smart' ? '' : 'border-custom-aqua'
+        }`}
+      >
+        <div className="flex justify-between">
+          <div className="text-lg font-semibold">2</div>
+          <div>
+            <FaRegAddressCard size={20}/>
+          </div>
+        </div>
 
-      <div>
-        <div className='font-semibold text-[16px] '>Permohonan</div>
-        <div className='text-xs text-[#919191] '>Cetak KTA Smart Card</div>
-      </div>
-    </div>
+        <div className="flex flex-col">
+          <div className="font-semibold text-[16px] text-left">Permohonan</div>
+          <div className="text-xs text-left">Cetak KTA Smart Card</div>
+        </div>
+      </button>
 
   </div>
   )
