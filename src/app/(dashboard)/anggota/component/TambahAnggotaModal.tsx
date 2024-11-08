@@ -22,7 +22,7 @@ const TambahAnggotaModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     <FormModal isOpen={isOpen} onClose={onClose}>
       <div className="p-6">
         <div className="flex justify-between">
-          <div className="text-[16px] text-primaryBlack mb-4">Tambah Anggota</div>
+          <div className="text-[16px] text-primaryBlack mb-4 font-semibold">Tambah Anggota</div>
           <div 
           onClick={onClose}
           className="cursor-pointer"><CloseRedSVG/></div>

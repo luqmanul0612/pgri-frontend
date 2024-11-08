@@ -85,20 +85,21 @@ const columns: Column<IMember>[] = [
       </div>
     ),
   },
-  { Header: "Whatsapp", accessor: "email" },
-  // {
-  //   Header: "Status",
-  //   accessor: "status",
-  //   Cell: ({ value }) => (
-  //     <div className="flex items-center justify-center">
-  //       {value === 1 ? (
-  //         <IoIosCheckmarkCircle color="green" fontSize={18} />
-  //       ) : (
-  //         <IoIosCloseCircle color="red" fontSize={18} />
-  //       )}
-  //     </div>
-  //   ),
-  // },
+  { 
+    Header: "Whatsapp", 
+    accessor: "email" ,
+    Cell: ({ value }) => (
+      <div className="flex items-center justify-center">
+        <div className="relative flex  items-center justify-center rounded-md h-[25px] w-[25px] ">
+          <img
+            src='/assets/wa.png'
+            alt="QR Code"
+            className="object-cover"
+          />
+        </div>
+      </div>
+    ),
+  },
   {
     Header: "Status",
     accessor: "status",
