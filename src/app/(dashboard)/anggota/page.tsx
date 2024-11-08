@@ -15,7 +15,7 @@ const MemberTable: React.FC = async () => {
       <Filter />
       <div className="flex items-end justify-between">
         <p className="font-semibold text-primary">Semua Anggota</p>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center justify-center">
           <FilterByKeyword />
           <SearchInput className="border border-primary" />
         </div>
