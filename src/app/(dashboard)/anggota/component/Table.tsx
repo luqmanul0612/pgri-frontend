@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { useTable, Column } from "react-table";
 import ReactPaginate from "react-paginate";
 import Image from "next/image";
@@ -35,6 +35,7 @@ import TambahAnggotaModal from "./TambahAnggotaModal";
 import Link from "next/link";
 import { FaRegHand } from "react-icons/fa6";
 import ActionOptions from "./ActionOptions";
+import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
 
 
 const initialPageSize = 10;
@@ -85,16 +86,54 @@ const columns: Column<IMember>[] = [
     ),
   },
   { Header: "Whatsapp", accessor: "email" },
+  // {
+  //   Header: "Status",
+  //   accessor: "status",
+  //   Cell: ({ value }) => (
+  //     <div className="flex items-center justify-center">
+  //       {value === 1 ? (
+  //         <IoIosCheckmarkCircle color="green" fontSize={18} />
+  //       ) : (
+  //         <IoIosCloseCircle color="red" fontSize={18} />
+  //       )}
+  //     </div>
+  //   ),
+  // },
   {
     Header: "Status",
     accessor: "status",
-    Cell: ({ value }) => (
+    Cell: ({ value }: { value: number }) => (
       <div className="flex items-center justify-center">
-        {value === 1 ? (
-          <IoIosCheckmarkCircle color="green" fontSize={18} />
-        ) : (
-          <IoIosCloseCircle color="red" fontSize={18} />
-        )}
+        <Popover className="relative">
+          {/* Tooltip Trigger */}
+          <PopoverButton
+            onMouseEnter={(e) => e.currentTarget.click()}
+            onMouseLeave={(e) => e.currentTarget.click()}
+            className="outline-none focus:outline-none ring-0 border-none cursor-default"
+       
+          >
+            {value === 1 ? (
+              <IoIosCheckmarkCircle color="green" fontSize={18} />
+            ) : (
+              <IoIosCloseCircle color="red" fontSize={18} />
+            )}
+          </PopoverButton>
+          
+          {/* Tooltip Panel */}
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-200"
+            enterFrom="opacity-0 translate-y-1"
+            enterTo="opacity-100 translate-y-0"
+            leave="transition ease-in duration-150"
+            leaveFrom="opacity-100 translate-y-0"
+            leaveTo="opacity-0 translate-y-1"
+          >
+            <PopoverPanel className={`absolute bottom-full mb-2 w-32 transform -translate-x-1/2 left-1/2 bg-white rounded-3xl border border-gray-100  shadow-xl ${value === 1 ? "text-green-600": "text-red-600"} text-sm rounded-lg shadow-lg p-2`}>
+              {value === 1 ? "Sudah diverifikasi" : "Belum diverifikasi"}
+            </PopoverPanel>
+          </Transition>
+        </Popover>
       </div>
     ),
   },
