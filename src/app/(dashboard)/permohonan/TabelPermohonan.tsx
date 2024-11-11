@@ -34,6 +34,7 @@ import { PaginationItem } from "@mui/material";
 import { getMembers } from "../anggota/serverActions/member";
 import TambahAnggotaModal from "../anggota/component/TambahAnggotaModal";
 import { SearchInput } from "@/app/components/SearchInput";
+import LoadingDots from "@/components/loading/LoadingDots";
 // import TambahAnggotaModal from "./TambahAnggotaModal";
 
 const initialPageSize = 10;
@@ -160,12 +161,20 @@ const Table: React.FC = () => {
   const [tableData, setTableData] = useState<IMember[]>([]);
   const [pageCount, setPageCount] = useState<number>();
   const [isModalAddOpen, setIsModalAddOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const memberData = await getMembers(currentPage + 1, pageSize);
-      setTableData(memberData.data.data);
-      setPageCount(memberData.data.total_page);
+      setLoading(true); 
+      try {
+        const memberData = await getMembers(currentPage + 1, pageSize);
+        setTableData(memberData.data.data);
+        setPageCount(memberData.data.total_page);
+      } catch (error) {
+        console.error("Failed to fetch members data:", error);
+      } finally {
+        setLoading(false); 
+      }
     })();
   }, [currentPage, pageSize]);
 
@@ -225,7 +234,15 @@ const Table: React.FC = () => {
               ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-              {rows.map((row, index) => {
+              {
+              loading ? (
+                <tr className="mt-4 ">
+                  <td colSpan={headerGroups[0].headers.length} className="text-center py-6 ">
+                  <LoadingDots/>
+                  </td>
+                </tr>
+              ) :
+              rows.map((row, index) => {
                 prepareRow(row);
                 return (
                   <tr

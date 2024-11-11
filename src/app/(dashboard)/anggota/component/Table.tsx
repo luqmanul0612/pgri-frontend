@@ -5,29 +5,14 @@ import { useTable, Column } from "react-table";
 import ReactPaginate from "react-paginate";
 import Image from "next/image";
 import Card from "@/app/components/Card";
-import { IoIosArrowDown } from "react-icons/io";
 import { IoFemaleOutline, IoMaleOutline } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-import { SlOptionsVertical } from "react-icons/sl";
 import { getMembers } from "../serverActions/member";
 import { IMember } from "@/interfaces/IMemberResponse";
 import dummyProfile from "@/../public/assets/profileNew.png";
 import { FaPlus, FaRegCopy, FaRegCreditCard } from "react-icons/fa6";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { FaRegTrashAlt } from "react-icons/fa";
-import { PiPencilLineLight } from "react-icons/pi";
-import { PiPencilSimpleLine } from "react-icons/pi";
-import { BsPrinter } from "react-icons/bs";
 import { MdOutlineLocalPrintshop } from "react-icons/md";
 import Pagination from "@mui/material/Pagination";
 import { PaginationItem } from "@mui/material";
@@ -36,6 +21,8 @@ import Link from "next/link";
 import { FaRegHand } from "react-icons/fa6";
 import ActionOptions from "./ActionOptions";
 import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
+import LoadingDots from "@/components/loading/LoadingDots";
+import LoadingDotTable from "@/components/loading/LoadingDotTable";
 
 
 const initialPageSize = 10;
@@ -152,12 +139,20 @@ const Table: React.FC = () => {
   const [tableData, setTableData] = useState<IMember[]>([]);
   const [pageCount, setPageCount] = useState<number>();
   const [isModalAddOpen, setIsModalAddOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const memberData = await getMembers(currentPage + 1, pageSize);
-      setTableData(memberData.data.data);
-      setPageCount(memberData.data.total_page);
+      setLoading(true); 
+      try {
+        const memberData = await getMembers(currentPage + 1, pageSize);
+        setTableData(memberData.data.data);
+        setPageCount(memberData.data.total_page);
+      } catch (error) {
+        console.error("Failed to fetch members data:", error);
+      } finally {
+        setLoading(false); 
+      }
     })();
   }, [currentPage, pageSize]);
 
@@ -182,6 +177,8 @@ const Table: React.FC = () => {
   return (
     <div className="">
       <Card className="">
+        {/* 
+        <LoadingDotTable/> */}
         <div className="flex justify-between p-5">
           <div className="flex items-center space-x-3">
             <button className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary">
@@ -209,51 +206,61 @@ const Table: React.FC = () => {
         </div>
 
         <div className="overflow-y-hidden">
-          <table {...getTableProps()} className="min-w-full bg-white">
-            <thead>
-              {headerGroups.map((headerGroup, index) => (
-                <tr
-                  {...headerGroup.getHeaderGroupProps()}
-                  key={index}
-                  className="bg-[#17a3b8]"
+  <table {...getTableProps()} className="min-w-full bg-white">
+    <thead>
+      {headerGroups.map((headerGroup, index) => (
+        <tr
+          {...headerGroup.getHeaderGroupProps()}
+          key={index}
+          className="bg-[#17a3b8]"
+        >
+          {headerGroup.headers.map((column, colIndex) => (
+            <th
+              {...column.getHeaderProps()}
+              key={colIndex}
+              className="whitespace-nowrap px-4 py-3 text-left text-sm font-semibold text-white"
+            >
+              {column.render("Header")}
+            </th>
+          ))}
+        </tr>
+      ))}
+    </thead>
+    <tbody {...getTableBodyProps()}>
+      {loading ? (
+        <tr className="mt-4 ">
+          <td colSpan={headerGroups[0].headers.length} className="text-center py-6 ">
+          <LoadingDots/>
+          </td>
+        </tr>
+      ) : (
+        rows.map((row, index) => {
+          prepareRow(row);
+          return (
+            <tr
+              {...row.getRowProps()}
+              key={index}
+              className={`border-t text-xs font-light ${
+                row.index % 2 === 0 ? "bg-gray-100" : "bg-white"
+              }`}
+            >
+              {row.cells.map((cell, cellIndex) => (
+                <td
+                  {...cell.getCellProps()}
+                  key={cellIndex}
+                  className="px-4 py-2"
                 >
-                  {headerGroup.headers.map((column, colIndex) => (
-                    <th
-                      {...column.getHeaderProps()}
-                      key={colIndex}
-                      className="whitespace-nowrap px-4 py-3 text-left text-sm font-semibold text-white"
-                      // style={{ minWidth: '150px' }}
-                    >
-                      {column.render("Header")}
-                    </th>
-                  ))}
-                </tr>
+                  {cell.render("Cell")}
+                </td>
               ))}
-            </thead>
-            <tbody {...getTableBodyProps()}>
-              {rows.map((row, index) => {
-                prepareRow(row);
-                return (
-                  <tr
-                    {...row.getRowProps()}
-                    key={index}
-                    className={`border-t text-xs font-light ${row.index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
-                  >
-                    {row.cells.map((cell, cellIndex) => (
-                      <td
-                        {...cell.getCellProps()}
-                        key={cellIndex}
-                        className="px-4 py-2"
-                      >
-                        {cell.render("Cell")}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+            </tr>
+          );
+        })
+      )}
+    </tbody>
+  </table>
+</div>
+
 
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center">
