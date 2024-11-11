@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
+import Link from "next/link";
 import React from "react";
 
 const CardListKarya = () => {
   return (
-    <div className="w-[calc(33.333%-16px)] rounded-xl border border-custom-aqua bg-white p-3 flex justify-between items-center mb-2">
+    <Link passHref href={"/karyaguru/id"} className="w-[calc(33.333%-16px)] rounded-xl border border-custom-aqua bg-white p-3 flex justify-between items-center mb-0">
       <div className="flex">
         <img src="/icon/provinsi/jateng.svg" alt="provinsi"/>
         <div className="ml-2">
@@ -14,7 +15,7 @@ const CardListKarya = () => {
       <div className="text-xs font-semibold text-primary">
         300.000 Karya
       </div>
-    </div>
+    </Link>
   );
 };
 
