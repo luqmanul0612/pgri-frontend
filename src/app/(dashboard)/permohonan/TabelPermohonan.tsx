@@ -301,12 +301,11 @@ const Table: React.FC = () => {
             breakClassName="px-3 py-1 border"
           /> */}
 
-          <Pagination
+<Pagination
             count={pageCount}
             page={currentPage + 1}
             onChange={(_, newPage) => setCurrentPage(newPage - 1)}
-            color="primary"
-            // variant="outlined"
+             color="standard"
             shape="rounded"
             sx={{
               "& .MuiPaginationItem-root": {
@@ -323,20 +322,28 @@ const Table: React.FC = () => {
                 },
               },
               "& .Mui-selected": {
-                backgroundColor: "#17a3b8", // Warna tombol yang sedang aktif (cyan)
-                color: "#ffffff", // Warna teks tombol aktif menjadi putih
+                backgroundColor: "#17a3b8 !important",
+                color: "#ffffff !important",
                 "&:hover": {
-                  backgroundColor: "#138a99", // Warna tombol aktif saat hover
+                  backgroundColor: "#138a99 !important", 
                 },
               },
             }}
             renderItem={(item) => (
-              <PaginationItem
-                {...item}
-                components={{
-                  previous: () => <span className="">Previous</span>,
-                  next: () => <span>Next</span>,
-                }}
+<PaginationItem
+      {...item}
+      sx={{
+        borderTopLeftRadius: item.type === "previous" ? "15px !important" : "0px",
+        borderBottomLeftRadius: item.type === "previous" ? "15px !important" : "0px",
+        borderTopRightRadius: item.type === "next" ? "15px !important" : "0px",
+        borderBottomRightRadius: item.type === "next" ? "15px !important" : "0px",
+        paddingLeft:  item.type === "previous" || item.type === "next" ?  "20px !important" : "10px",
+        paddingRight:  item.type === "previous" || item.type === "next" ?  "20px !important" : "10px",
+      }}
+      components={{
+        previous: () => <span>Sebelumnya</span>,
+        next: () => <span>Selanjutnya</span>,
+      }}
               />
             )}
           />

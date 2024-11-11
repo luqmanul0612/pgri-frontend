@@ -283,26 +283,12 @@ const Table: React.FC = () => {
               Halaman {currentPage + 1} dari {pageCount}
             </div>
           </div>
-          {/* <ReactPaginate
-            pageCount={pageCount!}
-            pageRangeDisplayed={3} // Menampilkan 3 tombol halaman di tengah
-            marginPagesDisplayed={1} // Menampilkan 1 tombol di awal dan akhir
-            onPageChange={handlePageChange}
-            containerClassName="flex gap-0" // Menghilangkan gap antar tombol
-            pageClassName="px-3 py-0 border cursor-pointer flex items-center justify-center"
-            pageLinkClassName="w-full h-full flex items-center justify-center text-[14px]" // Tombol angka bisa di-klik sepenuhnya
-            activeClassName="bg-primary text-white border"
-            previousClassName="px-4 py-2 bg-primary text-white rounded-l-md cursor-pointer text-[14px]"
-            nextClassName="px-4 py-2 bg-primary text-white rounded-r-md cursor-pointer text-[14px]"
-            breakClassName="px-3 py-1 border"
-          /> */}
 
           <Pagination
             count={pageCount}
             page={currentPage + 1}
             onChange={(_, newPage) => setCurrentPage(newPage - 1)}
-            color="primary"
-            // variant="outlined"
+             color="standard"
             shape="rounded"
             sx={{
               "& .MuiPaginationItem-root": {
@@ -310,30 +296,38 @@ const Table: React.FC = () => {
                 minWidth: "40px",
                 minHeight: "40px",
                 padding: "5px 10px",
-                backgroundColor: "#ffffff", // Warna tombol tidak aktif menjadi putih
-                color: "#17a3b8", // Warna teks tombol tidak aktif
+                backgroundColor: "#ffffff",
+                color: "#17a3b8", 
                 margin: "0",
                 border: "1px solid lightgray",
                 "&:hover": {
-                  backgroundColor: "#e0f7fa", // Warna saat hover
+                  backgroundColor: "#e0f7fa", 
                 },
               },
               "& .Mui-selected": {
-                backgroundColor: "#17a3b8", // Warna tombol yang sedang aktif (cyan)
-                color: "#ffffff", // Warna teks tombol aktif menjadi putih
+                backgroundColor: "#17a3b8 !important",
+                color: "#ffffff !important", 
                 "&:hover": {
-                  backgroundColor: "#138a99", // Warna tombol aktif saat hover
+                  backgroundColor: "#138a99 !important", 
                 },
               },
             }}
             renderItem={(item) => (
-              <PaginationItem
-                {...item}
-                components={{
-                  previous: () => <span className="">Previous</span>,
-                  next: () => <span>Next</span>,
-                }}
-              />
+<PaginationItem
+      {...item}
+      sx={{
+        borderTopLeftRadius: item.type === "previous" ? "15px !important" : "0px",
+        borderBottomLeftRadius: item.type === "previous" ? "15px !important" : "0px",
+        borderTopRightRadius: item.type === "next" ? "15px !important" : "0px",
+        borderBottomRightRadius: item.type === "next" ? "15px !important" : "0px",
+        paddingLeft:  item.type === "previous" || item.type === "next" ?  "20px !important" : "10px",
+        paddingRight:  item.type === "previous" || item.type === "next" ?  "20px !important" : "10px",
+      }}
+      components={{
+        previous: () => <span>Sebelumnya</span>,
+        next: () => <span>Selanjutnya</span>,
+      }}
+    />
             )}
           />
         </div>
