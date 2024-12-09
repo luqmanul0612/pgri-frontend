@@ -8,6 +8,7 @@ interface SelectFieldProps {
   onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
   options: { value: string; label: string }[];
   placeholder: string;
+  disabled?: boolean;
 }
 
 const SelectField: React.FC<SelectFieldProps> = ({
@@ -17,6 +18,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   onChange,
   options,
   placeholder,
+  disabled,
 }) => {
   return (
     <div>
@@ -31,6 +33,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
           id={id}
           value={value}
           onChange={onChange}
+          disabled={disabled}
           className={clsx(
             "w-full appearance-none rounded-lg border border-[#17a3b8]/20 bg-transparent py-[8px] pl-4 pr-10 focus:border-[#17a3b8] focus:outline-none text-sm",
             !value ? "text-mutedText border-mutedBorder" : "text-[#17a3b8]",
