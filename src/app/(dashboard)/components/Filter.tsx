@@ -5,11 +5,20 @@ import { Button } from "@/components/ui/button";
 import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import { getCity, getDistrict, getProvinces } from "@/app/(dashboard)/anggota/serverActions/member";
 import { IAdministrativeRegions, IAdministrativeRegionValue } from "@/interfaces/IAdministrativeRegions";
+import { EmployeeType } from "@/enum/EmployeeType";
 
-interface FilterProps {}
+interface FilterProps {
+  filterRegions?: any;
+}
 
-export const Filter: FC<FilterProps> = ({}) => {
-  const [formData, setFormData] = useState<Record<any, any>>({});
+export const Filter: FC<FilterProps> = ({ filterRegions }) => {
+  const [formData, setFormData] = useState<Record<any, any>>({
+    provinsi: null,
+    kota: null,
+    kecamatan: null,
+    status: null
+  });
+
   const [listProvinces, setListProvinces] = useState<IAdministrativeRegionValue[]>([]);
   const [listCity, setListCity] = useState<IAdministrativeRegionValue[]>([]);
   const [listDistrict, setListDistrict] = useState<IAdministrativeRegionValue[]>([])
@@ -21,6 +30,10 @@ export const Filter: FC<FilterProps> = ({}) => {
     }));
   };
 
+  const ListEmployeeStatus : IAdministrativeRegionValue[] = Object.values(EmployeeType).map((type) => ({
+    label: type,
+    value: type,
+  }))
 
   useEffect(() => {
     (async () => {
@@ -62,6 +75,7 @@ export const Filter: FC<FilterProps> = ({}) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
+    filterRegions(formData);
   }
 
   return (
@@ -74,11 +88,6 @@ export const Filter: FC<FilterProps> = ({}) => {
               label="Provinsi"
               value={formData.provinsi}
               onChange={handleSelectChange}
-              // options={[
-              //   { value: "jakarta", label: "Jakarta" },
-              //   { value: "jawa barat", label: "Jawa Barat" },
-              //   { value: "jawa timur", label: "Jawa Timur" },
-              // ]}
               options={listProvinces}
               placeholder="Pilih Provinsi"
             />
@@ -90,12 +99,7 @@ export const Filter: FC<FilterProps> = ({}) => {
               label="Kab/Kota"
               value={formData.kota}
               onChange={handleSelectChange}
-              disabled={false}
-              // options={[
-              //   { value: "bogor", label: "Bogor" },
-              //   { value: "semarang", label: "Semarang" },
-              //   { value: "medan", label: "Medan" },
-              // ]}
+              disabled={!formData.provinsi}
               options={listCity}
               placeholder="Pilih Kab/Kota"
             />
@@ -103,15 +107,11 @@ export const Filter: FC<FilterProps> = ({}) => {
 
           <div className="w-full">
             <SelectField
-              id="Kecamatan"
+              id="kecamatan"
               label="Kecamatan"
               value={formData.kecamatan}
+              disabled={!formData.kota}
               onChange={handleSelectChange}
-              // options={[
-              //   { value: "ciawi", label: "Ciawi" },
-              //   { value: "bogor kota", label: "Bogor Kota" },
-              //   { value: "cigombong", label: "Cigombong" },
-              // ]}
               options={listDistrict}
               placeholder="Pilih Kecamatan"
             />
@@ -123,11 +123,7 @@ export const Filter: FC<FilterProps> = ({}) => {
               label="Status Pegawai"
               value={formData.status}
               onChange={handleSelectChange}
-              options={[
-                { value: "PAUD", label: "PAUD" },
-                { value: "TK", label: "TK" },
-                { value: "Lainnya", label: "Lainnya" },
-              ]}
+              options={ListEmployeeStatus}
               placeholder="Pilih Status Pegawai"
             />
           </div>

@@ -24,6 +24,11 @@ import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/re
 import LoadingDots from "@/components/loading/LoadingDots";
 import LoadingDotTable from "@/components/loading/LoadingDotTable";
 
+interface TableProps {
+  searchQuery: string;
+  filterRegions: any;
+  filterByStatus?: string;
+}
 
 const initialPageSize = 10;
 
@@ -72,8 +77,8 @@ const columns: Column<IMember>[] = [
       </div>
     ),
   },
-  { 
-    Header: "Whatsapp", 
+  {
+    Header: "Whatsapp",
     accessor: "email" ,
     Cell: ({ value }) => (
       <div className="flex items-center justify-center">
@@ -98,7 +103,7 @@ const columns: Column<IMember>[] = [
             onMouseEnter={(e) => e.currentTarget.click()}
             onMouseLeave={(e) => e.currentTarget.click()}
             className="outline-none focus:outline-none ring-0 border-none cursor-default"
-       
+
           >
             {value === 1 ? (
               <IoIosCheckmarkCircle color="green" fontSize={18} />
@@ -106,7 +111,7 @@ const columns: Column<IMember>[] = [
               <IoIosCloseCircle color="red" fontSize={18} />
             )}
           </PopoverButton>
-          
+
           {/* Tooltip Panel */}
           <Transition
             as={Fragment}
@@ -133,28 +138,32 @@ const columns: Column<IMember>[] = [
   },
 ];
 
-const Table: React.FC = () => {
+const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatus }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [tableData, setTableData] = useState<IMember[]>([]);
   const [pageCount, setPageCount] = useState<number>();
   const [isModalAddOpen, setIsModalAddOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [countMale, setCountMale] = useState<number>(0);
+  const [countFemale, setCountFemale] = useState<number>(0);
 
   useEffect(() => {
     (async () => {
-      setLoading(true); 
+      setLoading(true);
       try {
-        const memberData = await getMembers(currentPage + 1, pageSize);
+        const memberData = await getMembers(currentPage + 1, pageSize, searchQuery, filterRegions, filterByStatus);
         setTableData(memberData.data.data);
         setPageCount(memberData.data.total_page);
+        setCountMale(memberData.data?.counter?.laki_laki);
+        setCountFemale(memberData.data?.counter?.perempuan);
       } catch (error) {
         console.error("Failed to fetch members data:", error);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     })();
-  }, [currentPage, pageSize]);
+  }, [currentPage, pageSize, searchQuery, filterRegions, filterByStatus]);
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
@@ -177,7 +186,7 @@ const Table: React.FC = () => {
   return (
     <div className="">
       <Card className="">
-        {/* 
+        {/*
         <LoadingDotTable/> */}
         <div className="flex justify-between p-5">
           <div className="flex items-center space-x-3">
@@ -196,11 +205,11 @@ const Table: React.FC = () => {
           <div className="flex gap-4">
             <div className="flex items-center gap-2 rounded-lg border border-yellow-300 bg-yellow-300 bg-opacity-20 px-4 py-1 text-sm font-normal text-[#FFC107]">
               <IoMaleOutline />
-              <span>Anggota Laki-laki : 3000</span>
+              <span>Anggota Laki-laki : { countMale }</span>
             </div>
             <div className="flex items-center gap-2 rounded-lg border border-red-500 border-opacity-20 bg-red-500 bg-opacity-20 px-4 py-1 text-sm font-normal text-[#DC3545]">
               <IoFemaleOutline />
-              <span>Anggota Perempuan : 3000</span>
+              <span>Anggota Perempuan : { countFemale }</span>
             </div>
           </div>
         </div>
@@ -250,7 +259,7 @@ const Table: React.FC = () => {
                   key={cellIndex}
                   className="px-4 py-2"
                 >
-                  {cell.render("Cell")}
+                  { cell.render("Cell") }
                 </td>
               ))}
             </tr>
@@ -297,18 +306,18 @@ const Table: React.FC = () => {
                 minHeight: "40px",
                 padding: "5px 10px",
                 backgroundColor: "#ffffff",
-                color: "#17a3b8", 
+                color: "#17a3b8",
                 margin: "0",
                 border: "1px solid lightgray",
                 "&:hover": {
-                  backgroundColor: "#e0f7fa", 
+                  backgroundColor: "#e0f7fa",
                 },
               },
               "& .Mui-selected": {
                 backgroundColor: "#17a3b8 !important",
-                color: "#ffffff !important", 
+                color: "#ffffff !important",
                 "&:hover": {
-                  backgroundColor: "#138a99 !important", 
+                  backgroundColor: "#138a99 !important",
                 },
               },
             }}
