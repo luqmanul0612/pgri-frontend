@@ -6,16 +6,18 @@ import { Fragment } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
 
 
-interface FilterByKeywordProps {}
+interface FilterByKeywordProps {
+  filterByStatusProps: any;
+}
 
 const options = [
   { value: "", label: "Semua Anggota" },
-  { value: "verified", label: "Terverifikasi" },
-  { value: "unverified", label: "Belum Terverifikasi" },
-  { value: "inactive", label: "Nonaktif" },
+  { value: "0", label: "Belum Terverifikasi" },
+  { value: "1", label: "Terverifikasi" },
+  { value: "2", label: "Nonaktif" },
 ];
 
-export const FilterByKeyword: FC<FilterByKeywordProps> = ({}) => {
+export const FilterByKeyword: FC<FilterByKeywordProps> = ({ filterByStatusProps }) => {
   const [formData, setFormData] = useState<{ filterByStatus: string }>({
     filterByStatus: "",
   });
@@ -25,6 +27,7 @@ export const FilterByKeyword: FC<FilterByKeywordProps> = ({}) => {
   const handleSelectChange = (value: string) => {
     setFormData({ filterByStatus: value });
     setIsOpen(false);
+    filterByStatusProps(value);
   };
 
   return (

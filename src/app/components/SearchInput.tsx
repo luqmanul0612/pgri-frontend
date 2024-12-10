@@ -1,7 +1,20 @@
-import React from 'react'
+import React, { useState } from "react";
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
-export function SearchInput({ className }: { className?: string }) {
+
+interface SearchInputProps {
+  onSearch: (query: string) => void;
+  className?: string;
+}
+
+export const SearchInput: React.FC<SearchInputProps> = ({ onSearch, className }) =>{
+  const [inputValue, setInputValue] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+    onSearch(value);
+  };
   return (
     <div className={cn("flex w-[300px] rounded-lg bg-white p-2", className)}>
       <Image
@@ -11,6 +24,8 @@ export function SearchInput({ className }: { className?: string }) {
         height={18} />
       <input
         placeholder="Ketik Nama, NPA"
+        value={inputValue}
+        onChange={handleChange}
         className="w-full px-3 outline-none text-sm" />
     </div>
   )
