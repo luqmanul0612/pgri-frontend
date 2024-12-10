@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment, useRef } from "react";
 import { useTable, Column } from "react-table";
 import ReactPaginate from "react-paginate";
 import Image from "next/image";
@@ -23,6 +23,8 @@ import ActionOptions from "./ActionOptions";
 import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
 import LoadingDots from "@/components/loading/LoadingDots";
 import LoadingDotTable from "@/components/loading/LoadingDotTable";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 interface TableProps {
   searchQuery: string;
@@ -147,6 +149,7 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
   const [loading, setLoading] = useState(true);
   const [countMale, setCountMale] = useState<number>(0);
   const [countFemale, setCountFemale] = useState<number>(0);
+  const printRef = useRef();
 
   useEffect(() => {
     (async () => {
@@ -179,6 +182,21 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
     setCurrentPage(0);
   };
 
+  const handlePrintPDF = async () => {
+    const el = printRef.current;
+    const canvas = await html2canvas(el);
+    const data = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF();
+    const imgProperties = pdf.getImageProperties(data);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+
+    pdf.addImage(data, 0, 0, pdfWidth, pdfHeight);
+    const date = new Date().valueOf();
+    pdf.save(`download-tabel-anggota-${date}.pdf`);
+  };
+
   const scrollStyle = {
     overflowX: "auto",
   };
@@ -190,7 +208,7 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
         <LoadingDotTable/> */}
         <div className="flex justify-between p-5">
           <div className="flex items-center space-x-3">
-            <button className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary">
+            <button onClick={handlePrintPDF} className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary">
               <span>Cetak</span> <MdOutlineLocalPrintshop size={18} />
             </button>
             <button
@@ -214,7 +232,7 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
           </div>
         </div>
 
-        <div className="overflow-y-hidden">
+        <div className="overflow-y-hidden" ref={printRef}>
   <table {...getTableProps()} className="min-w-full bg-white">
     <thead>
       {headerGroups.map((headerGroup, index) => (

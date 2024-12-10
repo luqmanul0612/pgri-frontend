@@ -1,6 +1,6 @@
 "use client";
 
-// components/MemberTable.tsx
+// Page Member Table
 import React, { useEffect, useState } from "react";
 import Table from "./component/Table";
 import { getMembers } from "./serverActions/member";
@@ -9,8 +9,6 @@ import { FilterByKeyword } from "../components/FilterByKeyword";
 import { SearchInput } from "@/app/components/SearchInput";
 import * as sea from "node:sea";
 import { IMember } from "@/interfaces/IMemberResponse";
-
-// test
 
 const MemberTable: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
