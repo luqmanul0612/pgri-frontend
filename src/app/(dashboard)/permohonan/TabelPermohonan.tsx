@@ -162,10 +162,11 @@ const Table: React.FC = () => {
   const [pageCount, setPageCount] = useState<number>();
   const [isModalAddOpen, setIsModalAddOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [SearchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     (async () => {
-      setLoading(true); 
+      setLoading(true);
       try {
         const memberData = await getMembers(currentPage + 1, pageSize);
         setTableData(memberData.data.data);
@@ -173,7 +174,7 @@ const Table: React.FC = () => {
       } catch (error) {
         console.error("Failed to fetch members data:", error);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     })();
   }, [currentPage, pageSize]);
@@ -207,7 +208,7 @@ const Table: React.FC = () => {
             <button className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary">
               <span>Cetak</span> <MdOutlineLocalPrintshop size={18} />
             </button>
-            <SearchInput className="border border-primary" />
+            <SearchInput onSearch={setSearchQuery} className="border border-primary" />
           </div>
         </div>
 
@@ -325,7 +326,7 @@ const Table: React.FC = () => {
                 backgroundColor: "#17a3b8 !important",
                 color: "#ffffff !important",
                 "&:hover": {
-                  backgroundColor: "#138a99 !important", 
+                  backgroundColor: "#138a99 !important",
                 },
               },
             }}

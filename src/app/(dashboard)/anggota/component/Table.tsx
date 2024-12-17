@@ -25,6 +25,7 @@ import LoadingDots from "@/components/loading/LoadingDots";
 import LoadingDotTable from "@/components/loading/LoadingDotTable";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import clsx from "clsx";
 
 interface TableProps {
   searchQuery: string;
@@ -150,12 +151,17 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
   const [countMale, setCountMale] = useState<number>(0);
   const [countFemale, setCountFemale] = useState<number>(0);
   const printRef = useRef();
+  const [filterGender, setFilterGender] = useState<string>('');
+  const defaultFilterMale: string = 'laki-laki';
+  const defaultFilterFemale: string = 'perempuan';
+
+
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
-        const memberData = await getMembers(currentPage + 1, pageSize, searchQuery, filterRegions, filterByStatus);
+        const memberData = await getMembers(currentPage + 1, pageSize, searchQuery, filterRegions, filterByStatus, filterGender);
         setTableData(memberData.data.data);
         setPageCount(memberData.data.total_page);
         setCountMale(memberData.data?.counter?.laki_laki);
@@ -166,7 +172,7 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
         setLoading(false);
       }
     })();
-  }, [currentPage, pageSize, searchQuery, filterRegions, filterByStatus]);
+  }, [currentPage, pageSize, searchQuery, filterRegions, filterByStatus, filterGender]);
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
@@ -197,6 +203,10 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
     pdf.save(`download-tabel-anggota-${date}.pdf`);
   };
 
+  const handleFilterGender = (gender: string) => () => {
+    setFilterGender(gender);
+  }
+
   const scrollStyle = {
     overflowX: "auto",
   };
@@ -221,11 +231,23 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
             </button>
           </div>
           <div className="flex gap-4">
-            <div className="flex items-center gap-2 rounded-lg border border-yellow-300 bg-yellow-300 bg-opacity-20 px-4 py-1 text-sm font-normal text-[#FFC107]">
+            <div onClick={handleFilterGender(defaultFilterMale)} className={clsx(
+              "flex cursor-pointer items-center gap-2 rounded-lg border border-yellow-300 bg-yellow-300 px-4 py-1 text-sm font-normal",
+              {
+                "bg-opacity-100 text-white" : filterGender === defaultFilterMale,
+                "bg-opacity-20 text-[#FFC107]": filterGender !== defaultFilterMale,
+              }
+            )}>
               <IoMaleOutline />
               <span>Anggota Laki-laki : { countMale }</span>
             </div>
-            <div className="flex items-center gap-2 rounded-lg border border-red-500 border-opacity-20 bg-red-500 bg-opacity-20 px-4 py-1 text-sm font-normal text-[#DC3545]">
+            <div onClick={handleFilterGender(defaultFilterFemale)} className={clsx(
+              "flex cursor-pointer items-center gap-2 rounded-lg border border-red-500 bg-red-500 bg-opacity-20 px-4 py-1 text-sm font-normal",
+              {
+                "bg-opacity-100 text-white" : filterGender === defaultFilterFemale,
+                "border-opacity-20 text-[#DC3545]": filterGender !== defaultFilterFemale,
+              }
+            )}>
               <IoFemaleOutline />
               <span>Anggota Perempuan : { countFemale }</span>
             </div>

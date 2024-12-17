@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { IAdministrativeRegions, IApiResponse } from "@/interfaces/IAdministrativeRegions";
 import { cache } from "sharp";
 
-export const getMembers = async (page: number, show: number, querySearch: string, filterRegions: any, filterByStatus: string) => {
+export const getMembers = async (page: number, show: number, querySearch: string, filterRegions: any, filterByStatus: string | null | undefined, filterGender: any ) => {
   const token = cookies().get("token")?.value;
   console.log(filterByStatus, "Server");
   const headers: Record<string, any> = {
@@ -18,6 +18,7 @@ export const getMembers = async (page: number, show: number, querySearch: string
   if (filterRegions?.kota?.trim()) url.searchParams.append("city", filterRegions.kota.trim());
   if(filterRegions?.status?.trim()) url.searchParams.append("employee_status", filterRegions.status.trim());
   if(filterByStatus?.trim()) url.searchParams.append("status", filterByStatus.trim());
+  if(filterGender?.trim()) url.searchParams.append("gender", filterGender.trim());
   const response = await fetch(url, {
       headers,
       cache: "no-cache",

@@ -74,7 +74,6 @@ export const Filter: FC<FilterProps> = ({ filterRegions }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
     filterRegions(formData);
   }
 
