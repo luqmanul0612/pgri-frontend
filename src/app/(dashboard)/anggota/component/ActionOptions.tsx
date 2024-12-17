@@ -48,15 +48,17 @@ const ActionOptions: React.FC<ActionOptionsProps> = ({ row }) => {
             <MdOutlineRemoveRedEye className="" size={18} />
           </DropdownMenuItem>
         </Link>
-        <DropdownMenuItem
-          // onClick={() => {
-          //   setIsUpdateModalOpen(true);
-          // }}
-          className="flex justify-between rounded-lg bg-blue-500 px-3 py-3 text-xs text-white hover:!bg-blue-400 hover:!text-white/90"
-        >
-          <span>Ubah</span>
-          <PiPencilSimpleLine className="" size={18} />
-        </DropdownMenuItem>
+        <Link href={`/anggota/edit/${row.original.id}`} passHref>
+          <DropdownMenuItem
+            // onClick={() => {
+            //   setIsUpdateModalOpen(true);
+            // }}
+            className="flex justify-between rounded-lg bg-blue-500 px-3 py-3 text-xs text-white hover:!bg-blue-400 hover:!text-white/90"
+          >
+            <span>Ubah</span>
+            <PiPencilSimpleLine className="" size={18} />
+          </DropdownMenuItem>
+          </Link>
         <DropdownMenuItem
           onClick={() => {
             setIsModalTindakanOpen(true);
