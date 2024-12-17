@@ -1,9 +1,12 @@
+"use client";
+
 import { SearchInput } from "@/app/components/SearchInput";
-import React from "react";
+import React, { useState } from "react";
 import FilterSVG from "../../../../public/icon/Filter";
 import CardListKarya from "./CardListKarya";
 
 const ListKaryaGuru = () => {
+  const [searchQuery, setSearchQuery] = useState<string>('');
   return (
     <div>
       <div className="flex justify-between py-5 ">
@@ -14,7 +17,7 @@ const ListKaryaGuru = () => {
           <button className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary bg-white">
             Filter <FilterSVG />
           </button>
-          <SearchInput className="border border-primary" />
+          <SearchInput onSearch={setSearchQuery} className="border border-primary" />
         </div>
       </div>
 

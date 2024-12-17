@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { Fragment } from "react";
+import ChartStatistic from "@/app/(dashboard)/statistik/component/ChartStatistic";
 
 const StatistikPage = () => {
   return (
-    <div>StatistikPage</div>
+    <Fragment>
+      <div>StatistikPage</div>
+      <ChartStatistic />
+    </Fragment>
   )
 }
 

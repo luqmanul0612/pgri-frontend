@@ -14,6 +14,7 @@ interface pageProps {
 
 const KaryaGuruDetail: FC<pageProps> = ({ params: { id } }) => {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState<string>("");
   return (
     <div>
         {/* header back */}
@@ -31,7 +32,7 @@ const KaryaGuruDetail: FC<pageProps> = ({ params: { id } }) => {
       <FilterByKota/>
     </div>
     <div>
-    <SearchInput className="border border-primary" />
+    <SearchInput onSearch={setSearchQuery} className="border border-primary" />
     </div>
   </div>
 </div>
