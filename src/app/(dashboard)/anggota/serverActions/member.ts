@@ -3,6 +3,7 @@ import { IMemberByIdResponse } from "@/interfaces/IMemberById";
 import { IMemberResponse } from "@/interfaces/IMemberResponse";
 import { cookies } from "next/headers";
 import { IAdministrativeRegions, IApiResponse } from "@/interfaces/IAdministrativeRegions";
+import { cache } from "sharp";
 
 export const getMembers = async (page: number, show: number, querySearch: string, filterRegions: any, filterByStatus: string) => {
   const token = cookies().get("token")?.value;
@@ -77,6 +78,18 @@ export const getDistrict = async (id: string) => {
       cache: "no-cache",
     }
   );
+  const result: IApiResponse = await response.json();
+  return result;
+}
+
+// GET SUB DISTRICT
+export const getSubDistrict = async (id: string) => {
+  const response: Response = await  fetch(
+    `${process.env.HOST}/api/v1/address/subdistrict/${id}`,
+    {
+      cache: "no-cache",
+    }
+  )
   const result: IApiResponse = await response.json();
   return result;
 }
