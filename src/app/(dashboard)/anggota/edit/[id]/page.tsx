@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { IAdministrativeRegionValue } from "@/interfaces/IAdministrativeRegions";
 import { getCity, getDistrict, getProvinces, getSubDistrict } from "@/app/(dashboard)/anggota/serverActions/member";
 import ConfirmationEdit from "@/app/(dashboard)/anggota/component/ConfirmationEdit";
+import { useRouter } from "next/navigation";
 
 interface pageProps {
   params: {
@@ -62,6 +63,11 @@ const EditAnggota: React.FC<pageProps> = () => {
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [checkBoxAgree, setCheckBoxAgree] = useState<boolean>(false);
   const [isModalConfirmationOpen, setIsModalConfirmationOpen] = useState<boolean>(false);
+  const [file, setFile] = useState(null);
+  const [fileKtp, setFileKtp] = useState(null);
+  const [previewURL, setPreviewURL] = useState<any>(null);
+  const [previewKTP, setPreviewKTP] = useState<any>(null);
+  const router = useRouter();
 
   const religions = [
     { label: "Islam", value: "islam" },
@@ -167,6 +173,34 @@ const EditAnggota: React.FC<pageProps> = () => {
     setIsModalConfirmationOpen(true);
   }
 
+  const handleFileChange = (e: any, type: string) => {
+    if (type === "poto") {
+      const uploadFile = e.target.files[0];
+      console.log(uploadFile);
+      setFile(uploadFile);
+
+      if (uploadFile) {
+        const reader = new FileReader();
+        reader.onload = () => setPreviewURL(reader.result);
+        reader.readAsDataURL(uploadFile);
+      }
+    } else {
+      const uploadFile = e.target.files[0];
+      console.log(uploadFile);
+      setFileKtp(uploadFile);
+
+      if (uploadFile) {
+        const reader = new FileReader();
+        reader.onload = () => setPreviewKTP(reader.result);
+        reader.readAsDataURL(uploadFile);
+      }
+    }
+  }
+
+  const handleButtonBack = () => {
+    router.back()
+  }
+
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -174,12 +208,12 @@ const EditAnggota: React.FC<pageProps> = () => {
         <div id={'dataPribadi'} className={'flex flex-col gap-4 mb-4'}>
           {/*  Judul Data Pribadi */}
           <div className={"flex items-center gap-2.5"}>
-            <span className={'w-[34px] h-[34px] bg-[#17A3B8] flex justify-center items-center text-white rounded-full'}>2</span>
-            <h2 className={'text-[14px] text-[#17A3B8]'}>Data Pekerjaan</h2>
+            <span className={'w-[34px] h-[34px] bg-[#17A3B8] flex justify-center items-center text-white rounded-full'}>1</span>
+            <h2 className={'text-[14px] text-[#17A3B8]'}>Data Pribadi</h2>
           </div>
 
           {/* Form Data Pribadi */}
-          <div className={'border border-[#17A3B8] border-opacity-20 p-4 rounded-2xl'}>
+          <div className={'border border-[#17A3B8] border-opacity-20 p-4 rounded-2xl bg-white'}>
             <div className={'flex gap-[26px]'}>
               <div className={'w-1/2 flex flex-col gap-6'}>
                 {/* Nama & Gelar */}
@@ -545,12 +579,12 @@ const EditAnggota: React.FC<pageProps> = () => {
         <div id={'dataPekerjaan'} className={'flex flex-col gap-4 mb-4'}>
           {/*  Judul Data Pekerjaan */}
           <div className={"flex items-center gap-2.5"}>
-            <span className={'w-[34px] h-[34px] bg-[#17A3B8] flex justify-center items-center text-white rounded-full'}>1</span>
+            <span className={'w-[34px] h-[34px] bg-[#17A3B8] flex justify-center items-center text-white rounded-full'}>2</span>
             <h2 className={'text-[14px] text-[#17A3B8]'}>Data Pekerjaan</h2>
           </div>
 
           {/* Form Data Pekerjaan */}
-          <div className={'border border-[#17A3B8] border-opacity-20 p-4 rounded-2xl'}>
+          <div className={'border border-[#17A3B8] border-opacity-20 p-4 rounded-2xl bg-white'}>
             <div className={'flex gap-[26px]'}>
             <div className={'w-1/2 flex flex-col gap-6'}>
               {/* Nama Instansi */}
@@ -993,33 +1027,42 @@ const EditAnggota: React.FC<pageProps> = () => {
           </div>
 
           {/* Form Data Pekerjaan */}
-          <div className={'border border-[#17A3B8] border-opacity-20 p-4 rounded-2xl'}>
-            <div className={'flex gap-[26px]'}>
-              <div className={'w-1/2 flex flex-col gap-6'}>
+          <div className={'border border-[#17A3B8] border-opacity-20 p-4 rounded-2xl bg-white'}>
+            <div className={"flex gap-[26px]"}>
+              <div className={"w-1/2 flex flex-col gap-6"}>
                 <div className={"flex gap-4"}>
-                  <div className={'w-4/12'}>
-                    <img className={"h-[223px] object-cover rounded-2xl overflow-hidden"} height={"223"} src="/assets/default-image.png" />
+                  <div className={"w-4/12"}>
+                    <img className={"h-[223px] object-cover rounded-2xl overflow-hidden"} height={"223"}
+                         src={previewURL ? previewURL : "/assets/default-image.png"} />
                   </div>
-                  <div className={'w-8/12'}>
-                    <img className={"h-[223px] w-full object-cover rounded-2xl overflow-hidden"} height={"223"} src="/assets/default-image.png" />
+                  <div className={"w-8/12"}>
+                    <img className={"h-[223px] w-full object-cover rounded-2xl overflow-hidden"} height={"223"}
+                         src={previewKTP ? previewKTP : "/assets/default-image.png"} />
                   </div>
                 </div>
               </div>
-              <div className={'w-1/2 flex flex-col gap-6'}></div>
+              <div className={"w-1/2 flex flex-col gap-6"}>
+                <FormField label={"Upload Poto"}>
+                  <Input type={"file"} onChange={(e) => handleFileChange(e, 'poto')} />
+                </FormField>
+                <FormField label={"Upload KTP"}>
+                  <Input type={"file"} onChange={(e) => handleFileChange(e, "ktp")} />
+                </FormField>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Kata Sandi */}
-        <div id={'dataKataSandi'} className={'flex flex-col gap-4'}>
+        <div id={"dataKataSandi"} className={"flex flex-col gap-4"}>
           {/*  Judul Data Kata Sandi */}
           <div className={"flex items-center gap-2.5"}>
-            <span className={'w-[34px] h-[34px] bg-[#17A3B8] flex justify-center items-center text-white rounded-full'}>3</span>
+            <span className={'w-[34px] h-[34px] bg-[#17A3B8] flex justify-center items-center text-white rounded-full'}>4</span>
             <h2 className={'text-[14px] text-[#17A3B8]'}>Kata Sandi</h2>
           </div>
 
           {/* Form Data Kata Sandi */}
-          <div className={'border border-[#17A3B8] border-opacity-20 p-4 rounded-2xl'}>
+          <div className={'border border-[#17A3B8] border-opacity-20 p-4 rounded-2xl bg-white'}>
             <div className={'flex flex-col gap-6'}>
               {/* Kata Sandi */}
               <div className="relative flex flex-col items-start justify-start gap-2.5 self-stretch">
@@ -1120,7 +1163,7 @@ const EditAnggota: React.FC<pageProps> = () => {
           </div>
           <div className={'flex'}>
             <div className="flex gap-4">
-              <Button
+              <Button onClick={handleButtonBack}
                 className="w-[200px] rounded-2xl bg-[#ff0000] text-[16px]"
               >
                 Batal
