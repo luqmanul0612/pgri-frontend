@@ -9,6 +9,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Label } from "@/components/ui/label";
 import { IAdministrativeRegionValue } from "@/interfaces/IAdministrativeRegions";
 import { getCity, getDistrict, getProvinces, getSubDistrict } from "@/app/(dashboard)/anggota/serverActions/member";
+import ConfirmationEdit from "@/app/(dashboard)/anggota/component/ConfirmationEdit";
 
 interface pageProps {
   params: {
@@ -56,11 +57,11 @@ const EditAnggota: React.FC<pageProps> = () => {
 
   });
 
-
-
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordNew, setShowPasswordNew] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [checkBoxAgree, setCheckBoxAgree] = useState<boolean>(false);
+  const [isModalConfirmationOpen, setIsModalConfirmationOpen] = useState<boolean>(false);
 
   const religions = [
     { label: "Islam", value: "islam" },
@@ -163,6 +164,7 @@ const EditAnggota: React.FC<pageProps> = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(formData);
+    setIsModalConfirmationOpen(true);
   }
 
   return (
@@ -211,7 +213,7 @@ const EditAnggota: React.FC<pageProps> = () => {
                       })
                     }}
                     className={clsx(
-                      "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
+                      "flex items-center gap-2.5 bg-transparent rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
                       formData.nik ? "border-[#17a3b8]/20" : "border-gray-300",
                     )}
                     placeholder="Masukkan NIK"
@@ -305,7 +307,6 @@ const EditAnggota: React.FC<pageProps> = () => {
                 <FormField label={'Pendidikan/Ijazah Terakhir'}>
                   <div className="relative">
                     <select
-                      required
                       id="subdistrict"
                       value={formData.pendidikan}
                       onChange={(e) => {
@@ -348,7 +349,6 @@ const EditAnggota: React.FC<pageProps> = () => {
                 <FormField label={'Jenis Kelamin'}>
                   <div className="relative">
                     <select
-                      required
                       id="subdistrict"
                       value={formData.jenis_kelamin}
                       onChange={(e) => {
@@ -391,7 +391,6 @@ const EditAnggota: React.FC<pageProps> = () => {
                 <FormField label={'Agama'}>
                   <div className="relative">
                     <select
-                      required
                       id="subdistrict"
                       value={formData.agama}
                       onChange={(e) => {
@@ -435,7 +434,6 @@ const EditAnggota: React.FC<pageProps> = () => {
                 <FormField label={'Golongan Darah'}>
                   <div className="relative">
                     <select
-                      required
                       id="subdistrict"
                       value={formData.golongan_darah}
                       onChange={(e) => {
@@ -578,7 +576,7 @@ const EditAnggota: React.FC<pageProps> = () => {
               <FormField label={'Provinsi Tempat Tugas'}>
                 <div className="relative">
                   <select
-                    required
+                    disabled={false}
                     id="provinces"
                     value={formData.provinces}
                     onChange={(e) => {
@@ -621,7 +619,7 @@ const EditAnggota: React.FC<pageProps> = () => {
               <FormField label={'Kabupaten/Kota/Kota Administrasi Tempat Kerja'}>
                 <div className="relative">
                   <select
-                    required
+                    disabled={!formData.provinces}
                     id="city"
                     value={formData.city}
                     onChange={(e) => {
@@ -665,7 +663,7 @@ const EditAnggota: React.FC<pageProps> = () => {
               <FormField label={'Kecamatan/Cabang/Distrik Tempat Tugas'}>
                 <div className="relative">
                   <select
-                    required
+                    disabled={!formData.city}
                     id="district"
                     value={formData.district}
                     onChange={(e) => {
@@ -708,7 +706,7 @@ const EditAnggota: React.FC<pageProps> = () => {
               <FormField label={'Desa/Kelurahan'}>
                 <div className="relative">
                   <select
-                    required
+                    disabled={!formData.district}
                     id="subdistrict"
                     value={formData.subdistrict}
                     onChange={(e) => {
@@ -772,7 +770,6 @@ const EditAnggota: React.FC<pageProps> = () => {
                 <FormField label={'Pekerjaan'}>
                   <div className="relative">
                     <select
-                      required
                       id="pekerjaan"
                       value={formData.pekerjaan}
                       onChange={(e) => {
@@ -817,7 +814,6 @@ const EditAnggota: React.FC<pageProps> = () => {
                 <FormField label={'Status Pegawai'}>
                   <div className="relative">
                     <select
-                      required
                       id="status_pegawai"
                       value={formData.status_pegawai}
                       onChange={(e) => {
@@ -881,7 +877,6 @@ const EditAnggota: React.FC<pageProps> = () => {
                 <FormField label={'Sertifikat Pendidik'}>
                   <div className="relative">
                     <select
-                      required
                       id="setifikat_pendidik"
                       value={formData.setifikat_pendidik}
                       onChange={(e) => {
@@ -926,7 +921,6 @@ const EditAnggota: React.FC<pageProps> = () => {
                 <FormField label={'Jenjang Mengajar'}>
                   <div className="relative">
                     <select
-                      required
                       id="jenjang_mengajar"
                       value={formData.jenjang_mengajar}
                       onChange={(e) => {
@@ -1000,27 +994,16 @@ const EditAnggota: React.FC<pageProps> = () => {
 
           {/* Form Data Pekerjaan */}
           <div className={'border border-[#17A3B8] border-opacity-20 p-4 rounded-2xl'}>
-
             <div className={'flex gap-[26px]'}>
               <div className={'w-1/2 flex flex-col gap-6'}>
-                {/* Mata Pelajaran */}
-                <FormField label={'Mata Pelajaran'}>
-                  <Input
-                    id={'mata_pelajaran'}
-                    value={formData.mata_pelajaran}
-                    onChange={(e) => {
-                      setFormData((v) => {
-                        return { ...v, mata_pelajaran: e.target.value };
-                      })
-                    }}
-                    className={clsx(
-                      "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
-                      formData.mata_pelajaran ? "border-[#17a3b8]/20" : "border-gray-300",
-                    )}
-                    placeholder="Masukkan Mata Pelajaran"
-                    autoComplete="off"
-                  />
-                </FormField>
+                <div className={"flex gap-4"}>
+                  <div className={'w-4/12'}>
+                    <img className={"h-[223px] object-cover rounded-2xl overflow-hidden"} height={"223"} src="/assets/default-image.png" />
+                  </div>
+                  <div className={'w-8/12'}>
+                    <img className={"h-[223px] w-full object-cover rounded-2xl overflow-hidden"} height={"223"} src="/assets/default-image.png" />
+                  </div>
+                </div>
               </div>
               <div className={'w-1/2 flex flex-col gap-6'}></div>
             </div>
@@ -1123,9 +1106,13 @@ const EditAnggota: React.FC<pageProps> = () => {
         </div>
 
         {/* Tombol Submit */}
-        <div className={"flex justify-between"}>
+        <div className={"flex justify-between mt-4"}>
           <div className={"flex items-center flex-row gap-2.5"}>
             <input
+              value={checkBoxAgree}
+              onChange={(e) => {
+                setCheckBoxAgree(e.target.checked);
+              }}
               type={"checkbox"}
               id={"relegion"}
             />
@@ -1141,19 +1128,23 @@ const EditAnggota: React.FC<pageProps> = () => {
               <Button
                 className="w-[200px] rounded-2xl bg-[#17a3b8]"
                 type="submit"
-                disabled={false}
+                disabled={!checkBoxAgree}
               >
                 Simpan
               </Button>
             </div>
           </div>
         </div>
-
       </form>
-
+      {
+        <ConfirmationEdit
+          isOpen={isModalConfirmationOpen}
+          onClose={() => setIsModalConfirmationOpen(false)}
+        />
+      }
     </>
   )
-}
+};
 
 
 export default EditAnggota;

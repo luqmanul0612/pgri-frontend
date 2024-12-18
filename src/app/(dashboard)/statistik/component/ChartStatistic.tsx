@@ -11,7 +11,7 @@ const HighchartsReact = dynamic(() => import('highcharts-react-official'), {
 const ChartStatistic: React.FC = () => {
   const options: Highcharts.Options = {
     title: {
-      text: 'My Chart Example',
+      text: '',
     },
     chart: {
       type: 'column',
@@ -54,8 +54,13 @@ const ChartStatistic: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Highcharts Example</h1>
+    <div className={'p-10 bg-white rounded-2xl'}>
+      <div className={'flex justify-between mb-[34px]'}>
+        <h3>Jenis Kelamin & Umur</h3>
+        <select>
+          <option>Januari - Desember 2024</option>
+        </select>
+      </div>
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );

@@ -6,8 +6,10 @@ const MutasiAnggota = () => {
   return (
     <Fragment>
       <div>
-        <p className="font-semibold text-primary">Data Tabel Anggota PGRI</p>
-        <Filter />
+        <p className="font-semibold text-primary mb-2">Data Tabel Anggota PGRI</p>
+        <div className={'mb-5'}>
+          <Filter />
+        </div>
         <TableMutasiAnggota />
       </div>
     </Fragment>
