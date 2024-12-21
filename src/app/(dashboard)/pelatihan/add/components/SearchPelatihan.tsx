@@ -1,21 +1,28 @@
+"use client";
+
 import React from "react";
 import { FormField } from "@/app/components/FormField";
 import { Input } from "@/components/ui/input";
 import { MdAdd } from "react-icons/md";
 import { HiOutlineSearch } from "react-icons/hi";
 import { FiSearch } from "react-icons/fi";
+import { useRouter } from 'next/navigation';
 
 interface SearchPelatihanProps {
   className?: string;
 }
 
 const SearchPelatihan: React.FC<SearchPelatihanProps> = ({ className = '' }) => {
+  const router = useRouter();
+  const handleAdd = () => {
+    router.push(`/pelatihan/add`);
+  }
   return (
     <>
       <div className={`flex flex-row items-center justify-between mb-6 ${className}`}>
         <div className={'flex flex-row items-center gap-6'}>
           <h2 className={'text-primary font-semibold'}>Pelatihan Anggota</h2>
-          <button className={'py-3.5 px-6 text-primary border border-primary rounded-xl text-sm flex flex-row items-center gap-3.5 hover:bg-primary hover:text-white transition-all'}>
+          <button onClick={handleAdd} className={'py-3.5 px-6 text-primary border border-primary rounded-xl text-sm flex flex-row items-center gap-3.5 hover:bg-primary hover:text-white transition-all'}>
             Tambah Pelatihan
             <MdAdd />
           </button>

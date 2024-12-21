@@ -1,6 +1,6 @@
 import React from 'react'
-import CardPelatihan from "@/app/(dashboard)/pelatihan/components/CardPelatihan";
-import SearchPelatihan from "@/app/(dashboard)/pelatihan/components/SearchPelatihan";
+import CardPelatihan from "@/app/(dashboard)/pelatihan/add/components/CardPelatihan";
+import SearchPelatihan from "@/app/(dashboard)/pelatihan/add/components/SearchPelatihan";
 
 const PelatihanPage = () => {
   const dataPelatihan: any[] = [
