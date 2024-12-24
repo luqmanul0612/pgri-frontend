@@ -11,6 +11,7 @@ import { IAdministrativeRegionValue } from "@/interfaces/IAdministrativeRegions"
 import { getCity, getDistrict, getProvinces, getSubDistrict } from "@/app/(dashboard)/anggota/serverActions/member";
 import ConfirmationEdit from "@/app/(dashboard)/anggota/component/ConfirmationEdit";
 import { useRouter } from "next/navigation";
+import { GenericOptions } from "@/interfaces/IGenericOption";
 
 interface pageProps {
   params: {
@@ -120,7 +121,7 @@ const EditAnggota: React.FC<pageProps> = () => {
   useEffect(() => {
     (async () => {
       const getDataProvinces = await getProvinces();
-      const getDataMapping: any = getDataProvinces.data.map(item => ({
+      const getDataMapping: GenericOptions[] = getDataProvinces.data.map(item => ({
         value: item.code,
         label: item.name,
       }));
@@ -132,7 +133,7 @@ const EditAnggota: React.FC<pageProps> = () => {
     (async () => {
       if (formData.provinces) {
         const getDataCity = await getCity(formData.provinces);
-        const getDataMapping: any = getDataCity.data.map(item => ({
+        const getDataMapping: GenericOptions[] = getDataCity.data.map(item => ({
           value: item.code,
           label: item.name,
         }));
@@ -145,7 +146,7 @@ const EditAnggota: React.FC<pageProps> = () => {
     (async () => {
       if (formData.city) {
         const getDataDistrict = await getDistrict(formData.city);
-        const getDataMapping: any = getDataDistrict.data.map(item => ({
+        const getDataMapping: GenericOptions[] = getDataDistrict.data.map(item => ({
           value: item.code,
           label: item.name,
         }));
