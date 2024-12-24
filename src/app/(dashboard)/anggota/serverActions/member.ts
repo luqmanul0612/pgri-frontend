@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { IAdministrativeRegions, IApiResponse } from "@/interfaces/IAdministrativeRegions";
 import { cache } from "sharp";
 
-export const getMembers = async (page: number, show: number, querySearch: string, filterRegions: any, filterByStatus: string | null | undefined, filterGender: any ) => {
+export const getMembers = async (page: number, show: number, querySearch?: string, filterRegions?: any, filterByStatus?: string | null | undefined, filterGender?: any ) => {
   const token = cookies().get("token")?.value;
   console.log(filterByStatus, "Server");
   const headers: Record<string, any> = {

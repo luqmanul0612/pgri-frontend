@@ -5,9 +5,10 @@ import { cn } from '@/lib/utils'
 interface SearchInputProps {
   onSearch: (query: string) => void;
   className?: string;
+  placeholder?: string;
 }
 
-export const SearchInput: React.FC<SearchInputProps> = ({ onSearch, className }) =>{
+export const SearchInput: React.FC<SearchInputProps> = ({ onSearch, className, placeholder = 'Ketik Nama, NPA' }) =>{
   const [inputValue, setInputValue] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +24,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({ onSearch, className })
         width={18}
         height={18} />
       <input
-        placeholder="Ketik Nama, NPA"
+        placeholder={placeholder}
         value={inputValue}
         onChange={handleChange}
         className="w-full px-3 outline-none text-sm" />
