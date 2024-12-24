@@ -9,6 +9,7 @@ import clsx from "clsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { KeyValuePair } from "tailwindcss/types/config";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 interface IAddPelatihan {
 }
@@ -30,6 +31,7 @@ const submit: SubmitHandler<FormInputPelatihan> = (data) => {
 
 const AddPelatihan: React.FC<IAddPelatihan> = () => {
   const { register, handleSubmit, control, formState: { errors } } = useForm<FormInputPelatihan>();
+  const router = useRouter();
 
   const listKuotaPelatihan: KeyValuePair[] = [
     {
@@ -72,6 +74,11 @@ const AddPelatihan: React.FC<IAddPelatihan> = () => {
     }
   ];
 
+  const handleback = () => {
+    console.log('hello world');
+    router.back();
+  }
+
   return (
     <>
       <div className={'mb-4'}>
@@ -79,11 +86,12 @@ const AddPelatihan: React.FC<IAddPelatihan> = () => {
       </div>
 
       <div className={"border border-primary border-opacity-20 p-4 rounded-2xl bg-white"}>
-        <div className={'flex gap-6 mb-6'}>
-          <img className={'w-1/2'} src='/assets/pelatihan.png' />
-        </div>
-        <form className={""}
+        <form className={"flex flex-col"}
               onSubmit={handleSubmit(submit)}>
+          {/*  Image Preview */}
+          <div className={'flex gap-6 mb-6'}>
+            <img className={'w-1/2'} src='/assets/pelatihan.png' />
+          </div>
           <div className={'mb-4'}>
             <FormField label={"Unggah Benner Pelatihan"}>
               <Input
@@ -252,6 +260,7 @@ const AddPelatihan: React.FC<IAddPelatihan> = () => {
           </FormField>
           <div className={"flex mt-6 gap-6 justify-end"}>
             <Button
+              onClick={handleback}
               className="w-[200px] rounded-2xl bg-[#ff0000] text-[16px]"
             >
               Batal
