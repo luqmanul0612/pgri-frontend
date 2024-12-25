@@ -1,7 +1,13 @@
 "use client";
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import dynamic from 'next/dynamic';
 import Highcharts from 'highcharts';
+import {
+  getCertificate,
+  getStage,
+  getStatisticsAge,
+  getStatisticsEducation
+} from "@/app/(dashboard)/statistik/serverAction/statistics";
 
 // Import HighchartsReact secara dinamis dan menonaktifkan SSR
 const HighchartsReact = dynamic(() => import('highcharts-react-official'), {
@@ -13,6 +19,90 @@ interface ChartProps {
 }
 
 const ChartStatistic: React.FC<ChartProps> = ({ categoryChart}) => {
+  const [dataAgeMale, setDataAgeMale] = useState<any>();
+  const [dataAgeFemale, setDataAgeFemale] = useState<any>();
+  const [dataEducation, setDataEducation] = useState<any>();
+  const [dataStage, setDataStage] = useState<any>();
+  const [labelStage, setLabelStage] = useState<any>();
+  const [dataCertificate, setDataCertificate] = useState<any>();
+  const [labelCertificate, setLabelCertificate] = useState<any>();
+  useEffect(() => {
+    (async () => {
+      const statisticAge = await getStatisticsAge();
+      console.log(statisticAge);
+
+      const tampungLakiLaki = statisticAge.data.filter((data: any) => data?.gender == 'laki-laki').map((item: any) => {
+        return item.count;
+      });
+      setDataAgeMale(tampungLakiLaki);
+
+      const tampungPerempuan = statisticAge.data.filter((data: any) => data?.gender == 'perempuan').map((item: any) => {
+        return item.count;
+      });
+      setDataAgeFemale(tampungPerempuan);
+
+      const tampungLabel = statisticAge.data.filter((data: any, index: number) => statisticAge.data.findIndex((item: any) => item.age_range === data.age_range) === index);
+      console.log(tampungLabel);
+
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const dataEducation = await getStatisticsEducation();
+      console.log(dataEducation);
+
+      const colors = ['#2CAFFE', '#544FC5', '#20C997', '#FD7E14', '#007BFF']
+      const getDataEducation = dataEducation.data.map((item: any, index: number) => {
+        return {
+          y: item.count,
+          color: colors[index % colors.length]
+        }
+      });
+      setDataEducation(getDataEducation);
+    })()
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const dataStage = await getStage();
+      console.log(dataStage);
+
+      const colors = ['#2CAFFE', '#544FC5', '#20C997', '#FD7E14', '#007BFF']
+      const getDataStatge = dataStage.data.map((item: any, index: number) => {
+        return {
+          y: item.count,
+          color: colors[index % colors.length]
+        }
+      })
+      console.log(getDataStatge);
+      setDataStage(getDataStatge);
+
+      const getLabelStage = dataStage.data.map((item: any) => item.name);
+      console.log(getLabelStage);
+      setLabelStage(getLabelStage);
+    })()
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const dataCertificate = await getCertificate();
+      console.log(dataCertificate);
+
+      const colors= ['#2CAFFE', '#544FC5']
+      const getDataCertificate = dataCertificate.data.map((item: any, index: number) => {
+        return {
+          y: item.count,
+          color: colors[index % colors.length],
+        }
+      });
+      setDataCertificate(getDataCertificate);
+
+      const getLabelCertificate: [] = dataCertificate.data.map((item: any) => item.name);
+      setLabelCertificate(getLabelCertificate);
+    })()
+  }, []);
+
   const options: Highcharts.Options = {
     title: {
       text: '',
@@ -50,12 +140,14 @@ const ChartStatistic: React.FC<ChartProps> = ({ categoryChart}) => {
       {
         type: 'column', // Menambahkan tipe grafik untuk seri pertama
         name: 'Laki-laki', // Nama seri pertama
-        data: [17400, 14400, 13000, 8000, 5000], // Data untuk seri 'Corn'
+        // data: [17400, 14400, 13000, 8000, 5000], // Data untuk seri 'Corn'
+        data: dataAgeMale
       },
       {
         type: 'column', // Menambahkan tipe grafik untuk seri kedua
         name: 'Perempuan', // Nama seri kedua
-        data: [16400, 13400, 11000, 14000, 4000], // Data untuk seri 'Wheat'
+        // data: [16400, 13400, 11000, 14000, 4000], // Data untuk seri 'Wheat'
+        data: dataAgeFemale
       },
     ],
     legend: {
@@ -113,13 +205,7 @@ const ChartStatistic: React.FC<ChartProps> = ({ categoryChart}) => {
       {
         type: 'column', // Menambahkan tipe grafik untuk seri pertama
         name: 'Kualifikasi Pendidikan', // Nama seri pertama
-        data: [
-          { y: 200, color: '#2CAFFE' }, // Warna merah
-          { y: 500, color: '#544FC5' }, // Warna hijau
-          { y: 1000, color: '#20C997' }, // Warna biru
-          { y: 400, color: '#FD7E14' }, // Warna kuning
-          { y: 700, color: '#007BFF' }, // Warna ungu
-        ],
+        data: dataEducation,
       },
     ],
     tooltip: {
@@ -127,6 +213,63 @@ const ChartStatistic: React.FC<ChartProps> = ({ categoryChart}) => {
       valueSuffix: ' units',
     },
   };
+
+  const stage: Highcharts.Options = {
+    title: {
+      text: '',
+    },
+    chart: {
+      type: 'column',
+    },
+    xAxis: {
+      // categories: ['PAUD', 'TK', 'SD/MI', 'SMP/MTS', 'SMA/MA', 'SMK', 'PT', 'Lainnya']
+      categories: labelStage,
+    },
+    yAxis: {
+      min: 0, // Nilai minimal pada sumbu Y
+      title: {
+        text: '', // Judul sumbu Y
+      },
+      labels: {
+        enabled: false,
+      },
+      gridLineWidth: 0,
+    },
+    legend: {
+      enabled: false,
+    },
+    plotOptions: {
+      bar: {
+        dataLabels: {
+          enabled: true
+        },
+        groupPadding: 0.1
+      },
+      column: {
+        pointPadding: 0.2,
+        borderWidth: 0,
+        maxPointWidth: 34,
+        borderRadius: 100,
+      }
+    },
+    series: [
+      {
+        type: 'column', // Menambahkan tipe grafik untuk seri pertama
+        name: 'Kualifikasi Pendidikan', // Nama seri pertama
+        // data: [
+        //   { y: 200, color: '#2CAFFE' }, // Warna merah
+        //   { y: 500, color: '#544FC5' }, // Warna hijau
+        //   { y: 1000, color: '#20C997' }, // Warna biru
+        //   { y: 400, color: '#FD7E14' }, // Warna kuning
+        //   { y: 700, color: '#007BFF' }, // Warna ungu
+        //   { y: 700, color: '#D568FB' },
+        //   { y: 700, color: '#2EE0CA' },
+        //   { y: 700, color: '#DB2424' },
+        // ],
+        data: dataStage,
+      },
+    ],
+  }
 
   const teachingPlace: Highcharts.Options = {
     title: {
@@ -192,16 +335,16 @@ const ChartStatistic: React.FC<ChartProps> = ({ categoryChart}) => {
       type: 'column',
     },
     xAxis: {
-      categories: ['Sudah Bersertifikat', 'Belum Bersertifikat'], // Kategori pada sumbu X
+      categories: labelCertificate,
       crosshair: true,
       accessibility: {
-        description: 'Countries', // Deskripsi untuk aksesibilitas
+        description: 'Countries',
       },
     },
     yAxis: {
-      min: 0, // Nilai minimal pada sumbu Y
+      min: 0,
       title: {
-        text: 'Amount', // Judul sumbu Y
+        text: '',
       },
     },
     plotOptions: {
@@ -220,12 +363,9 @@ const ChartStatistic: React.FC<ChartProps> = ({ categoryChart}) => {
     },
     series: [
       {
-        type: 'column', // Menambahkan tipe grafik untuk seri pertama
-        name: 'Kualifikasi Pendidikan', // Nama seri pertama
-        data: [
-          { y: 200, color: '#2CAFFE' }, // Warna merah
-          { y: 500, color: '#544FC5' }, // Warna hijau
-        ],
+        type: 'column',
+        name: 'Sertifikat Pendidik',
+        data: dataCertificate,
       },
     ],
     legend: {
@@ -275,7 +415,7 @@ const ChartStatistic: React.FC<ChartProps> = ({ categoryChart}) => {
                 <option>Januari - Desember 2024</option>
               </select>
             </div>
-            <HighchartsReact highcharts={Highcharts} options={teachingPlace} />
+            <HighchartsReact highcharts={Highcharts} options={stage} />
           </div>
         )
       }
