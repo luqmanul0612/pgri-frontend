@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { FormField } from "@/app/components/FormField";
 import { Input } from "@/components/ui/input";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { KeyValuePair } from "tailwindcss/types/config";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { reader } from "next/dist/experimental/testmode/fetch";
 
 interface IAddPelatihan {
 }
@@ -79,6 +80,23 @@ const AddPelatihan: React.FC<IAddPelatihan> = () => {
     router.back();
   }
 
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedName, setSelectedName] = useState("");
+  const [previewFile, setPreviewFile] = useState<any>(null);
+
+  const handleFileChange = (event: any) => {
+    const file = event.target.files[0];
+    console.log(file);
+    setSelectedFile(file);
+    setSelectedName(file.name)
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setPreviewFile(reader.result);
+      reader.readAsDataURL(file)
+    }
+  }
+
   return (
     <>
       <div className={'mb-4'}>
@@ -89,19 +107,45 @@ const AddPelatihan: React.FC<IAddPelatihan> = () => {
         <form className={"flex flex-col"}
               onSubmit={handleSubmit(submit)}>
           {/*  Image Preview */}
-          <div className={'flex gap-6 mb-6'}>
-            <img className={'w-1/2'} src='/assets/pelatihan.png' />
+          <div className={"flex gap-6 mb-6"}>
+            {/*<img className={'w-1/2'} src='/assets/pelatihan.png' />*/}
+            <img className={"w-1/2 rounded-2xl"} src={previewFile ?? "/assets/default-image.png" } />
           </div>
-          <div className={'mb-4'}>
+          <div className={"mb-4"}>
             <FormField label={"Unggah Benner Pelatihan"}>
-              <Input
-                type={"file"}
-                placeholder={"File"}
-                className={clsx(
-                  "flex items-center gap-2.5 rounded-2xl text-[#17a3b8]",
-                  errors.tanggalPelatihan ? "border-[#17a3b8]/20" : "border-gray-300"
-                )}
-              />
+              <div className={clsx(
+                "flex items-center gap-2.5 rounded-2xl text-[#17a3b8] border relative w-full py-2.5 px-4",
+                errors.tanggalPelatihan ? "border-[#17a3b8]/20" : "border-gray-300"
+              )}>
+                { selectedName ? (
+                  <p className={'text-sm'}>{ selectedName }</p>
+                ) : (
+                  <p className={'text-sm text-gray-300'}>Masukan Benner Pelatihan</p>
+                ) }
+                <Input
+                  type={"file"}
+                  placeholder={"File"}
+                  className={'opacity-0 absolute top-0 left-0 w-full h-full'}
+                  onChange={handleFileChange}
+                  accept={'image/png, image/jpeg'}
+                  // className={clsx(
+                  //   "flex items-center gap-2.5 rounded-2xl text-[#17a3b8]",
+                  //   errors.tanggalPelatihan ? "border-[#17a3b8]/20" : "border-gray-300"
+                  // )}
+                />
+
+                <span className={'absolute right-[10px] top-1/2 -translate-y-1/2'}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M21.6799 16.9599L18.5499 9.64988C17.4899 7.16988 15.5399 7.06988 14.2299 9.42988L12.3399 12.8399C11.3799 14.5699 9.58993 14.7199 8.34993 13.1699L8.12993 12.8899C6.83993 11.2699 5.01993 11.4699 4.08993 13.3199L2.36993 16.7699C1.15993 19.1699 2.90993 21.9999 5.58993 21.9999H18.3499C20.9499 21.9999 22.6999 19.3499 21.6799 16.9599Z"
+                      stroke="#919191" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <path
+                      d="M6.96973 8C8.62658 8 9.96973 6.65685 9.96973 5C9.96973 3.34315 8.62658 2 6.96973 2C5.31287 2 3.96973 3.34315 3.96973 5C3.96973 6.65685 5.31287 8 6.96973 8Z"
+                      stroke="#919191" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </span>
+              </div>
+
             </FormField>
           </div>
           <div className={"flex gap-6"}>
@@ -120,7 +164,7 @@ const AddPelatihan: React.FC<IAddPelatihan> = () => {
                 </FormField>
 
                 <FormField label={"Biaya Pelatihan"}>
-                  <Input
+                <Input
                     {...register("biayaPelatihan")}
                     type={"text"}
                     placeholder={"Masukan Biaya Pelatihan"}
