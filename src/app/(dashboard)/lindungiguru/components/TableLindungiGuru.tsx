@@ -20,6 +20,7 @@ import Pagination from "@mui/material/Pagination";
 import { PaginationItem } from "@mui/material";
 import Card from "@/app/components/Card";
 import { SearchInput } from "@/app/components/SearchInput";
+import IconPdf from "../../../../../public/iconDokumenPendukung/IconPdf";
 
 const initialPageSize = 10;
 const columns: Column<IMember>[] = [
@@ -27,12 +28,39 @@ const columns: Column<IMember>[] = [
     Header: "No.",
     Cell: (row) => row.row.index + 1
   },
-  { Header: "NPA", accessor: "npa_number" },
+  // { Header: "NPA", accessor: "npa_number" },
   { Header: "NIK", accessor: "nik" },
   { Header: "Nama Anggota", accessor: "name" },
-  { Header: "Email", accessor: "email" },
   { Header: "Provinsi", accessor: "province" },
   { Header: "Tanggal Pengajuan", accessor: "dob" },
+  {
+    Header: "Document Pendukung",
+    accessor: "email",
+    Cell: ({ value }) => (
+      <div className={'flex flex-row gap-4'}>
+        <IconPdf />
+        { value }
+      </div>
+    )
+  },
+  {
+    Header: "Status",
+    accessor: "npa_number",
+    Cell: ({ value }) => (
+      <div>
+        {
+          value ?
+            (<span className={'bg-primary w-fit bg-opacity-20 text-primary py-2 px-3 rounded-full text-[10px] leading-none'}>
+              Terkirim
+            </span>)
+            :
+            (<span className={'bg-red-500 w-fit bg-opacity-20 text-red-500 py-2 px-3 rounded-full text-[10px] leading-none'}>
+              Ditolak
+            </span>)
+        }
+      </div>
+    )
+  },
   {
     Header: "Opsi",
     Cell: () => (
