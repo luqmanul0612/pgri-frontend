@@ -5,8 +5,10 @@ import TableIuranTagihan from "@/app/(dashboard)/iurandantagihan/components/Tabl
 const IuranDanTagihan = () => {
   return (
     <>
-      <HeaderIuranTagihan />
-      <TableIuranTagihan />
+      <div className={'flex flex-col gap-5'}>
+        <HeaderIuranTagihan />
+        <TableIuranTagihan />
+      </div>
     </>
   )
 }
