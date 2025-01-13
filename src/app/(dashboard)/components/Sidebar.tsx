@@ -79,6 +79,11 @@ const menus: {
     href: "/mutasianggota",
     Icon: MutasiAnggota,
   },
+  {
+    title: "Role",
+    href: "/role",
+    Icon: MutasiAnggota,
+  }
 ];
 
 const utilityMenus: {
@@ -120,7 +125,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={handleSidebarToggle}
         />
       </div>
-
       <div className="scroll-hidden mt-5 flex h-[calc(100%-80px)] shrink-0 flex-col gap-6 overflow-auto pb-20">
         {/* Dashboard Menu */}
         {menus.map((item, i) => (

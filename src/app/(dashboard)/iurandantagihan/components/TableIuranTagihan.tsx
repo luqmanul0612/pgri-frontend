@@ -41,6 +41,46 @@ const columns: Column<IMember>[] = [
     accessor: "province",
   },
   {
+    Header: "Email",
+    accessor: "email",
+  },
+  {
+    Header: 'Status Payment',
+    accessor: "npa_number",
+    Cell: ({ value }) => (
+      <div>
+        {
+          value ?
+            (<span className={'bg-primary w-fit bg-opacity-20 text-primary py-2 px-3 rounded-full text-[10px] leading-none'}>
+              Lunas
+            </span>)
+            :
+            (<span className={'bg-red-500 w-fit bg-opacity-20 text-red-500 py-2 px-3 rounded-full text-[10px] leading-none'}>
+              Belum Lunas
+            </span>)
+        }
+      </div>
+    )
+  },
+  {
+    Header: 'Status Distribution',
+    accessor: "status",
+    Cell: ({ value }) => (
+      <div>
+        {
+          value ?
+            (<span className={'bg-primary w-fit bg-opacity-20 text-primary py-2 px-3 rounded-full text-[10px] leading-none'}>
+              Selesai
+            </span>)
+            :
+            (<span className={'bg-red-500 w-fit bg-opacity-20 text-red-500 py-2 px-3 rounded-full text-[10px] leading-none'}>
+              Pending
+            </span>)
+        }
+      </div>
+    )
+  },
+  {
     Header: "Opsi",
     Cell: () => (
       <DropdownMenu>
