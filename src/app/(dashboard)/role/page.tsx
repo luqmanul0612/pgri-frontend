@@ -4,7 +4,6 @@ import ContentRoleAdmin from "@/app/(dashboard)/role/components/ContentRoleAdmin
 const Role = () => {
   return (
     <div>
-      <h1>Role</h1>
       <HeaderRole />
       <ContentRoleAdmin />
     </div>
