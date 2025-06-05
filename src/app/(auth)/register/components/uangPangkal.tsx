@@ -1,5 +1,4 @@
-import React, { Dispatch, FC, SetStateAction } from "react";
-import { IFormData } from "../page";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Danger from "../../../../../public/assets/danger";

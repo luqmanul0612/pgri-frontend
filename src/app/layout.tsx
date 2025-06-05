@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/context/authContext";
 import { Toaster } from "@/components/ui/sonner";
 
 const inter = Roboto({
@@ -22,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>{children}</AuthProvider>
+        {children}
         <Toaster
           position="top-center"
           richColors

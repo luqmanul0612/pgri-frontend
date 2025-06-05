@@ -3,107 +3,43 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Danger from "../../../../../public/assets/danger";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { IFormData } from "../page";
 import { FormField } from "@/app/components/FormField";
-import { submitDataPekerjaan } from "../serverActions/submitDataPekerjaan";
-import { toast } from "@/components/ui/use-toast";
 import clsx from "clsx";
 import { useRegistrationStepStore } from "@/store/use-registration-step-store";
-
-interface Region {
-  id: string;
-  name: string;
-}
-
-interface Province {
-  code: string;
-  name: string;
-}
-
-interface InFormData {
-  subdistrict_id: string;
-  stage: string;
-  job_title: string;
-  name: string;
-  address: string;
-  employee_status: string;
-  educator_certificate: boolean;
-  grade: string;
-  study_subjects: string;
-}
+import { useGetRegionStore } from "@/store/use-get-region-store";
+import { IDataPekerjaan } from "@/interfaces/IDataPekerjaan";
+import { useFormPekerjaanStore } from "@/store/use-data-pekerjaan-store";
 
 export const DataPekerjaan = ({}) => {
-  const [provinces, setProvinces] = useState<Province[]>([]);
-  const [kabupatenKota, setKabupatenKota] = useState<Province[]>([]);
-  const [kecamatan, setKecamatan] = useState<Province[]>([]);
-  const [kelurahan, setKelurahan] = useState<Province[]>([]);
-
-  const [selectedProvince, setSelectedProvince] = useState<string>("");
-  const [selectedKabupatenKota, setSelectedKabupatenKota] =
-    useState<string>("");
-  const [selectedKecamatan, setSelectedKecamatan] = useState<string>("");
-  const [selectedKelurahan, setSelectedKelurahan] = useState<string>("");
+  const {
+    provinces,
+    kabupatenKota,
+    kecamatan,
+    kelurahan,
+    selectedProvince,
+    selectedKabupatenKota,
+    selectedKecamatan,
+    selectedKelurahan,
+    setSelectedProvince,
+    setSelectedKabupatenKota,
+    setSelectedKecamatan,
+    setSelectedKelurahan,
+    fetchProvinces,
+    fetchKabupatenKota,
+    fetchKecamatan,
+    fetchKelurahan,
+  } = useGetRegionStore();
   const { setStep } = useRegistrationStepStore();
-  const [error, setError] = useState<string | null>(null);
-
-  const [formData, setFormData] = useState<InFormData>({
-    subdistrict_id: "",
-    stage: "",
-    job_title: "",
-    name: "",
-    address: "",
-    employee_status: "",
-    educator_certificate: false,
-    grade: "",
-    study_subjects: "",
-  });
+  const { formData, setFormData, handleSubmit } = useFormPekerjaanStore();
 
   // get data provinsi
   useEffect(() => {
-    const fetchProvinces = async () => {
-      try {
-        const response = await fetch("/api/provinces", {
-          method: "GET",
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch provinces");
-        }
-
-        const data = await response.json();
-        // console.log('data provinsi--->', data.data)
-        setProvinces(data.data);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        // setLoading(false);
-      }
-    };
     fetchProvinces();
   }, []);
 
   // get data kota / kabupaten
   useEffect(() => {
     if (selectedProvince) {
-      const fetchKabupatenKota = async () => {
-        try {
-          const response = await fetch(`/api/city/${selectedProvince}`, {
-            method: "GET",
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch city");
-          }
-
-          const data = await response.json();
-          // console.log('data kota--->', data.data)
-          setKabupatenKota(data.data);
-        } catch (err) {
-          setError((err as Error).message);
-        } finally {
-          // setLoading(false);
-        }
-      };
       fetchKabupatenKota();
     }
   }, [selectedProvince]);
@@ -112,28 +48,6 @@ export const DataPekerjaan = ({}) => {
 
   useEffect(() => {
     if (selectedKabupatenKota) {
-      const fetchKecamatan = async () => {
-        try {
-          const response = await fetch(
-            `/api/district/${selectedKabupatenKota}`,
-            {
-              method: "GET",
-            },
-          );
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch district");
-          }
-
-          const data = await response.json();
-          // console.log('data kecamatan--->', data.data)
-          setKecamatan(data.data);
-        } catch (err) {
-          setError((err as Error).message);
-        } finally {
-          // setLoading(false);
-        }
-      };
       fetchKecamatan();
     }
   }, [selectedKabupatenKota]);
@@ -141,85 +55,29 @@ export const DataPekerjaan = ({}) => {
   // get data desa / kelurahan
   useEffect(() => {
     if (selectedKecamatan) {
-      const fetchKelurahan = async () => {
-        try {
-          const response = await fetch(
-            `/api/subdistrict/${selectedKecamatan}`,
-            {
-              method: "GET",
-            },
-          );
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch subdistrict");
-          }
-
-          const data = await response.json();
-          // console.log('data kelurahan/desa--->', data.data)
-          setKelurahan(data.data);
-        } catch (err) {
-          setError((err as Error).message);
-        } finally {
-          // setLoading(false);
-        }
-      };
       fetchKelurahan();
     }
   }, [selectedKecamatan]);
 
+  useEffect(() => {
+    setFormData({ subdistrict_id: selectedKelurahan });
+  }, [selectedKelurahan]);
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
+    setFormData({
       [id]: value,
-    }));
+    });
   };
 
   const handleTextAreaInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { id, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
+    setFormData({
       [id]: value,
-    }));
+    });
     // console.log(`${id}:`, value);
   };
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>,
-  ): Promise<void> => {
-    event.preventDefault();
-
-    const formDatas = {
-      subdistrict_id: selectedKelurahan,
-      stage: formData.stage,
-      job_title: formData.job_title,
-      name: formData.name,
-      address: formData.address,
-      employee_status: formData.employee_status,
-      educator_certificate: formData.educator_certificate,
-      grade: formData.grade,
-      study_subjects: formData.study_subjects,
-    };
-
-    // setStep(4);
-    try {
-      // todo add error handler for this
-      const response = await submitDataPekerjaan(formDatas);
-      if (response === true) {
-        console.log(response);
-        toast({ title: "Berhasil simpan data" });
-        setStep(4);
-      }
-
-      if (response.status === 200 || response.status === 201) {
-        console.log("data berhasil dikirim", response.data);
-        console.log(response?.success);
-      }
-    } catch (error) {
-      console.log("error saat kirim data", error);
-      // alert('Terjadi kesalahan')
-    }
-  };
   return (
     <div className="w-full max-w-5xl rounded-2xl border border-[#17a3b8]/20 p-4">
       <form onSubmit={handleSubmit}>
@@ -454,11 +312,10 @@ export const DataPekerjaan = ({}) => {
                   id="job_title"
                   value={formData.job_title}
                   onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                    const { value } = e.target;
-                    setFormData((prevFormData) => ({
-                      ...prevFormData,
-                      job_title: value,
-                    }));
+                    const { value, id } = e.target;
+                    setFormData({
+                      [id]: value,
+                    });
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
@@ -505,11 +362,10 @@ export const DataPekerjaan = ({}) => {
                   id="employee_status"
                   value={formData.employee_status}
                   onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                    const { value } = e.target;
-                    setFormData((prevFormData) => ({
-                      ...prevFormData,
-                      employee_status: value,
-                    }));
+                    const { value, id } = e.target;
+                    setFormData({
+                      [id]: value,
+                    });
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
@@ -580,10 +436,10 @@ export const DataPekerjaan = ({}) => {
                   value={formData.educator_certificate ? "true" : "false"}
                   onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                     const value = e.target.value === "true";
-                    setFormData((prevFormData) => ({
-                      ...prevFormData,
-                      educator_certificate: value,
-                    }));
+                    const id = e.target.id;
+                    setFormData({
+                      [id]: value,
+                    });
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
@@ -623,11 +479,10 @@ export const DataPekerjaan = ({}) => {
                   id="stage"
                   value={formData.stage}
                   onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                    const { value } = e.target;
-                    setFormData((prevFormData) => ({
-                      ...prevFormData,
-                      stage: value,
-                    }));
+                    const { value, id } = e.target;
+                    setFormData({
+                      [id]: value,
+                    });
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",

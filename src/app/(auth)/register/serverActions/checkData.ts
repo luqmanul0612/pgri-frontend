@@ -1,6 +1,6 @@
 "use server";
 
-import { IFormData } from "@/store/use-registration-form-1";
+import { IFormData } from "@/store/use-registration-form";
 
 interface ApiResponse {
   status: number;

@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState } from "react";
+import { FC } from "react";
 import FormComponent from "./components/form";
 import Stepper from "./components/stepper";
 import { Footer } from "@/app/components/Footer";
@@ -8,22 +8,6 @@ import PasswordForm from "./components/passwordForm";
 import { DataPekerjaan } from "./components/dataPekerjaan";
 import UangPangkal from "./components/uangPangkal";
 import { useRegistrationStepStore } from "@/store/use-registration-step-store";
-
-export interface IFormData {
-  name: string;
-  nik: string;
-  email: string;
-  birth_place: string;
-  dob: string;
-  gender: string;
-  relegion: string;
-  blood_type: string;
-  phone_number: string;
-  address: string;
-  postal_code: string;
-  latest_education: string;
-  password?: string;
-}
 
 interface PageProps {
   params: {};

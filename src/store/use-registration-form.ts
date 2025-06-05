@@ -20,6 +20,7 @@ export interface IFormData {
 }
 
 interface FormStore {
+  isLoading: boolean;
   formData: IFormData;
   errors: Partial<Record<keyof IFormData, string>>;
   updateField: (key: keyof IFormData, value: string) => void;
@@ -49,6 +50,7 @@ export const useRegistrationFormStore = create<FormStore>()(
     (set, get) => ({
       formData: defaultForm,
       errors: {},
+      isLoading: false,
       updateField: (key, value) => {
         set((state) => ({
           formData: { ...state.formData, [key]: value },
@@ -75,27 +77,40 @@ export const useRegistrationFormStore = create<FormStore>()(
         return Object.keys(newErrors).length === 0;
       },
       sendFormForCheck: async () => {
-        if (get().validateForm()) {
-          const result = await checkRegistrationData(get().formData);
-          if (result?.errors) {
-            toast.error(result.errors ?? result.errors[0]);
+        set({ isLoading: true });
+        try {
+          if (get().validateForm()) {
+            const result = await checkRegistrationData(get().formData);
+            if (result?.errors) {
+              const errors = Array.isArray(result.errors)
+                ? result.errors
+                : [result.errors];
+
+              errors.forEach((err) => toast.error(err));
+              return { success: false };
+            }
+            return { success: true };
+          } else {
+            Object.entries(get().errors).forEach(([field, msg]) => {
+              toast.error(`${field}: ${msg}`);
+            });
             return { success: false };
           }
-          return { success: true };
-        } else {
-          Object.entries(get().errors).forEach(([field, msg]) => {
-            toast.error(`${field}: ${msg}`);
-          });
-          return { success: false };
+        } finally {
+          set({ isLoading: false });
         }
       },
+
       submitForm: async () => {
         return { success: true };
       },
     }),
     {
       name: "form-storage",
-      partialize: (state) => ({ formData: state.formData }),
+      partialize: (state) => {
+        const { password, ...formDataWithoutPass } = state.formData;
+        return { formData: formDataWithoutPass };
+      },
     },
   ),
 );

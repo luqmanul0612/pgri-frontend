@@ -12,7 +12,7 @@ import {
 } from "@/store/use-registration-form";
 
 const FormComponent = () => {
-  const { errors, formData, updateField, sendFormForCheck } =
+  const { isLoading, errors, formData, updateField, sendFormForCheck } =
     useRegistrationFormStore();
   const { step, setStep } = useRegistrationStepStore();
   const router = useRouter();
@@ -396,8 +396,9 @@ const FormComponent = () => {
             <Button
               className="w-[200px] rounded-2xl bg-[#17a3b8]"
               type="submit"
+              disabled={isLoading}
             >
-              Selanjutnya
+              {isLoading ? "Melakukan validasi..." : "Selanjutnya"}
             </Button>
           </div>
         </div>
