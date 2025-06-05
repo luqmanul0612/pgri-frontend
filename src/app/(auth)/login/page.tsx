@@ -1,5 +1,4 @@
 import { WAButton } from "@/app/components/WAButton";
-import WA from "../../../../public/assets/wa";
 import { Footer } from "../../components/Footer";
 import { LeftSection } from "./component/leftSection";
 import { RightSection } from "./component/rightSection";

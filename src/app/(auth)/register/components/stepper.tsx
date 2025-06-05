@@ -1,12 +1,8 @@
+import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 import React, { Dispatch, SetStateAction } from "react";
 
-const Stepper = ({
-  step,
-  setStep,
-}: {
-  step: number;
-  setStep: Dispatch<SetStateAction<number>>;
-}) => {
+const Stepper = () => {
+  const { step, setStep } = useRegistrationStepStore();
   return (
     <div className="inline-flex h-[34px] w-[900px] items-center justify-between">
       <Step
@@ -48,7 +44,7 @@ interface StepProps {
   number: number;
   label: string;
   active?: boolean;
-  setStep: Dispatch<SetStateAction<number>>;
+  setStep: (step: number) => void;
   step: number;
 }
 

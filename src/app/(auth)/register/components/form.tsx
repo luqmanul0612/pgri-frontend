@@ -1,80 +1,29 @@
 import { Input } from "@/components/ui/input";
-import { Dispatch, FC, SetStateAction, useState } from "react";
 import Danger from "../../../../../public/assets/danger";
 import { FormField } from "@/app/components/FormField";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import "./dob.css";
-import { checkRegistrationData } from "../serverActions/checkData";
-import { IFormData } from "../page";
-import { toast } from "@/components/ui/use-toast";
+import { useRegistrationStepStore } from "@/store/use-registration-step-store";
+import {
+  IFormData,
+  useRegistrationForm1Store,
+} from "@/store/use-registration-form-1";
 
-interface FormComponentProps {
-  formData: IFormData;
-  setStep: Dispatch<SetStateAction<number>>;
-  setFormData: Dispatch<SetStateAction<IFormData>>;
-}
-
-const FormComponent: FC<FormComponentProps> = ({
-  formData,
-  setStep,
-  setFormData,
-}) => {
+const FormComponent = () => {
+  const { errors, formData, updateField, submitForm } =
+    useRegistrationForm1Store();
+  const { step, setStep } = useRegistrationStepStore();
   const router = useRouter();
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-  function validateForm(data: IFormData): boolean {
-    const newErrors: { [key: string]: string } = {};
-
-    if (!/^\d{16}$/.test(data.nik)) {
-      newErrors.nik = "NIK harus 16 digit angka.";
-    }
-
-    if (!/^\d{10,15}$/.test(data.phone_number)) {
-      newErrors.phone_number =
-        "Nomor telepon harus antara 10 hingga 15 digit angka.";
-    }
-
-    if (!/^\d{5}$/.test(data.postal_code)) {
-      newErrors.postal_code = "Kode pos harus 5 digit angka.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }
 
   async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>,
   ): Promise<void> {
     event.preventDefault();
-
-    const updatedFormData: IFormData = {
-      name: event.currentTarget.nama.value,
-      nik: event.currentTarget.nik.value,
-      email: event.currentTarget.email.value,
-      birth_place: event.currentTarget.birth_place.value,
-      dob: event.currentTarget.dob.value,
-      gender: event.currentTarget.gender.value,
-      relegion: event.currentTarget.relegion.value, // Keeping relegion as requested
-      blood_type: event.currentTarget.blood_type.value,
-      phone_number: event.currentTarget.phone_number.value,
-      address: event.currentTarget.address.value,
-      postal_code: event.currentTarget.postal_code.value,
-      latest_education: event.currentTarget.latest_education.value,
-    };
-
-    if (validateForm(updatedFormData)) {
-      setFormData((prev) => ({ ...prev, ...updatedFormData }));
-      const result = await checkRegistrationData(updatedFormData);
-      if (result?.errors) {
-        toast({
-          title: result.errors ?? result.errors[0],
-          variant: "destructive",
-        });
-        return;
-      }
-      setStep((prevStep) => prevStep + 1);
+    const res = await submitForm();
+    if (res.success) {
+      setStep(step + 1);
     }
   }
 
@@ -87,12 +36,10 @@ const FormComponent: FC<FormComponentProps> = ({
             <FormField label="Nama & Gelar" required>
               <Input
                 required
-                id="nama"
+                id="name"
                 value={formData.name}
                 onChange={(e) => {
-                  setFormData((v) => {
-                    return { ...v, name: e.target.value };
-                  });
+                  updateField(e.target.id as keyof IFormData, e.target.value);
                 }}
                 className={clsx(
                   "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
@@ -112,9 +59,7 @@ const FormComponent: FC<FormComponentProps> = ({
                 id="nik"
                 value={formData.nik}
                 onChange={(e) => {
-                  setFormData((v) => {
-                    return { ...v, nik: e.target.value };
-                  });
+                  updateField(e.target.id as keyof IFormData, e.target.value);
                 }}
                 type="number"
                 className={clsx(
@@ -135,9 +80,7 @@ const FormComponent: FC<FormComponentProps> = ({
                 id="email"
                 value={formData.email}
                 onChange={(e) => {
-                  setFormData((v) => {
-                    return { ...v, email: e.target.value };
-                  });
+                  updateField(e.target.id as keyof IFormData, e.target.value);
                 }}
                 type="email"
                 className={clsx(
@@ -158,9 +101,7 @@ const FormComponent: FC<FormComponentProps> = ({
                 id="birth_place"
                 value={formData.birth_place}
                 onChange={(e) => {
-                  setFormData((v) => {
-                    return { ...v, birth_place: e.target.value };
-                  });
+                  updateField(e.target.id as keyof IFormData, e.target.value);
                 }}
                 className={clsx(
                   "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
@@ -180,9 +121,7 @@ const FormComponent: FC<FormComponentProps> = ({
                 id="dob"
                 value={formData.dob}
                 onChange={(e) => {
-                  setFormData((v) => {
-                    return { ...v, dob: e.target.value };
-                  });
+                  updateField(e.target.id as keyof IFormData, e.target.value);
                 }}
                 type="date"
                 className={clsx(
@@ -201,9 +140,7 @@ const FormComponent: FC<FormComponentProps> = ({
                   id="latest_education"
                   value={formData.latest_education}
                   onChange={(e) => {
-                    setFormData((v) => {
-                      return { ...v, latest_education: e.target.value };
-                    });
+                    updateField(e.target.id as keyof IFormData, e.target.value);
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl border-gray-300 bg-transparent py-[8px] pl-4 pr-8 focus:border-[#17a3b8] focus:outline-none",
@@ -248,9 +185,7 @@ const FormComponent: FC<FormComponentProps> = ({
                   id="gender"
                   value={formData.gender}
                   onChange={(e) => {
-                    setFormData((v) => {
-                      return { ...v, gender: e.target.value };
-                    });
+                    updateField(e.target.id as keyof IFormData, e.target.value);
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl bg-transparent py-[8px] pl-4 pr-8 focus:border-[#17a3b8] focus:outline-none",
@@ -287,16 +222,14 @@ const FormComponent: FC<FormComponentProps> = ({
               <div className="relative">
                 <select
                   required
-                  id="relegion"
-                  value={formData.relegion}
+                  id="religion"
+                  value={formData.religion}
                   onChange={(e) => {
-                    setFormData((v) => {
-                      return { ...v, relegion: e.target.value };
-                    });
+                    updateField(e.target.id as keyof IFormData, e.target.value);
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl bg-transparent py-[8px] pl-4 pr-8 text-[#17a3b8] focus:border-[#17a3b8] focus:outline-none",
-                    formData.relegion
+                    formData.religion
                       ? "border border-[#17a3b8]/20 text-[#17a3b8]"
                       : "border border-gray-300 text-gray-400",
                   )}
@@ -312,7 +245,7 @@ const FormComponent: FC<FormComponentProps> = ({
                   <option value="Konghucu">Konghucu</option>
                 </select>
                 <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${formData.relegion ? "text-[#17a3b8]" : "text-gray-400"}`}
+                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${formData.religion ? "text-[#17a3b8]" : "text-gray-400"}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -336,9 +269,7 @@ const FormComponent: FC<FormComponentProps> = ({
                   id="blood_type"
                   value={formData.blood_type}
                   onChange={(e) => {
-                    setFormData((v) => {
-                      return { ...v, blood_type: e.target.value };
-                    });
+                    updateField(e.target.id as keyof IFormData, e.target.value);
                   }}
                   className={clsx(
                     "relative z-10 w-full appearance-none rounded-2xl bg-transparent py-[8px] pl-4 pr-8 text-[#17a3b8] focus:border-[#17a3b8] focus:outline-none",
@@ -379,9 +310,7 @@ const FormComponent: FC<FormComponentProps> = ({
                 id="address"
                 value={formData.address}
                 onChange={(e) => {
-                  setFormData((v) => {
-                    return { ...v, address: e.target.value };
-                  });
+                  updateField(e.target.id as keyof IFormData, e.target.value);
                 }}
                 className={clsx(
                   "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
@@ -400,9 +329,7 @@ const FormComponent: FC<FormComponentProps> = ({
                   id="postal_code"
                   value={formData.postal_code}
                   onChange={(e) => {
-                    setFormData((v) => {
-                      return { ...v, postal_code: e.target.value };
-                    });
+                    updateField(e.target.id as keyof IFormData, e.target.value);
                   }}
                   type="number"
                   className={clsx(
@@ -426,9 +353,7 @@ const FormComponent: FC<FormComponentProps> = ({
                   id="phone_number"
                   value={formData.phone_number}
                   onChange={(e) => {
-                    setFormData((v) => {
-                      return { ...v, phone_number: e.target.value };
-                    });
+                    updateField(e.target.id as keyof IFormData, e.target.value);
                   }}
                   type="tel"
                   className={clsx(

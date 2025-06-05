@@ -12,14 +12,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { IFormData } from "../page";
 import { FormField } from "@/app/components/FormField";
-import Cookies from "js-cookie";
 import { submitDataPekerjaan } from "../serverActions/submitDataPekerjaan";
 import { toast } from "@/components/ui/use-toast";
 import clsx from "clsx";
+import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 
 interface DataPekerjaanProps {
   formData: IFormData;
-  setStep: Dispatch<SetStateAction<number>>;
   setFormData: Dispatch<SetStateAction<IFormData>>;
 }
 
@@ -45,7 +44,7 @@ interface InFormData {
   study_subjects: string;
 }
 
-export const DataPekerjaan: FC<DataPekerjaanProps> = ({ setStep }) => {
+export const DataPekerjaan: FC<DataPekerjaanProps> = ({  }) => {
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [kabupatenKota, setKabupatenKota] = useState<Province[]>([]);
   const [kecamatan, setKecamatan] = useState<Province[]>([]);
@@ -56,7 +55,7 @@ export const DataPekerjaan: FC<DataPekerjaanProps> = ({ setStep }) => {
     useState<string>("");
   const [selectedKecamatan, setSelectedKecamatan] = useState<string>("");
   const [selectedKelurahan, setSelectedKelurahan] = useState<string>("");
-
+const {setStep} = useRegistrationStepStore()
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<InFormData>({

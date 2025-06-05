@@ -10,25 +10,17 @@ import { submitRegistration } from "../serverActions/submitRegistration";
 import { ScaleLoader } from "react-spinners";
 import { toast } from "@/components/ui/use-toast";
 import PasswordSuccess from "../../../../../public/assets/passwordSuccess";
-import { useRouter } from "next/navigation";
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  Transition,
-  TransitionChild,
-} from "@headlessui/react";
 import { setCookies } from "@/serverActions/setCookies";
+import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 
 interface PasswordFormProps {
   formData: IFormData;
-  setStep: Dispatch<SetStateAction<number>>;
+  
   setFormData: Dispatch<SetStateAction<IFormData>>;
 }
 
 const PasswordForm: React.FC<PasswordFormProps> = ({
   formData,
-  setStep,
   setFormData,
 }) => {
   const [password2, setPassword2] = useState("");
@@ -38,6 +30,7 @@ const PasswordForm: React.FC<PasswordFormProps> = ({
   const [isSuccess, setIsSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
+  const {setStep} = useRegistrationStepStore()
 
   let [isOpen, setIsOpen] = useState(true);
 

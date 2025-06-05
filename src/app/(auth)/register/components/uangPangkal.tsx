@@ -4,20 +4,20 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Danger from '../../../../../public/assets/danger';
 import { useRouter } from "next/navigation";
+import { useRegistrationStepStore } from '@/store/use-registration-step-store';
 
 
 interface UangPangkalProps {
     formData: IFormData; // nanti diedit
-    setStep: Dispatch<SetStateAction<number>>;
     setFormData: Dispatch<SetStateAction<IFormData>>;
   }
 
 const UangPangkal: FC<UangPangkalProps> = ({
     formData,
-    setStep,
     setFormData,
   }) => {
-    const router = useRouter()
+  const router = useRouter()
+  const {setStep} = useRegistrationStepStore()
   return (
     <div className='w-full max-w-[600px] rounded-2xl border border-[#17a3b8]/20 p-4'>
         <div className='bg-[#17a3b8]/20 rounded-md text-[#17a3b8] items-center flex flex-col p-5'>

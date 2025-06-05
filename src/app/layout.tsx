@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/context/authContext";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Roboto({
   subsets: ["latin"],
@@ -23,7 +23,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>{children}</AuthProvider>
-        <Toaster />
+        <Toaster
+          position="top-center"
+          richColors
+          toastOptions={{
+            duration: 5000,
+          }}
+        />
       </body>
     </html>
   );
