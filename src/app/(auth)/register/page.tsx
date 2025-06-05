@@ -38,15 +38,9 @@ const Page: FC<PageProps> = ({ params: {} }) => {
       <div className="flex flex-col items-center gap-5 py-28">
         <Stepper />
         {step === 1 && <FormComponent />}
-        {step === 2 && (
-          <PasswordForm formData={formData} setFormData={setFormData} />
-        )}
-        {step === 3 && (
-          <DataPekerjaan formData={formData} setFormData={setFormData} />
-        )}
-        {step === 4 && (
-          <UangPangkal formData={formData} setFormData={setFormData} />
-        )}
+        {step === 2 && <PasswordForm />}
+        {step === 3 && <DataPekerjaan />}
+        {step === 4 && <UangPangkal />}
       </div>
       <div className="fixed bottom-0 left-0 right-0">
         <Footer />

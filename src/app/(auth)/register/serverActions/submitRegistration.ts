@@ -1,6 +1,6 @@
 "use server";
-import { cookies } from "next/headers";
-import { IFormData } from "../page";
+
+import { IFormData } from "@/store/use-registration-form";
 
 export async function submitRegistration(registrationData: IFormData) {
   const url = process.env.HOST + "/api/v1/auth/register";
@@ -10,7 +10,10 @@ export async function submitRegistration(registrationData: IFormData) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(registrationData),
+      body: JSON.stringify({
+        ...registrationData,
+        relegion: registrationData.religion,
+      }),
     });
     const res = await response.json();
     // console.log('response register', res)
@@ -23,9 +26,8 @@ export async function submitRegistration(registrationData: IFormData) {
     // cookies().set("auth", JSON.stringify(user), {})
 
     // cookies().set("token", token, {})
-    
-    // return {success: true};
 
+    // return {success: true};
   } catch (error) {
     console.error("Error during password setup:", error);
   }

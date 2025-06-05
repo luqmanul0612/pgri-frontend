@@ -12,7 +12,7 @@ import {
 } from "@/store/use-registration-form";
 
 const FormComponent = () => {
-  const { errors, formData, updateField, submitForm } =
+  const { errors, formData, updateField, sendFormForCheck } =
     useRegistrationFormStore();
   const { step, setStep } = useRegistrationStepStore();
   const router = useRouter();
@@ -21,7 +21,7 @@ const FormComponent = () => {
     event: React.FormEvent<HTMLFormElement>,
   ): Promise<void> {
     event.preventDefault();
-    const res = await submitForm();
+    const res = await sendFormForCheck();
     if (res.success) {
       setStep(step + 1);
     }

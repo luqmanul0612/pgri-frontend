@@ -24,7 +24,8 @@ interface FormStore {
   errors: Partial<Record<keyof IFormData, string>>;
   updateField: (key: keyof IFormData, value: string) => void;
   validateForm: () => boolean;
-  submitForm: () => Promise<{ success: boolean }>;
+  sendFormForCheck: () => Promise<{ success: boolean }>;
+  submitForm: (passwordConfirmation: string) => Promise<{ success: boolean }>;
 }
 
 const defaultForm: IFormData = {
@@ -73,7 +74,7 @@ export const useRegistrationFormStore = create<FormStore>()(
         set({ errors: newErrors });
         return Object.keys(newErrors).length === 0;
       },
-      submitForm: async () => {
+      sendFormForCheck: async () => {
         if (get().validateForm()) {
           const result = await checkRegistrationData(get().formData);
           if (result?.errors) {
@@ -87,6 +88,9 @@ export const useRegistrationFormStore = create<FormStore>()(
           });
           return { success: false };
         }
+      },
+      submitForm: async () => {
+        return { success: true };
       },
     }),
     {

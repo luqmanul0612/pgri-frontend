@@ -1,28 +1,18 @@
 "use client";
-import React, { Dispatch, SetStateAction, useState, Fragment } from "react";
+import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Danger from "../../../../../public/assets/danger";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { IFormData } from "../page";
 import { submitRegistration } from "../serverActions/submitRegistration";
 import { ScaleLoader } from "react-spinners";
 import { toast } from "@/components/ui/use-toast";
 import PasswordSuccess from "../../../../../public/assets/passwordSuccess";
 import { setCookies } from "@/serverActions/setCookies";
 import { useRegistrationStepStore } from "@/store/use-registration-step-store";
+import { useRegistrationFormStore } from "@/store/use-registration-form";
 
-interface PasswordFormProps {
-  formData: IFormData;
-  
-  setFormData: Dispatch<SetStateAction<IFormData>>;
-}
-
-const PasswordForm: React.FC<PasswordFormProps> = ({
-  formData,
-  setFormData,
-}) => {
+const PasswordForm = () => {
   const [password2, setPassword2] = useState("");
   const [checkbox, setCheckbox] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +20,9 @@ const PasswordForm: React.FC<PasswordFormProps> = ({
   const [isSuccess, setIsSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
-  const {setStep} = useRegistrationStepStore()
+
+  const { formData, updateField } = useRegistrationFormStore();
+  const { setStep } = useRegistrationStepStore();
 
   let [isOpen, setIsOpen] = useState(true);
 
@@ -131,9 +123,7 @@ const PasswordForm: React.FC<PasswordFormProps> = ({
             <input
               value={formData.password}
               onChange={(e) => {
-                setFormData((v) => {
-                  return { ...formData, password: e.target.value };
-                });
+                updateField("password", e.target.value);
               }}
               type={showPassword ? "text" : "password"}
               id="password1"

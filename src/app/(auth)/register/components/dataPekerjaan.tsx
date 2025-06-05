@@ -1,12 +1,5 @@
 "use client";
-import {
-  ChangeEvent,
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Danger from "../../../../../public/assets/danger";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,11 +9,6 @@ import { submitDataPekerjaan } from "../serverActions/submitDataPekerjaan";
 import { toast } from "@/components/ui/use-toast";
 import clsx from "clsx";
 import { useRegistrationStepStore } from "@/store/use-registration-step-store";
-
-interface DataPekerjaanProps {
-  formData: IFormData;
-  setFormData: Dispatch<SetStateAction<IFormData>>;
-}
 
 interface Region {
   id: string;
@@ -44,7 +32,7 @@ interface InFormData {
   study_subjects: string;
 }
 
-export const DataPekerjaan: FC<DataPekerjaanProps> = ({  }) => {
+export const DataPekerjaan = ({}) => {
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [kabupatenKota, setKabupatenKota] = useState<Province[]>([]);
   const [kecamatan, setKecamatan] = useState<Province[]>([]);
@@ -55,7 +43,7 @@ export const DataPekerjaan: FC<DataPekerjaanProps> = ({  }) => {
     useState<string>("");
   const [selectedKecamatan, setSelectedKecamatan] = useState<string>("");
   const [selectedKelurahan, setSelectedKelurahan] = useState<string>("");
-const {setStep} = useRegistrationStepStore()
+  const { setStep } = useRegistrationStepStore();
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<InFormData>({
