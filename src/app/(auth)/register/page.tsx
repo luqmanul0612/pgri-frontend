@@ -1,5 +1,5 @@
 "use client";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import FormComponent from "./components/form";
 import Stepper from "./components/stepper";
 import { Footer } from "@/app/components/Footer";
@@ -7,6 +7,7 @@ import Header from "./components/header";
 import PasswordForm from "./components/passwordForm";
 import { DataPekerjaan } from "./components/dataPekerjaan";
 import UangPangkal from "./components/uangPangkal";
+import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 
 export interface IFormData {
   name: string;
@@ -29,55 +30,22 @@ interface PageProps {
 }
 
 const Page: FC<PageProps> = ({ params: {} }) => {
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<IFormData>({
-    name: "",
-    nik: "",
-    email: "",
-    birth_place: "",
-    dob: "",
-    gender: "",
-    relegion: "",
-    blood_type: "",
-    phone_number: "",
-    address: "",
-    postal_code: "",
-    latest_education: "",
-    password: "",
-  });
+  const { step } = useRegistrationStepStore();
 
   return (
     <div>
       <Header />
       <div className="flex flex-col items-center gap-5 py-28">
-        <Stepper step={step} setStep={setStep} />
-        {step === 1 && (
-          <FormComponent
-            formData={formData}
-            setStep={setStep}
-            setFormData={setFormData}
-          />
-        )}
+        <Stepper />
+        {step === 1 && <FormComponent />}
         {step === 2 && (
-          <PasswordForm
-            formData={formData}
-            setStep={setStep}
-            setFormData={setFormData}
-          />
+          <PasswordForm formData={formData} setFormData={setFormData} />
         )}
         {step === 3 && (
-          <DataPekerjaan
-            formData={formData}
-            setStep={setStep}
-            setFormData={setFormData}
-          />
+          <DataPekerjaan formData={formData} setFormData={setFormData} />
         )}
         {step === 4 && (
-          <UangPangkal
-            formData={formData}
-            setStep={setStep}
-            setFormData={setFormData}
-          />
+          <UangPangkal formData={formData} setFormData={setFormData} />
         )}
       </div>
       <div className="fixed bottom-0 left-0 right-0">

@@ -8,12 +8,12 @@ import "./dob.css";
 import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 import {
   IFormData,
-  useRegistrationForm1Store,
-} from "@/store/use-registration-form-1";
+  useRegistrationFormStore,
+} from "@/store/use-registration-form";
 
 const FormComponent = () => {
   const { errors, formData, updateField, submitForm } =
-    useRegistrationForm1Store();
+    useRegistrationFormStore();
   const { step, setStep } = useRegistrationStepStore();
   const router = useRouter();
 

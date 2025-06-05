@@ -43,7 +43,7 @@ const defaultForm: IFormData = {
   password: "",
 };
 
-export const useRegistrationForm1Store = create<FormStore>()(
+export const useRegistrationFormStore = create<FormStore>()(
   persist(
     (set, get) => ({
       formData: defaultForm,
