@@ -22,7 +22,7 @@ export const useFormPekerjaanStore = create<FormPekerjaanState>()(
         name: "",
         address: "",
         employee_status: "",
-        educator_certificate: false,
+        educator_certificate: undefined,
         grade: "",
         study_subjects: "",
       },
@@ -31,8 +31,12 @@ export const useFormPekerjaanStore = create<FormPekerjaanState>()(
         event.preventDefault();
         const { formData } = get();
         const { setStep } = useRegistrationStepStore.getState();
+
         Object.entries(formData).map((item) => {
-          if (!item[1] && item[0] != "educator_certificate") {
+          if (
+            (!item[1] && item[0] != "educator_certificate") ||
+            (item[1] === undefined && item[0] == "educator_certificate")
+          ) {
             toast.error(`Anda belum mengisi data: ${item[0]}`);
             return;
           }
@@ -41,15 +45,21 @@ export const useFormPekerjaanStore = create<FormPekerjaanState>()(
         try {
           const response = await submitDataPekerjaan(formData);
           console.log({ response });
-          if (response === true) {
+          if (response && response.success) {
             toast.success("Berhasil simpan data");
             setStep(4);
-          }
-          if (response.status === 200 || response.status === 201) {
-            console.log("data berhasil dikirim", response.data);
+          } else if (response?.status === 401) {
+            toast.error("Unauthorized: Silakan login kembali.");
+          } else if (response?.status === 400) {
+            toast.error(
+              response?.error?.message || "Bad Request: Data tidak valid.",
+            );
+          } else {
+            toast.error(response?.error?.message || "Gagal simpan data");
           }
         } catch (error) {
           console.error("error saat kirim data", error);
+          toast.error("Terjadi kesalahan saat mengirim data");
         }
       },
     }),

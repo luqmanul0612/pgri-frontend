@@ -1,22 +1,26 @@
+"use client";
+// ANCHOR: imports
+// #region imports
 import React from "react";
 import Image from "next/image";
 import warningIcon from "@/../public/icon/warning.png";
+import { useFormPekerjaanStore } from "@/store/use-data-pekerjaan-store";
+import clsx from "clsx";
+import { useGetRegionStore } from "@/store/use-get-region-store";
+import { useRegistrationStepStore } from "@/store/use-registration-step-store";
+// #endregion
 
-// Type definitions
+// ANCHOR: types definitions
+// #region types definitions
 type InputFieldProps = {
   label: string;
   placeholder: string;
   isSelect?: boolean;
   options?: { label: string; value: string }[];
-};
-
-type SectionHeaderProps = {
-  title: string;
-};
-
-type FormSectionProps = {
-  title: string;
-  children: React.ReactNode;
+  value?: string;
+  onChange?: React.ChangeEventHandler<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  >;
 };
 
 type WarningMessageProps = {
@@ -28,18 +32,445 @@ type SubmitButtonProps = {
   disabled?: boolean;
 };
 
-const FormSection: React.FC<FormSectionProps> = ({ title, children }) => (
-  <div>
-    <h3 className="mb-2 text-sm font-bold text-primary">{title}</h3>
-    {children}
+// #endregion
+
+// ANCHOR: helpers
+// #region helpers
+// Helper untuk mapping data region ke options
+const toOptions = (arr: { code: string; name: string }[]) =>
+  arr.map((item) => ({ label: item.name, value: item.code }));
+
+const LABELS = {
+  instansi: "Nama Instansi Tempat Tugas",
+  provinsi: "Provinsi Tempat Tugas",
+  kabupaten: "Kabupaten/Kota/Kota Administrasi Tempat Kerja",
+  kecamatan: "Kecamatan/Cabang/Distrik Tempat Tugas",
+  kelurahan: "Desa/Kelurahan",
+  alamat: "Alamat Tempat Tugas",
+  pekerjaan: "Pekerjaan",
+  status: "Status Kepegawaian",
+  pangkat: "Pangkat/Golongan",
+  sertifikat: "Sertifikat Pendidik",
+  jenjang: "Jenjang Mengajar",
+  mapel: "Mata Pelajaran",
+};
+const PLACEHOLDERS = {
+  instansi: "Tulis Nama Instansi",
+  provinsi: "Pilih Provinsi",
+  kabupaten: "Pilih Kabupaten/Kota/Kota Administrasi Tempat Kerja",
+  kecamatan: "Pilih Kecamatan/Cabang/Distrik Tempat Tugas",
+  kelurahan: "Pilih Desa/Kelurahan",
+  alamat: "Tulis Alamat Tempat Tugas",
+  pekerjaan: "Pilih Pekerjaan",
+  status: "Pilih Status Kepegawaian",
+  pangkat: "Tulis Pangkat/Golongan",
+  sertifikat: "Pilih Status",
+  jenjang: "Pilih Jenjang Mengajar",
+  mapel: "Pilih Mata Pelajaran",
+};
+
+type CustomSelectProps = {
+  value: string;
+  onChange: React.ChangeEventHandler<HTMLSelectElement>;
+  options: { label: string; value: string }[];
+  placeholder?: string;
+  className?: string;
+};
+const CustomSelect: React.FC<CustomSelectProps> = ({
+  value = "",
+  onChange,
+  options,
+  placeholder = "",
+  className = "",
+}) => (
+  <div className={`relative w-full ${className}`}>
+    <select
+      className="flex h-10 w-full appearance-none items-center rounded-lg border border-gray-300 bg-white px-4 pr-10 text-xs text-gray-400"
+      value={typeof value === "string" ? value : ""}
+      onChange={onChange}
+    >
+      <option value="" disabled hidden>
+        {placeholder}
+      </option>
+      {options.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      ))}
+    </select>
+    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+      <svg
+        className="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+    </div>
   </div>
 );
+
+// ANCHOR: main-component
+// #region main-component
+const Main: React.FC = () => {
+  const {
+    provinces,
+    kabupatenKota,
+    kecamatan,
+    kelurahan,
+    selectedProvince,
+    selectedKabupatenKota,
+    selectedKecamatan,
+    selectedKelurahan,
+    setSelectedProvince,
+    setSelectedKabupatenKota,
+    setSelectedKecamatan,
+    setSelectedKelurahan,
+    fetchProvinces,
+    fetchKabupatenKota,
+    fetchKecamatan,
+    fetchKelurahan,
+  } = useGetRegionStore();
+  const { formData, setFormData, handleSubmit } = useFormPekerjaanStore();
+
+  React.useEffect(() => {
+    fetchProvinces();
+  }, [fetchProvinces]);
+  React.useEffect(() => {
+    if (selectedProvince) fetchKabupatenKota();
+  }, [selectedProvince, fetchKabupatenKota]);
+  React.useEffect(() => {
+    if (selectedKabupatenKota) fetchKecamatan();
+  }, [selectedKabupatenKota, fetchKecamatan]);
+  React.useEffect(() => {
+    if (selectedKecamatan) fetchKelurahan();
+  }, [selectedKecamatan, fetchKelurahan]);
+  React.useEffect(() => {
+    setFormData({
+      subdistrict_id: selectedKelurahan,
+    });
+  }, [selectedKelurahan, setFormData]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData({ [id]: value });
+  };
+
+  const handleTextAreaInputChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    const { id, value } = e.target;
+    setFormData({ [id]: value });
+  };
+
+  const pekerjaanOptions = [
+    { label: "Guru", value: "Guru" },
+    { label: "Tenaga Administrasi", value: "Tenaga Administrasi" },
+    { label: "Dosen", value: "Dosen" },
+    { label: "Kepala Sekolah", value: "Kepala Sekolah" },
+    { label: "Pengawas", value: "Pengawas" },
+    { label: "Lainnya", value: "Lainnya" },
+  ];
+  const statusKepegawaianOptions = [
+    { label: "ASN PNS", value: "ASN PNS" },
+    { label: "ASN PPPK", value: "ASN PPPK" },
+    { label: "Honorer", value: "Honorer" },
+    { label: "GTY", value: "GTY" },
+    { label: "GTTY", value: "GTTY" },
+    { label: "Dosen ASN", value: "Dosen ASN" },
+    { label: "Dosen Tetap Yayasan", value: "Dosen Tetap Yayasan" },
+    { label: "Dosen Tidak Tetap Yayasan", value: "Dosen Tidak Tetap Yayasan" },
+  ];
+  const sertifikatPendidikOptions = [
+    { label: "Sudah", value: "true" },
+    { label: "Belum", value: "false" },
+  ];
+  const jenjangMengajarOptions = [
+    { label: "PAUD", value: "PAUD" },
+    { label: "TK", value: "TK" },
+    { label: "SD/MI", value: "SD/MI" },
+    { label: "SMP/MTS", value: "SMP/MTS" },
+    { label: "SMA/MA", value: "SMA/MA" },
+    { label: "SMK", value: "SMK" },
+    { label: "PT", value: "PT" },
+    { label: "Sekolah Luar Biasa (SLB)", value: "Sekolah Luar Biasa (SLB)" },
+    { label: "Lainnya", value: "Lainnya" },
+  ];
+
+  return (
+    <div className="my-4 px-4">
+      <h3 className="mb-2 text-sm font-bold text-primary">
+        Verifikasi Data Pekerjaan
+      </h3>
+      <form onSubmit={handleSubmit}>
+        <div className="space-y-4">
+          {/* Nama Instansi Tempat Tugas */}
+          <div className="mb-4">
+            <label className="mb-1 block text-xs text-black">
+              {LABELS.instansi}
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={formData.name || ""}
+              onChange={handleInputChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700"
+              placeholder={PLACEHOLDERS.instansi}
+              autoComplete="off"
+            />
+          </div>
+          {/* Provinsi Tempat Tugas */}
+          <div className="mb-4">
+            <label className="mb-1 block text-xs text-black">
+              {LABELS.provinsi}
+            </label>
+            <CustomSelect
+              value={selectedProvince || ""}
+              onChange={(event) => {
+                setSelectedProvince(event.target.value);
+                setSelectedKabupatenKota("");
+                setSelectedKecamatan("");
+                setSelectedKelurahan("");
+              }}
+              options={toOptions(provinces)}
+              placeholder={PLACEHOLDERS.provinsi}
+            />
+          </div>
+          {/* Kabupaten/Kota/Kota Administrasi Tempat Kerja */}
+          <div className="mb-4">
+            <label className="mb-1 block text-xs text-black">
+              {LABELS.kabupaten}
+            </label>
+            <CustomSelect
+              value={selectedKabupatenKota || ""}
+              onChange={(event) => {
+                setSelectedKabupatenKota(event.target.value);
+                setSelectedKecamatan("");
+                setSelectedKelurahan("");
+              }}
+              options={toOptions(kabupatenKota)}
+              placeholder={PLACEHOLDERS.kabupaten}
+            />
+          </div>
+          {/* Kecamatan/Cabang/Distrik Tempat Tugas */}
+          <div className="mb-4">
+            <label className="mb-1 block text-xs text-black">
+              {LABELS.kecamatan}
+            </label>
+            <CustomSelect
+              value={selectedKecamatan || ""}
+              onChange={(event) => {
+                setSelectedKecamatan(event.target.value);
+                setSelectedKelurahan("");
+              }}
+              options={toOptions(kecamatan)}
+              placeholder={PLACEHOLDERS.kecamatan}
+            />
+          </div>
+          {/* Desa/Kelurahan */}
+          <div className="mb-4">
+            <label className="mb-1 block text-xs text-black">
+              {LABELS.kelurahan}
+            </label>
+            <CustomSelect
+              value={selectedKelurahan || ""}
+              onChange={(event) => setSelectedKelurahan(event.target.value)}
+              options={toOptions(kelurahan)}
+              placeholder={PLACEHOLDERS.kelurahan}
+            />
+          </div>
+          {/* Alamat Tempat Tugas */}
+          <div className="mb-4">
+            <label className="mb-1 block text-xs text-black">
+              {LABELS.alamat}
+            </label>
+            <textarea
+              id="address"
+              value={formData.address || ""}
+              onChange={handleTextAreaInputChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700"
+              placeholder={PLACEHOLDERS.alamat}
+              autoComplete="off"
+            />
+          </div>
+          {/* Pekerjaan */}
+          <div className="mb-4">
+            <label className="mb-1 block text-xs text-black">
+              {LABELS.pekerjaan}
+            </label>
+            <CustomSelect
+              value={formData.job_title || ""}
+              onChange={(e) => {
+                const { value, id } = e.target;
+                setFormData({ [id || "job_title"]: value });
+              }}
+              options={pekerjaanOptions}
+              placeholder={PLACEHOLDERS.pekerjaan}
+            />
+          </div>
+          {/* Status Kepegawaian */}
+          <div className="mb-4">
+            <label className="mb-1 block text-xs text-black">
+              {LABELS.status}
+            </label>
+            <CustomSelect
+              value={formData.employee_status || ""}
+              onChange={(e) => {
+                const { value, id } = e.target;
+                setFormData({ [id || "employee_status"]: value });
+              }}
+              options={statusKepegawaianOptions}
+              placeholder={PLACEHOLDERS.status}
+            />
+          </div>
+          {/* Pangkat/Golongan */}
+          <div className="mb-4">
+            <label className="mb-1 block text-xs text-black">
+              {LABELS.pangkat}
+            </label>
+            <input
+              type="text"
+              id="grade"
+              value={formData.grade || ""}
+              onChange={handleInputChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700"
+              placeholder={PLACEHOLDERS.pangkat}
+              autoComplete="off"
+            />
+          </div>
+          {/* Sertifikat Pendidik */}
+          <div className="mb-4">
+            <label className="mb-1 block text-xs text-black">
+              {LABELS.sertifikat}
+            </label>
+            <CustomSelect
+              value={
+                formData.educator_certificate === undefined
+                  ? ""
+                  : formData.educator_certificate
+                    ? "true"
+                    : "false"
+              }
+              onChange={(e) => {
+                const value = e.target.value === "true";
+                const id = e.target.id || "educator_certificate";
+                setFormData({ [id]: value });
+              }}
+              options={sertifikatPendidikOptions}
+              placeholder={PLACEHOLDERS.sertifikat}
+            />
+          </div>
+          {/* Jenjang Mengajar */}
+          <div className="mb-4">
+            <label className="mb-1 block text-xs text-black">
+              {LABELS.jenjang}
+            </label>
+            <CustomSelect
+              value={formData.stage || ""}
+              onChange={(e) => {
+                const { value, id } = e.target;
+                setFormData({ [id || "stage"]: value });
+              }}
+              options={jenjangMengajarOptions}
+              placeholder={PLACEHOLDERS.jenjang}
+            />
+          </div>
+          {/* Mata Pelajaran */}
+          <div className="mb-4">
+            <label className="mb-1 block text-xs text-black">
+              {LABELS.mapel}
+            </label>
+            <input
+              type="text"
+              id="study_subjects"
+              value={formData.study_subjects || ""}
+              onChange={handleInputChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700"
+              placeholder={PLACEHOLDERS.mapel}
+              autoComplete="off"
+            />
+          </div>
+        </div>
+        <WarningMessage message="Pada pendaftaran akun ini kamu boleh langsung melewati proses pengisian data pekerjaan." />
+        <SubmitButton disabled={false}>Verifikasi</SubmitButton>
+      </form>
+    </div>
+  );
+};
+
+// Helper Components
+const InputText = ({
+  id,
+  label,
+  placeholder,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  placeholder: string;
+  value?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => (
+  <div>
+    <label className="mb-1 block text-xs text-black">{label}</label>
+    <input
+      type="text"
+      id={id}
+      value={value || ""}
+      onChange={onChange}
+      className="w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700"
+      placeholder={placeholder}
+      autoComplete="off"
+    />
+  </div>
+);
+
+const SelectInput = ({
+  label,
+  value,
+  placeholder,
+  options,
+  onChange,
+}: {
+  label: string;
+  value?: string;
+  placeholder: string;
+  options: { label: string; value: string }[];
+  onChange: (val: string) => void;
+}) => (
+  <div>
+    <label className="mb-1 block text-xs text-black">{label}</label>
+    <CustomSelect
+      value={value ?? ""}
+      onChange={(e) => onChange(e.target.value)}
+      options={options}
+      placeholder={placeholder}
+      className={clsx(
+        "w-full rounded-lg border px-4 py-2 text-xs",
+        value
+          ? "border-blue-500 text-blue-600"
+          : "border-gray-300 text-gray-400",
+      )}
+    />
+  </div>
+);
+
+export default Main;
+// #endregion
+
+// ANCHOR: internal-components
+// #region internal-components
 
 const InputField: React.FC<InputFieldProps> = ({
   label,
   placeholder,
   isSelect = false,
   options = [],
+  value = "",
+  onChange,
 }) => (
   <div className="mb-4">
     <label className="mb-1 block text-xs text-black">{label}</label>
@@ -47,7 +478,8 @@ const InputField: React.FC<InputFieldProps> = ({
       <div className="relative w-full">
         <select
           className="flex h-10 w-full appearance-none items-center rounded-lg border border-gray-300 bg-white px-4 pr-10 text-xs text-gray-400"
-          defaultValue=""
+          value={value}
+          onChange={onChange}
         >
           <option value="" disabled hidden>
             {placeholder}
@@ -77,11 +509,12 @@ const InputField: React.FC<InputFieldProps> = ({
         </div>
       </div>
     ) : (
-      <div className="flex h-10 items-center rounded-lg border border-gray-300 px-4">
-        <span className="flex-1 truncate text-xs text-gray-400">
-          {placeholder}
-        </span>
-      </div>
+      <input
+        className="flex h-10 w-full items-center rounded-lg border border-gray-300 px-4 text-xs text-gray-700"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+      />
     )}
   </div>
 );
@@ -107,118 +540,4 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
     {children}
   </button>
 );
-
-// Main component
-const VerificationForm: React.FC = () => {
-  return (
-    <div className="my-4 flex w-full max-w-md flex-col gap-4 px-4">
-      <div className="flex flex-col">
-        <FormSection title="Verifikasi Data Pekerjaan">
-          <div className="space-y-4">
-            <InputField
-              label="Nama Instansi Tempat Tugas"
-              placeholder="Tulis Nama Instansi"
-            />
-            <InputField
-              label="Provinsi Tempat Tugas"
-              placeholder="Pilih Provinsi"
-              isSelect
-              options={[
-                { label: "Provinsi 1", value: "provinsi_1" },
-                { label: "Provinsi 2", value: "provinsi_2" },
-              ]}
-            />
-            <InputField
-              label="Kabupaten/Kota/Kota Administrasi"
-              placeholder="Pilih Kabupaten/Kota/Kota Administrasi"
-              isSelect
-              options={[
-                { label: "Kabupaten 1", value: "kabupaten_1" },
-                { label: "Kota 1", value: "kota_1" },
-              ]}
-            />
-            <InputField
-              label="Kecamatan/Cabang/Distrik"
-              placeholder="Pilih Kecamatan/Cabang/Distrik"
-              isSelect
-              options={[
-                { label: "Kecamatan 1", value: "kecamatan_1" },
-                { label: "Cabang 1", value: "cabang_1" },
-              ]}
-            />
-            <InputField
-              label="Desa/Kelurahan"
-              placeholder="Pilih Desa/Kelurahan"
-              isSelect
-              options={[
-                { label: "Desa 1", value: "desa_1" },
-                { label: "Kelurahan 1", value: "kelurahan_1" },
-              ]}
-            />
-            <InputField
-              label="Alamat Tempat Tugas"
-              placeholder="Tulis Alamat Tempat Tugas"
-            />
-            <InputField
-              label="Pekerjaan"
-              placeholder="Pilih Pekerjaan"
-              isSelect
-              options={[
-                { label: "Pekerjaan 1", value: "pekerjaan_1" },
-                { label: "Pekerjaan 2", value: "pekerjaan_2" },
-              ]}
-            />
-            <InputField
-              label="Status Kepegawaian"
-              placeholder="Pilih Status Kepegawaian"
-              isSelect
-              options={[
-                { label: "Status 1", value: "status_1" },
-                { label: "Status 2", value: "status_2" },
-              ]}
-            />
-            <InputField
-              label="Pangkat/Golongan"
-              placeholder="Tulis Pangkat/Golongan"
-            />
-            <InputField
-              label="Sertifikat Pendidik"
-              placeholder="Pilih Status"
-              isSelect
-              options={[
-                { label: "Ada", value: "ada" },
-                { label: "Tidak Ada", value: "tidak_ada" },
-              ]}
-            />
-            <InputField
-              label="Jenjang Mengajar"
-              placeholder="Pilih Jenjang Mengajar"
-              isSelect
-              options={[
-                { label: "SD", value: "sd" },
-                { label: "SMP", value: "smp" },
-                { label: "SMA", value: "sma" },
-              ]}
-            />
-            <InputField
-              label="Mata Pelajaran"
-              placeholder="Pilih Mata Pelajaran"
-              isSelect
-              options={[
-                { label: "Matematika", value: "matematika" },
-                { label: "Bahasa Indonesia", value: "bahasa_indonesia" },
-                { label: "IPA", value: "ipa" },
-              ]}
-            />
-          </div>
-
-          <WarningMessage message="Pada pendaftaran akun ini kamu boleh langsung melewati proses pengisian data pekerjaan" />
-        </FormSection>
-
-        <SubmitButton disabled={false}>Verifikasi</SubmitButton>
-      </div>
-    </div>
-  );
-};
-
-export default VerificationForm;
+// #endregion

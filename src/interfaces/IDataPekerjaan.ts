@@ -5,7 +5,7 @@ export interface IDataPekerjaan {
   name: string;
   address: string;
   employee_status: string;
-  educator_certificate: boolean;
+  educator_certificate?: boolean;
   grade: string;
   study_subjects: string;
 }
