@@ -7,7 +7,7 @@ import warningIcon from "@/../public/icon/warning.png";
 import { useFormPekerjaanStore } from "@/store/use-data-pekerjaan-store";
 import clsx from "clsx";
 import { useGetRegionStore } from "@/store/use-get-region-store";
-import { useRegistrationStepStore } from "@/store/use-registration-step-store";
+
 // #endregion
 
 // ANCHOR: types definitions
@@ -83,9 +83,12 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   placeholder = "",
   className = "",
 }) => (
-  <div className={`relative w-full ${className}`}>
+  <div className={`relative w-full`}>
     <select
-      className="flex h-10 w-full appearance-none items-center rounded-lg border border-gray-300 bg-white px-4 pr-10 text-xs text-gray-400"
+      className={clsx(
+        "flex h-10 w-full appearance-none items-center rounded-lg border border-gray-300 bg-white px-4 pr-10 text-xs text-gray-400",
+        className,
+      )}
       value={typeof value === "string" ? value : ""}
       onChange={onChange}
     >
@@ -112,6 +115,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   </div>
 );
 
+// Helper untuk style non-empty state
+const inputNonEmptyClass =
+  "border-blue-500 text-primary bg-white outline outline-1 outline-[#919191] outline-offset-[-1px]";
+
 // ANCHOR: main-component
 // #region main-component
 const Main: React.FC = () => {
@@ -133,7 +140,9 @@ const Main: React.FC = () => {
     fetchKecamatan,
     fetchKelurahan,
   } = useGetRegionStore();
-  const { formData, setFormData, handleSubmit } = useFormPekerjaanStore();
+
+  const { formData, setFormData, handleSubmit, isFormIncomplete } =
+    useFormPekerjaanStore();
 
   React.useEffect(() => {
     fetchProvinces();
@@ -216,7 +225,10 @@ const Main: React.FC = () => {
               id="name"
               value={formData.name || ""}
               onChange={handleInputChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700"
+              className={clsx(
+                "w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700",
+                formData.name && inputNonEmptyClass,
+              )}
               placeholder={PLACEHOLDERS.instansi}
               autoComplete="off"
             />
@@ -228,7 +240,7 @@ const Main: React.FC = () => {
             </label>
             <CustomSelect
               value={selectedProvince || ""}
-              onChange={(event) => {
+              onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
                 setSelectedProvince(event.target.value);
                 setSelectedKabupatenKota("");
                 setSelectedKecamatan("");
@@ -236,6 +248,7 @@ const Main: React.FC = () => {
               }}
               options={toOptions(provinces)}
               placeholder={PLACEHOLDERS.provinsi}
+              className={clsx(selectedProvince && inputNonEmptyClass)}
             />
           </div>
           {/* Kabupaten/Kota/Kota Administrasi Tempat Kerja */}
@@ -252,6 +265,7 @@ const Main: React.FC = () => {
               }}
               options={toOptions(kabupatenKota)}
               placeholder={PLACEHOLDERS.kabupaten}
+              className={clsx(selectedKabupatenKota && inputNonEmptyClass)}
             />
           </div>
           {/* Kecamatan/Cabang/Distrik Tempat Tugas */}
@@ -267,6 +281,7 @@ const Main: React.FC = () => {
               }}
               options={toOptions(kecamatan)}
               placeholder={PLACEHOLDERS.kecamatan}
+              className={clsx(selectedKecamatan && inputNonEmptyClass)}
             />
           </div>
           {/* Desa/Kelurahan */}
@@ -279,6 +294,7 @@ const Main: React.FC = () => {
               onChange={(event) => setSelectedKelurahan(event.target.value)}
               options={toOptions(kelurahan)}
               placeholder={PLACEHOLDERS.kelurahan}
+              className={clsx(selectedKelurahan && inputNonEmptyClass)}
             />
           </div>
           {/* Alamat Tempat Tugas */}
@@ -290,7 +306,10 @@ const Main: React.FC = () => {
               id="address"
               value={formData.address || ""}
               onChange={handleTextAreaInputChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700"
+              className={clsx(
+                "w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700",
+                inputNonEmptyClass,
+              )}
               placeholder={PLACEHOLDERS.alamat}
               autoComplete="off"
             />
@@ -308,6 +327,7 @@ const Main: React.FC = () => {
               }}
               options={pekerjaanOptions}
               placeholder={PLACEHOLDERS.pekerjaan}
+              className={clsx(formData.job_title && inputNonEmptyClass)}
             />
           </div>
           {/* Status Kepegawaian */}
@@ -323,6 +343,7 @@ const Main: React.FC = () => {
               }}
               options={statusKepegawaianOptions}
               placeholder={PLACEHOLDERS.status}
+              className={clsx(formData.employee_status && inputNonEmptyClass)}
             />
           </div>
           {/* Pangkat/Golongan */}
@@ -335,7 +356,10 @@ const Main: React.FC = () => {
               id="grade"
               value={formData.grade || ""}
               onChange={handleInputChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700"
+              className={clsx(
+                "w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700",
+                formData.grade && inputNonEmptyClass,
+              )}
               placeholder={PLACEHOLDERS.pangkat}
               autoComplete="off"
             />
@@ -360,6 +384,11 @@ const Main: React.FC = () => {
               }}
               options={sertifikatPendidikOptions}
               placeholder={PLACEHOLDERS.sertifikat}
+              className={
+                formData.educator_certificate === undefined
+                  ? ""
+                  : inputNonEmptyClass
+              }
             />
           </div>
           {/* Jenjang Mengajar */}
@@ -375,6 +404,7 @@ const Main: React.FC = () => {
               }}
               options={jenjangMengajarOptions}
               placeholder={PLACEHOLDERS.jenjang}
+              className={clsx(formData.stage && inputNonEmptyClass)}
             />
           </div>
           {/* Mata Pelajaran */}
@@ -387,83 +417,27 @@ const Main: React.FC = () => {
               id="study_subjects"
               value={formData.study_subjects || ""}
               onChange={handleInputChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700"
+              className={clsx(
+                "w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700",
+                formData.study_subjects && inputNonEmptyClass,
+              )}
               placeholder={PLACEHOLDERS.mapel}
               autoComplete="off"
             />
           </div>
         </div>
         <WarningMessage message="Pada pendaftaran akun ini kamu boleh langsung melewati proses pengisian data pekerjaan." />
-        <SubmitButton disabled={false}>Verifikasi</SubmitButton>
+        <SubmitButton disabled={isFormIncomplete()}>Verifikasi</SubmitButton>
       </form>
     </div>
   );
 };
-
-// Helper Components
-const InputText = ({
-  id,
-  label,
-  placeholder,
-  value,
-  onChange,
-}: {
-  id: string;
-  label: string;
-  placeholder: string;
-  value?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) => (
-  <div>
-    <label className="mb-1 block text-xs text-black">{label}</label>
-    <input
-      type="text"
-      id={id}
-      value={value || ""}
-      onChange={onChange}
-      className="w-full rounded-lg border border-gray-300 px-4 py-2 text-xs text-gray-700"
-      placeholder={placeholder}
-      autoComplete="off"
-    />
-  </div>
-);
-
-const SelectInput = ({
-  label,
-  value,
-  placeholder,
-  options,
-  onChange,
-}: {
-  label: string;
-  value?: string;
-  placeholder: string;
-  options: { label: string; value: string }[];
-  onChange: (val: string) => void;
-}) => (
-  <div>
-    <label className="mb-1 block text-xs text-black">{label}</label>
-    <CustomSelect
-      value={value ?? ""}
-      onChange={(e) => onChange(e.target.value)}
-      options={options}
-      placeholder={placeholder}
-      className={clsx(
-        "w-full rounded-lg border px-4 py-2 text-xs",
-        value
-          ? "border-blue-500 text-blue-600"
-          : "border-gray-300 text-gray-400",
-      )}
-    />
-  </div>
-);
 
 export default Main;
 // #endregion
 
 // ANCHOR: internal-components
 // #region internal-components
-
 const InputField: React.FC<InputFieldProps> = ({
   label,
   placeholder,

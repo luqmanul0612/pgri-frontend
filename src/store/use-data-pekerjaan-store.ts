@@ -10,6 +10,7 @@ interface FormPekerjaanState {
   formData: IDataPekerjaan;
   setFormData: (data: Partial<IDataPekerjaan>) => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  isFormIncomplete: () => boolean;
 }
 
 export const useFormPekerjaanStore = create<FormPekerjaanState>()(
@@ -32,35 +33,51 @@ export const useFormPekerjaanStore = create<FormPekerjaanState>()(
         const { formData } = get();
         const { setStep } = useRegistrationStepStore.getState();
 
-        Object.entries(formData).map((item) => {
+        let incomplete = false;
+        Object.entries(formData).forEach((item) => {
           if (
             (!item[1] && item[0] != "educator_certificate") ||
             (item[1] === undefined && item[0] == "educator_certificate")
           ) {
             toast.error(`Anda belum mengisi data: ${item[0]}`);
-            return;
+            incomplete = true;
           }
         });
+        if (incomplete) return;
 
+        const toastId = toast.loading("Menyimpan data...");
         try {
           const response = await submitDataPekerjaan(formData);
           console.log({ response });
           if (response && response.success) {
-            toast.success("Berhasil simpan data");
+            toast.success("Berhasil simpan data", { id: toastId });
             setStep(4);
           } else if (response?.status === 401) {
-            toast.error("Unauthorized: Silakan login kembali.");
+            toast.error("Unauthorized: Silakan login kembali.", {
+              id: toastId,
+            });
           } else if (response?.status === 400) {
             toast.error(
               response?.error?.message || "Bad Request: Data tidak valid.",
+              { id: toastId },
             );
           } else {
-            toast.error(response?.error?.message || "Gagal simpan data");
+            toast.error(response?.error?.message || "Gagal simpan data", {
+              id: toastId,
+            });
           }
         } catch (error) {
           console.error("error saat kirim data", error);
-          toast.error("Terjadi kesalahan saat mengirim data");
+          toast.error("Terjadi kesalahan saat mengirim data", { id: toastId });
         }
+      },
+      isFormIncomplete: () => {
+        const { formData } = get();
+        return Object.entries(formData).some(
+          ([key, value]) =>
+            (key !== "educator_certificate" && !value) ||
+            (key === "educator_certificate" && value === undefined),
+        );
       },
     }),
     {
