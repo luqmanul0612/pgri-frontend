@@ -142,7 +142,7 @@ export const RightSection: FC<RightSectionProps> = () => {
             onClick={() => router.push("/register")}
             className="cursor-pointer text-[#17A3B8]"
           >
-            Daftar disini
+            Daftar di sini
           </span>
         </p>
       </form>

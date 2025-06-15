@@ -136,7 +136,7 @@ const Page: FC<pageProps> = ({ params: {} }) => {
             <div className="flex flex-col justify-between">
               <div>
                 <h1 className="mb-4 text-2xl font-bold text-primary">
-                  Rp. 1.500.000
+                  Rp1.500.000
                 </h1>
                 <h4>Pelatihan Kabupaten/Kota</h4>
                 <h4>Pelatihan Provinsi</h4>
