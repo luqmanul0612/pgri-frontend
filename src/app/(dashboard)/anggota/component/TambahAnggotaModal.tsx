@@ -34,7 +34,7 @@ const TambahAnggotaModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         </div>
         <div className="rounded-xl border border-primary flex flex-col justify-center items-center p-4 mb-4 hover:opacity-70 transition-all duration-300 cursor-pointer">
           <UploadGraySVG/>
-          <div className="text-xs mt-4">Tarik & Masukan file Excel untuk di Upload</div>
+          <div className="text-xs mt-4">Tarik & Masukkan file Excel untuk di Upload</div>
         </div>
 
         <div 

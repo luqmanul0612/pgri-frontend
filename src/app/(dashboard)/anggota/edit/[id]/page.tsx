@@ -791,7 +791,7 @@ const EditAnggota: React.FC<pageProps> = () => {
                       return { ...v, address: e.target.value }
                     })
                   }}
-                  placeholder={'Masukan Tempat Tugas'}
+                  placeholder={'Masukkan Tempat Tugas'}
                   className={clsx(
                     "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
                     formData.namaIntasiTempatTugas ? "border-[#17a3b8]/20" : "border-gray-300",

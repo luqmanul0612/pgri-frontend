@@ -112,7 +112,7 @@ const AddPelatihan: React.FC<IAddPelatihan> = () => {
             <img className={"w-1/2 rounded-2xl"} src={previewFile ?? "/assets/default-image.png" } />
           </div>
           <div className={"mb-4"}>
-            <FormField label={"Unggah Benner Pelatihan"}>
+            <FormField label={"Unggah Banner Pelatihan"}>
               <div className={clsx(
                 "flex items-center gap-2.5 rounded-2xl text-[#17a3b8] border relative w-full py-2.5 px-4",
                 errors.tanggalPelatihan ? "border-[#17a3b8]/20" : "border-gray-300"
@@ -120,7 +120,7 @@ const AddPelatihan: React.FC<IAddPelatihan> = () => {
                 { selectedName ? (
                   <p className={'text-sm'}>{ selectedName }</p>
                 ) : (
-                  <p className={'text-sm text-gray-300'}>Masukan Benner Pelatihan</p>
+                  <p className={'text-sm text-gray-300'}>Masukkan Banner Pelatihan</p>
                 ) }
                 <Input
                   type={"file"}
@@ -167,7 +167,7 @@ const AddPelatihan: React.FC<IAddPelatihan> = () => {
                 <Input
                     {...register("biayaPelatihan")}
                     type={"text"}
-                    placeholder={"Masukan Biaya Pelatihan"}
+                    placeholder={"Masukkan Biaya Pelatihan"}
                     className={clsx(
                       "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
                       errors.biayaPelatihan ? "border-[#17a3b8]/20" : "border-gray-300"
@@ -178,7 +178,7 @@ const AddPelatihan: React.FC<IAddPelatihan> = () => {
                 <FormField label={"Judul Pelatihan"}>
                   <Input
                     {...register("judulPelatihan")}
-                    type={"text"} placeholder={"Masukan Judul Pelatihan"}
+                    type={"text"} placeholder={"Masukkan Judul Pelatihan"}
                     className={clsx(
                       "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
                       errors.judulPelatihan ? "border-[#17a3b8]/20" : "border-gray-300"
@@ -299,7 +299,7 @@ const AddPelatihan: React.FC<IAddPelatihan> = () => {
           <FormField label={"Deskripsi"}>
             <textarea
               className={"border border-primary border-opacity-20 rounded-2xl py-3 pl-4"}
-              placeholder={"Masukan Deskripsi"}
+              placeholder={"Masukkan Deskripsi"}
             />
           </FormField>
           <div className={"flex mt-6 gap-6 justify-end"}>

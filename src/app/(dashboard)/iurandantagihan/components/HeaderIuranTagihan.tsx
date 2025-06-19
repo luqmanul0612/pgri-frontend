@@ -8,13 +8,13 @@ const HeaderIuranTagihan: React.FC<any> = (props: any) => {
       <div className='p-4 flex flex-col rounded-2xl border border-custom-aqua bg-white gap-3'>
         <div className=''>
           <div className='text-primary text-[16px] font-semibold'>Total Iuran Anggota PGRI</div>
-          <div className='text-[42px] text-primary font-bold'>Rp 80.000.000</div>
+          <div className='text-[42px] text-primary font-bold'>Rp80.000.000</div>
         </div>
 
         <div className={"grid grid-cols-6 gap-4"}>
           <div className={"border border-custom-aqua bg-white gap-3 rounded-2xl py-6 px-6 flex flex-col"}>
             <div className="flex justify-between">
-              <div className="text-lg font-semibold text-primary">Rp 80.000.000</div>
+              <div className="text-lg font-semibold text-primary">Rp80.000.000</div>
               <div>
                 <IconHandSVG />
               </div>
@@ -28,7 +28,7 @@ const HeaderIuranTagihan: React.FC<any> = (props: any) => {
 
           <div className={"border border-custom-aqua bg-white gap-3 rounded-2xl py-6 px-6 flex flex-col"}>
             <div className="flex justify-between">
-              <div className="text-lg font-semibold text-primary">Rp 80.000.000</div>
+              <div className="text-lg font-semibold text-primary">Rp80.000.000</div>
               <div>
                 <IconHandSVG />
               </div>
@@ -42,7 +42,7 @@ const HeaderIuranTagihan: React.FC<any> = (props: any) => {
 
           <div className={"border border-custom-aqua bg-white gap-3 rounded-2xl py-6 px-6 flex flex-col"}>
             <div className="flex justify-between">
-              <div className="text-lg font-semibold text-primary">Rp 80.000.000</div>
+              <div className="text-lg font-semibold text-primary">Rp80.000.000</div>
               <div>
                 <IconHandSVG />
               </div>
@@ -56,7 +56,7 @@ const HeaderIuranTagihan: React.FC<any> = (props: any) => {
 
           <div className={"border border-custom-aqua bg-white gap-3 rounded-2xl py-6 px-6 flex flex-col"}>
             <div className="flex justify-between">
-              <div className="text-lg font-semibold text-primary">Rp 80.000.000</div>
+              <div className="text-lg font-semibold text-primary">Rp80.000.000</div>
               <div>
                 <IconHandSVG />
               </div>

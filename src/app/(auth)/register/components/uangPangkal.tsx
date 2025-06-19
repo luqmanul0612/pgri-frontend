@@ -36,8 +36,8 @@ const UangPangkal = () => {
       <div className="flex items-center rounded-lg bg-[#ff0000]/10 p-2.5">
         <Danger />
         <p className="ml-2.5 text-xs font-normal text-[#ff0000]">
-          Pastikan anda mengisi semua form, jika terdapat form isian pendaftaran
-          yang terlewatkan maka anda tidak dapat menekan tombol Selanjutnya!
+          Pastikan Anda mengisi semua form, jika terdapat form isian pendaftaran
+          yang terlewatkan maka Anda tidak dapat menekan tombol Selanjutnya!
         </p>
       </div>
 
