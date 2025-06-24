@@ -3,8 +3,15 @@ import Card from "@/app/components/Card";
 import SelectField from "@/app/components/SelectField";
 import { Button } from "@/components/ui/button";
 import React, { ChangeEvent, FC, useEffect, useState } from "react";
-import { getCity, getDistrict, getProvinces } from "@/app/(dashboard)/anggota/serverActions/member";
-import { IAdministrativeRegions, IAdministrativeRegionValue } from "@/interfaces/IAdministrativeRegions";
+import {
+  getCity,
+  getDistrict,
+  getProvinces,
+} from "@/app/(dashboard)/anggota/serverActions/member";
+import {
+  IAdministrativeRegions,
+  IAdministrativeRegionValue,
+} from "@/interfaces/IAdministrativeRegions";
 import { EmployeeType } from "@/enum/EmployeeType";
 
 interface FilterProps {
@@ -16,12 +23,16 @@ export const Filter: FC<FilterProps> = ({ filterRegions }) => {
     provinsi: null,
     kota: null,
     kecamatan: null,
-    status: null
+    status: null,
   });
 
-  const [listProvinces, setListProvinces] = useState<IAdministrativeRegionValue[]>([]);
+  const [listProvinces, setListProvinces] = useState<
+    IAdministrativeRegionValue[]
+  >([]);
   const [listCity, setListCity] = useState<IAdministrativeRegionValue[]>([]);
-  const [listDistrict, setListDistrict] = useState<IAdministrativeRegionValue[]>([])
+  const [listDistrict, setListDistrict] = useState<
+    IAdministrativeRegionValue[]
+  >([]);
   const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const { value, id } = e.target;
     setFormData((prevFormData) => ({
@@ -30,52 +41,54 @@ export const Filter: FC<FilterProps> = ({ filterRegions }) => {
     }));
   };
 
-  const ListEmployeeStatus : IAdministrativeRegionValue[] = Object.values(EmployeeType).map((type) => ({
+  const ListEmployeeStatus: IAdministrativeRegionValue[] = Object.values(
+    EmployeeType,
+  ).map((type) => ({
     label: type,
     value: type,
-  }))
+  }));
 
   useEffect(() => {
     (async () => {
       const getDataProvinces = await getProvinces();
-      const getDataMapping : any = getDataProvinces.data.map(item => ({
+      const getDataMapping: any = getDataProvinces.data.map((item) => ({
         value: item.code,
         label: item.name,
-      }))
-      setListProvinces(getDataMapping)
-    })()
+      }));
+      setListProvinces(getDataMapping);
+    })();
   }, []);
 
   useEffect(() => {
     (async () => {
-     if (formData.provinsi) {
-       const getDataCity = await getCity(formData.provinsi);
-       const getDataMapping: any = getDataCity.data.map(item => ({
-         value: item.code,
-         label: item.name,
-       }));
-       setListCity(getDataMapping);
-     }
-    })()
+      if (formData.provinsi) {
+        const getDataCity = await getCity(formData.provinsi);
+        const getDataMapping: any = getDataCity.data.map((item) => ({
+          value: item.code,
+          label: item.name,
+        }));
+        setListCity(getDataMapping);
+      }
+    })();
   }, [formData.provinsi]);
 
   useEffect(() => {
     (async () => {
       if (formData.kota) {
         const getDataDistrict = await getDistrict(formData.kota);
-        const getDataMapping: any = getDataDistrict.data.map(item => ({
+        const getDataMapping: any = getDataDistrict.data.map((item) => ({
           value: item.code,
-          label: item.name
+          label: item.name,
         }));
-        setListDistrict(getDataMapping)
+        setListDistrict(getDataMapping);
       }
-    } )()
+    })();
   }, [formData.kota]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     filterRegions(formData);
-  }
+  };
 
   return (
     <Card className="p-4">
@@ -85,7 +98,7 @@ export const Filter: FC<FilterProps> = ({ filterRegions }) => {
             <SelectField
               id="provinsi"
               label="Provinsi"
-              value={formData.provinsi}
+              value={formData.provinsi || ""}
               onChange={handleSelectChange}
               options={listProvinces}
               placeholder="Pilih Provinsi"
@@ -96,7 +109,7 @@ export const Filter: FC<FilterProps> = ({ filterRegions }) => {
             <SelectField
               id="kota"
               label="Kab/Kota"
-              value={formData.kota}
+              value={formData.kota || ""}
               onChange={handleSelectChange}
               disabled={!formData.provinsi}
               options={listCity}
@@ -108,7 +121,7 @@ export const Filter: FC<FilterProps> = ({ filterRegions }) => {
             <SelectField
               id="kecamatan"
               label="Kecamatan"
-              value={formData.kecamatan}
+              value={formData.kecamatan || ""}
               disabled={!formData.kota}
               onChange={handleSelectChange}
               options={listDistrict}
@@ -120,7 +133,7 @@ export const Filter: FC<FilterProps> = ({ filterRegions }) => {
             <SelectField
               id="status"
               label="Status Pegawai"
-              value={formData.status}
+              value={formData.status || ""}
               onChange={handleSelectChange}
               options={ListEmployeeStatus}
               placeholder="Pilih Status Pegawai"

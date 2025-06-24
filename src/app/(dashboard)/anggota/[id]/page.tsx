@@ -10,6 +10,7 @@ import { IoIosCloseCircle } from "react-icons/io";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import VerifikasiModal from "../component/VerifikasiModal";
 import TolakModal from "../component/TolakModal";
+import { userAccess } from "@/lib/utils";
 
 interface pageProps {
   params: {
@@ -370,24 +371,26 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
       </TabGroup>
 
       {/* button verify */}
-      <div className="mt-5 flex space-x-4">
-        <button
-          onClick={() => {
-            setIsModalVerifikasiOpen(true);
-          }}
-          className="w-[250px] rounded-xl border border-primary px-4 py-3 text-sm text-primary"
-        >
-          Verifikasi
-        </button>
-        <button
-          onClick={() => {
-            setIsModalTolakOpen(true);
-          }}
-          className="w-[250px] rounded-xl bg-red-500 px-4 py-3 text-sm text-white"
-        >
-          Tolak
-        </button>
-      </div>
+      {userAccess()?.levelId === 1 && (
+        <div className="mt-5 flex space-x-4">
+          <button
+            onClick={() => {
+              setIsModalVerifikasiOpen(true);
+            }}
+            className="w-[250px] rounded-xl border border-primary px-4 py-3 text-sm text-primary"
+          >
+            Verifikasi
+          </button>
+          <button
+            onClick={() => {
+              setIsModalTolakOpen(true);
+            }}
+            className="w-[250px] rounded-xl bg-red-500 px-4 py-3 text-sm text-white"
+          >
+            Tolak
+          </button>
+        </div>
+      )}
       {memberData && (
         <VerifikasiModal
           isOpen={isModalVerifikasiOpen}
@@ -395,15 +398,13 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
           data={memberData}
         />
       )}
-      {
-        memberData && (
-          <TolakModal
+      {memberData && (
+        <TolakModal
           isOpen={isModalTolakOpen}
-          onClose={()=> setIsModalTolakOpen(false)}
+          onClose={() => setIsModalTolakOpen(false)}
           data={memberData}
-          />
-        )
-      }
+        />
+      )}
     </div>
   );
 };

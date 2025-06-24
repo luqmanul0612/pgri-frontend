@@ -46,7 +46,12 @@ const columns: Column<IMember>[] = [
     Cell: (row) => row.row.index + 1,
   },
   { Header: "Nama Anggota", accessor: "name" },
-  { Header: "NPA", accessor: "npa_number" },
+  {
+    Header: "NPA",
+    accessor: "npa_number",
+    Cell: ({ row, value }) =>
+      value ? (row.original.status === 1 ? value : "***") : "-",
+  },
   { Header: "NIK", accessor: "nik" },
   { Header: "Tempat Lahir", accessor: "birth_place" },
   { Header: "Tanggal Lahir", accessor: "dob" },

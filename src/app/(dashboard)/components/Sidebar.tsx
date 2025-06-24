@@ -1,5 +1,5 @@
 "use client";
-import { FC } from "react";
+import { FC, MouseEvent, MouseEventHandler } from "react";
 import { IoIosArrowForward } from "react-icons/io";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,6 +20,8 @@ import { Bahasa } from "../../../../public/icon/sidebarIcon/Bahasa";
 import { Logout } from "../../../../public/icon/sidebarIcon/Logout";
 import { cookies } from "next/headers";
 import { logout } from "./action";
+import { userAccess } from "@/lib/utils";
+import useModalNotVerified from "@/store/use-modal-not-verified";
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -30,6 +32,7 @@ const menus: {
   Icon: FC;
   title: string;
   href: string;
+  verify?: boolean;
 }[] = [
   {
     title: "Dashboard",
@@ -40,6 +43,7 @@ const menus: {
     title: "Anggota",
     href: "/anggota",
     Icon: Anggota,
+    verify: true,
   },
   {
     title: "Permohonan",
@@ -140,6 +144,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             Icon={item.Icon}
             href={item.href}
             isSidebarOpen={isSidebarOpen}
+            verify={item.verify}
           />
         ))}
         {utilityMenus.map((item, i) => (
@@ -163,6 +168,7 @@ interface MenuProps {
   href?: string;
   isSidebarOpen: boolean;
   onClick?: () => void;
+  verify?: boolean;
 }
 
 export const MenuItem: FC<MenuProps> = ({
@@ -171,12 +177,24 @@ export const MenuItem: FC<MenuProps> = ({
   href,
   isSidebarOpen,
   onClick,
+  verify,
 }) => {
   const pathname = usePathname();
+  const { setShowModalNotVerified } = useModalNotVerified();
 
   const isActive = (href: string) => pathname === href;
+  const onClickLink: MouseEventHandler<HTMLAnchorElement> = (e) => {
+    const access = userAccess();
+    if (verify) {
+      if (!access?.isVerified) {
+        e.preventDefault();
+        setShowModalNotVerified(true);
+        return;
+      }
+    }
+  };
   return href ? (
-    <Link href={href}>
+    <Link href={href} onClick={onClickLink}>
       <div
         className={`flex items-center gap-4 pl-[20px] opacity-100 transition-all duration-300 ${isActive(href) ? "text-[#17A2B8]" : ""}`}
       >

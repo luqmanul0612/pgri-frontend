@@ -1121,7 +1121,7 @@ const EditAnggota: React.FC<pageProps> = () => {
               <div className={"flex w-1/2 flex-col gap-6"}>
                 <div className={"flex gap-4"}>
                   <div className={"w-4/12"}>
-                    <Image
+                    <img
                       className={
                         "h-[223px] overflow-hidden rounded-2xl object-cover"
                       }
@@ -1133,7 +1133,7 @@ const EditAnggota: React.FC<pageProps> = () => {
                     />
                   </div>
                   <div className={"w-8/12"}>
-                    <Image
+                    <img
                       className={
                         "h-[223px] w-full overflow-hidden rounded-2xl object-cover"
                       }
