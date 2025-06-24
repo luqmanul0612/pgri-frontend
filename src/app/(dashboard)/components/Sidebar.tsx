@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { Setting } from "../../../../public/icon/sidebarIcon/Setting";
 import { Bahasa } from "../../../../public/icon/sidebarIcon/Bahasa";
 import { Logout } from "../../../../public/icon/sidebarIcon/Logout";
+import { cookies } from "next/headers";
+import { logout } from "./action";
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -83,12 +85,13 @@ const menus: {
     title: "Role",
     href: "/role",
     Icon: MutasiAnggota,
-  }
+  },
 ];
 
 const utilityMenus: {
   Icon: FC;
   title: string;
+  onClick?: () => void;
 }[] = [
   {
     Icon: Setting,
@@ -101,6 +104,9 @@ const utilityMenus: {
   {
     Icon: Logout,
     title: "Keluar",
+    onClick: async () => {
+      await logout();
+    },
   },
 ];
 
@@ -110,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   return (
     <div
-      className={`fixed h-screen bg-[#17191C] text-white transition-all duration-500 z-10 ${isSidebarOpen ? "w-[247px]" : "w-[63px]"}`}
+      className={`fixed z-10 h-screen bg-[#17191C] text-white transition-all duration-500 ${isSidebarOpen ? "w-[247px]" : "w-[63px]"}`}
     >
       <div className="flex h-[80px] items-center gap-4 pl-3 opacity-100 transition-all duration-300">
         <Image src={"/logo/logo.png"} alt="logo" width={40} height={40} />
@@ -142,6 +148,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             title={item.title}
             Icon={item.Icon}
             isSidebarOpen={isSidebarOpen}
+            onClick={item.onClick}
           />
         ))}
       </div>
@@ -155,6 +162,7 @@ interface MenuProps {
   title: string;
   href?: string;
   isSidebarOpen: boolean;
+  onClick?: () => void;
 }
 
 export const MenuItem: FC<MenuProps> = ({
@@ -162,6 +170,7 @@ export const MenuItem: FC<MenuProps> = ({
   title,
   href,
   isSidebarOpen,
+  onClick,
 }) => {
   const pathname = usePathname();
 
@@ -181,7 +190,8 @@ export const MenuItem: FC<MenuProps> = ({
     </Link>
   ) : (
     <div
-      className={`flex items-center gap-4 pl-[20px] opacity-100 transition-all duration-300`}
+      className={`flex cursor-pointer items-center gap-4 pl-[20px] opacity-100 transition-all duration-300`}
+      onClick={onClick}
     >
       <Icon />
       <span

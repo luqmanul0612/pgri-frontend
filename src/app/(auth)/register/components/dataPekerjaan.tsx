@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { ChangeEvent, useEffect, useState } from "react";
 import Danger from "../../../../../public/assets/danger";

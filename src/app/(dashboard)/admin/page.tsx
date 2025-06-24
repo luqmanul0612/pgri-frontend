@@ -3,6 +3,14 @@
 import BannerSlider from "@/app/components/BannerSlider";
 import CardDashboard from "@/app/components/CardDashboard";
 import Image, { StaticImageData } from "next/image";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from "recharts";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdDashboard } from "react-icons/md";
@@ -18,9 +26,12 @@ import Cookies from "js-cookie";
 import dummyChartLine from "@/../public/dummy/dummy-chart-line.png";
 import dummyIconStat from "@/../public/icon/group-white.png";
 import { Filter } from "../components/Filter";
+import clsx from "clsx";
+import DashboardPieChart from "../../components/molecules/dashboard-pie-charts";
+import DashboardGrowthCard from "@/app/components/molecules/dashboard-growth-card";
 
 interface pageProps {
-  params: {};
+  params: Promise<{}>;
 }
 
 const Page: FC<pageProps> = ({ params: {} }) => {
@@ -29,6 +40,55 @@ const Page: FC<pageProps> = ({ params: {} }) => {
     { src: "/banner/banner1.png", alt: "Banner 2" },
     { src: "/banner/banner1.png", alt: "Banner 3" },
   ];
+
+  const registerGrowthData = [
+    { value: 100 },
+    { value: 200 },
+    { value: 150 },
+    { value: 250 },
+    { value: 180 },
+    { value: 300 },
+    { value: 230 },
+  ];
+
+  const asnGrowthData = [
+    { value: 100 },
+    { value: 200 },
+    { value: 150 },
+    { value: 250 },
+    { value: 180 },
+    { value: 300 },
+    { value: 230 },
+  ];
+
+  const nonAsnGrowthData = [
+    { value: 100 },
+    { value: 200 },
+    { value: 150 },
+    { value: 250 },
+    { value: 180 },
+    { value: 300 },
+    { value: 230 },
+    { value: 50 },
+  ];
+
+  const trainingData = [
+    { name: "Training A", value: 250 },
+    { name: "Training B", value: 850 },
+    { name: "Training C", value: 250 },
+    { name: "Training D", value: 50 },
+    { name: "Training E", value: 150 },
+  ];
+
+  const membershipData = [
+    { name: "Training A", value: 250 },
+    { name: "Training B", value: 850 },
+    { name: "Training C", value: 250 },
+    { name: "Training D", value: 50 },
+    { name: "Training E", value: 150 },
+  ];
+
+  const COLORS = ["#BF19B8", "#DC3545", "#007BFF", "#FFC107", "#0EC516"];
 
   useEffect(() => {
     const token = Cookies.get("token");
@@ -106,14 +166,7 @@ const Page: FC<pageProps> = ({ params: {} }) => {
                 Lihat Detail
               </Button>
             </div>
-            <div>
-              <img
-                src={"/dummy/dummy-chart-pie.png"}
-                alt="chart-pie"
-                width={200}
-                height={200}
-              />
-            </div>
+            <DashboardPieChart data={trainingData} colors={COLORS} />
           </div>
         </Card>
 
@@ -147,15 +200,7 @@ const Page: FC<pageProps> = ({ params: {} }) => {
                 Lihat Detail
               </Button>
             </div>
-            <div>
-              <img
-                src={"/dummy/dummy-chart-pie.png"}
-                alt="chart-pie"
-                width={200}
-                height={200}
-                // fill
-              />
-            </div>
+            <DashboardPieChart data={membershipData} colors={COLORS} />
           </div>
         </Card>
       </div>
@@ -207,19 +252,16 @@ const Page: FC<pageProps> = ({ params: {} }) => {
         {/* ending statistik */}
 
         <div className="flex w-[70%] gap-5">
-          <PertumbuhanStat
-            icon={dummyIconStat}
-            iconStat={dummyChartLine}
+          <DashboardGrowthCard
+            data={registerGrowthData}
             title="Total Pendaftar"
           />
-          <PertumbuhanStat
-            icon={dummyIconStat}
-            iconStat={dummyChartLine}
-            title="Total Guru ASN"
+          <DashboardGrowthCard
+            data={asnGrowthData}
+            title="Total Guru ASN (PNS & PPPK)"
           />
-          <PertumbuhanStat
-            icon={dummyIconStat}
-            iconStat={dummyChartLine}
+          <DashboardGrowthCard
+            data={nonAsnGrowthData}
             title="Total Guru Non ASN"
           />
         </div>
@@ -230,35 +272,3 @@ const Page: FC<pageProps> = ({ params: {} }) => {
 };
 
 export default Page;
-
-interface props {
-  icon: StaticImageData;
-  title: string;
-  iconStat: StaticImageData;
-}
-
-const PertumbuhanStat: FC<props> = ({}) => {
-  return (
-    <Card className="w-full">
-      <div className="flex flex-col items-center justify-center rounded-t-xl bg-primary py-5">
-        <img
-          src={"/icon/group-white.png"}
-          alt="grup"
-          height={44}
-          width={44}
-          // priority
-          className="h-[44px] w-[44px]"
-          // fill
-        />
-        <h2 className="text-white">Total Pendaftar</h2>
-      </div>
-      <div className="py-4">
-        <p className="text-center text-lg font-bold text-[#17a2b8]">334.850</p>
-        {/* <img src={dummyChartLine} alt="chart-line" layout="responsive"/> */}
-        <div className="-mt-4 text-center text-xs font-normal text-[#0ec516]">
-          +12% selama 28 hari
-        </div>
-      </div>
-    </Card>
-  );
-};

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @next/next/no-img-element */
 import FormModal from "@/components/modal/FormModal";
 import React, { useState } from "react";
