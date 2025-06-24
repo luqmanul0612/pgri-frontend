@@ -59,7 +59,7 @@ export default page;
 // ANCHOR: Internal components
 // #region Internal components
 
-export const UserProfile = ({}) => {
+const UserProfile = () => {
   return (
     <div className="mt-2 flex flex-col gap-2">
       <h2 className="text-sm font-bold text-[#17191c]">Informasi Anggota</h2>

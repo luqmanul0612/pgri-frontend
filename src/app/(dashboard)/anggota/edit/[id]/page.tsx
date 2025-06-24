@@ -1153,7 +1153,7 @@ const EditAnggota: React.FC<pageProps> = () => {
         <div className={"flex justify-between mt-4"}>
           <div className={"flex items-center flex-row gap-2.5"}>
             <input
-              value={checkBoxAgree}
+              checked={checkBoxAgree}
               onChange={(e) => {
                 setCheckBoxAgree(e.target.checked);
               }}

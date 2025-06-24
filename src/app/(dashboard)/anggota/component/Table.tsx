@@ -150,7 +150,7 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
   const [loading, setLoading] = useState(true);
   const [countMale, setCountMale] = useState<number>(0);
   const [countFemale, setCountFemale] = useState<number>(0);
-  const printRef = useRef();
+  const printRef = useRef<HTMLDivElement | null>(null);
   const [filterGender, setFilterGender] = useState<string>('');
   const defaultFilterMale: string = 'laki-laki';
   const defaultFilterFemale: string = 'perempuan';
@@ -190,6 +190,7 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
 
   const handlePrintPDF = async () => {
     const el = printRef.current;
+    if (!el) return;
     const canvas = await html2canvas(el);
     const data = canvas.toDataURL("image/png");
 

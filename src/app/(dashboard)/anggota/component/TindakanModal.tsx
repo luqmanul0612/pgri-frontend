@@ -46,7 +46,7 @@ const TindakanModal: React.FC<ModalProps> = ({ isOpen, onClose, row }) => {
           Apakah kamu ingin menon-aktifkan Anggota dibawah ini?
         </div>
         <div className="mb-2 text-center text-sm font-bold text-[#ff0000]">
-       "{row.original.name}"
+          &quot;{row.original.name}&quot;
         </div>
 
         <div className="flex flex-col space-y-2">
