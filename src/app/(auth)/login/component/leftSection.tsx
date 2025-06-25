@@ -1,6 +1,6 @@
 import { FC } from "react";
 import Image from "next/image";
-import ilustrasi from "../../../../../public/assets/ilustrasi.png";
+import ilustrasi from "../../../../../public/assets/login-slider-illustration.webp";
 
 interface LeftSectionProps {}
 

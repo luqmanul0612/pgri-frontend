@@ -14,10 +14,15 @@ const InvalidVerificationModal: React.FC<ModalProps> = ({
   onClose,
 }) => {
   return (
-    <FormModal isOpen={isOpen} onClose={onClose} maxWidth="max-w-[350px]">
+    <FormModal isOpen={isOpen} onClose={onClose} maxWidth="max-w-[500px]">
       <div className="flex w-full flex-col items-center justify-center p-3 pt-5">
-        <Warning className="text-yellow-500 w-[50px] mb-3" />
-        <p className="mb-4 text-base font-semibold">Akun belum diverifikasi</p>
+        <Warning className="mb-3 w-[80px] text-yellow-500" />
+        <p className="mb-2 text-xl font-semibold">Akun belum terverifikasi</p>
+        <p className="mb-4 text-center text-sm text-slate-700">
+          Segera lengkapi data pekerjaan dan pembayaran uang pangkal untuk
+          mengakses seluruh fitur. Verifikasi kelengkapan dapat dilakukan
+          melalui aplikasi KTA PGRI versi web maupun mobile.
+        </p>
         <button
           className={
             "flex w-full items-center justify-center rounded-2xl bg-[#17a3b8] py-4 text-sm text-white"
