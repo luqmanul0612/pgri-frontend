@@ -1,46 +1,57 @@
+import { FC } from "react";
 import { colorOff, colorOn } from "./color";
 
-import { FC } from "react";
-
-interface PelatihanProps {
+interface CetakKtaProps {
   on?: boolean;
 }
 
-export const Pelatihan: FC<PelatihanProps> = ({ on }) => {
+export const CetakKta: FC<CetakKtaProps> = ({ on }) => {
   return (
     <svg
-      width="24"
-      height="24"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="shrink-0"
     >
       <path
-        d="M22 16.7399V4.66994C22 3.46994 21.02 2.57994 19.83 2.67994H19.77C17.67 2.85994 14.48 3.92994 12.7 5.04994L12.53 5.15994C12.24 5.33994 11.76 5.33994 11.47 5.15994L11.22 5.00994C9.44 3.89994 6.26 2.83994 4.16 2.66994C2.97 2.56994 2 3.46994 2 4.65994V16.7399C2 17.6999 2.78 18.5999 3.74 18.7199L4.03 18.7599C6.2 19.0499 9.55 20.1499 11.47 21.1999L11.51 21.2199C11.78 21.3699 12.21 21.3699 12.47 21.2199C14.39 20.1599 17.75 19.0499 19.93 18.7599L20.26 18.7199C21.22 18.5999 22 17.6999 22 16.7399Z"
+        d="M7.25 7H16.75V5C16.75 3 16 2 13.75 2H10.25C8 2 7.25 3 7.25 5V7Z"
         stroke={on ? colorOn : colorOff}
         strokeWidth="2"
+        strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
-        d="M12 5.48999V20.49"
+        d="M16 15V19C16 21 15 22 13 22H11C9 22 8 21 8 19V15H16Z"
         stroke={on ? colorOn : colorOff}
         strokeWidth="2"
+        strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
-        d="M7.75 8.48999H5.5"
+        d="M21 10V15C21 17 20 18 18 18H16V15H8V18H6C4 18 3 17 3 15V10C3 8 4 7 6 7H18C20 7 21 8 21 10Z"
         stroke={on ? colorOn : colorOff}
         strokeWidth="2"
+        strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
-        d="M8.5 11.49H5.5"
+        d="M17 15H15.79H7"
         stroke={on ? colorOn : colorOff}
         strokeWidth="2"
+        strokeMiterlimit="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M7 11H10"
+        stroke={on ? colorOn : colorOff}
+        strokeWidth="2"
+        strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

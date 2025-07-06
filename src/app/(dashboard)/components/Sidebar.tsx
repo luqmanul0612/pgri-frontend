@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Setting } from "../../../../public/icon/sidebarIcon/Setting";
 import { Bahasa } from "../../../../public/icon/sidebarIcon/Bahasa";
 import { Logout } from "../../../../public/icon/sidebarIcon/Logout";
+import { CetakKta } from "../../../../public/icon/sidebarIcon/CetakKta";
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -83,6 +84,11 @@ const menus: {
     title: "Role",
     href: "/role",
     Icon: MutasiAnggota,
+  },
+  {
+    title: "Cetak KTA",
+    href: "/cetak-kta",
+    Icon: CetakKta,
   }
 ];
 
