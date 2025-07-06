@@ -2,8 +2,6 @@
 "use client";
 import React, { useEffect, useState, Fragment, useRef } from "react";
 import { useTable, Column } from "react-table";
-import ReactPaginate from "react-paginate";
-import Image from "next/image";
 import Card from "@/app/components/Card";
 import { IoFemaleOutline, IoMaleOutline } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
@@ -20,7 +18,12 @@ import TambahAnggotaModal from "./TambahAnggotaModal";
 import Link from "next/link";
 import { FaRegHand } from "react-icons/fa6";
 import ActionOptions from "./ActionOptions";
-import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
+import {
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+  Transition,
+} from "@headlessui/react";
 import LoadingDots from "@/components/loading/LoadingDots";
 import LoadingDotTable from "@/components/loading/LoadingDotTable";
 import html2canvas from "html2canvas";
@@ -82,15 +85,11 @@ const columns: Column<IMember>[] = [
   },
   {
     Header: "Whatsapp",
-    accessor: "email" ,
+    accessor: "email",
     Cell: ({ value }) => (
       <div className="flex items-center justify-center">
-        <div className="relative flex  items-center justify-center rounded-md h-[25px] w-[25px] ">
-          <img
-            src='/assets/wa.png'
-            alt="QR Code"
-            className="object-cover"
-          />
+        <div className="relative flex h-[25px] w-[25px] items-center justify-center rounded-md">
+          <img src="/assets/wa.png" alt="QR Code" className="object-cover" />
         </div>
       </div>
     ),
@@ -105,8 +104,7 @@ const columns: Column<IMember>[] = [
           <PopoverButton
             onMouseEnter={(e) => e.currentTarget.click()}
             onMouseLeave={(e) => e.currentTarget.click()}
-            className="outline-none focus:outline-none ring-0 border-none cursor-default"
-
+            className="cursor-default border-none outline-none ring-0 focus:outline-none"
           >
             {value === 1 ? (
               <IoIosCheckmarkCircle color="green" fontSize={18} />
@@ -125,7 +123,9 @@ const columns: Column<IMember>[] = [
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
-            <PopoverPanel className={`absolute bottom-full mb-2 w-32 transform -translate-x-1/2 left-1/2 bg-white rounded-3xl border border-gray-100  shadow-xl ${value === 1 ? "text-green-600": "text-red-600"} text-sm rounded-lg shadow-lg p-2`}>
+            <PopoverPanel
+              className={`absolute bottom-full left-1/2 mb-2 w-32 -translate-x-1/2 transform rounded-3xl border border-gray-100 bg-white shadow-xl ${value === 1 ? "text-green-600" : "text-red-600"} rounded-lg p-2 text-sm shadow-lg`}
+            >
               {value === 1 ? "Sudah diverifikasi" : "Belum diverifikasi"}
             </PopoverPanel>
           </Transition>
@@ -135,13 +135,15 @@ const columns: Column<IMember>[] = [
   },
   {
     Header: "Opsi",
-    Cell: ({ row }) => (
-      <ActionOptions row={row}/>
-    ),
+    Cell: ({ row }) => <ActionOptions row={row} />,
   },
 ];
 
-const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatus }) => {
+const Table: React.FC<TableProps> = ({
+  searchQuery,
+  filterRegions,
+  filterByStatus,
+}) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [tableData, setTableData] = useState<IMember[]>([]);
@@ -151,17 +153,22 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
   const [countMale, setCountMale] = useState<number>(0);
   const [countFemale, setCountFemale] = useState<number>(0);
   const printRef = useRef<HTMLDivElement | null>(null);
-  const [filterGender, setFilterGender] = useState<string>('');
-  const defaultFilterMale: string = 'laki-laki';
-  const defaultFilterFemale: string = 'perempuan';
-
-
+  const [filterGender, setFilterGender] = useState<string>("");
+  const defaultFilterMale: string = "laki-laki";
+  const defaultFilterFemale: string = "perempuan";
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
-        const memberData = await getMembers(currentPage + 1, pageSize, searchQuery, filterRegions, filterByStatus, filterGender);
+        const memberData = await getMembers(
+          currentPage + 1,
+          pageSize,
+          searchQuery,
+          filterRegions,
+          filterByStatus,
+          filterGender,
+        );
         setTableData(memberData.data.data);
         setPageCount(memberData.data.total_page);
         setCountMale(memberData.data?.counter?.laki_laki);
@@ -172,7 +179,14 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
         setLoading(false);
       }
     })();
-  }, [currentPage, pageSize, searchQuery, filterRegions, filterByStatus, filterGender]);
+  }, [
+    currentPage,
+    pageSize,
+    searchQuery,
+    filterRegions,
+    filterByStatus,
+    filterGender,
+  ]);
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
@@ -206,7 +220,7 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
 
   const handleFilterGender = (gender: string) => () => {
     setFilterGender(gender);
-  }
+  };
 
   const scrollStyle = {
     overflowX: "auto",
@@ -219,7 +233,10 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
         <LoadingDotTable/> */}
         <div className="flex justify-between p-5">
           <div className="flex items-center space-x-3">
-            <button onClick={handlePrintPDF} className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary">
+            <button
+              onClick={handlePrintPDF}
+              className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary"
+            >
               <span>Cetak</span> <MdOutlineLocalPrintshop size={18} />
             </button>
             <button
@@ -232,85 +249,97 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
             </button>
           </div>
           <div className="flex gap-4">
-            <div onClick={handleFilterGender(defaultFilterMale)} className={clsx(
-              "flex cursor-pointer items-center gap-2 rounded-lg border border-yellow-300 bg-yellow-300 px-4 py-1 text-sm font-normal",
-              {
-                "bg-opacity-100 text-white" : filterGender === defaultFilterMale,
-                "bg-opacity-20 text-[#FFC107]": filterGender !== defaultFilterMale,
-              }
-            )}>
+            <div
+              onClick={handleFilterGender(defaultFilterMale)}
+              className={clsx(
+                "flex cursor-pointer items-center gap-2 rounded-lg border border-yellow-300 bg-yellow-300 px-4 py-1 text-sm font-normal",
+                {
+                  "bg-opacity-100 text-white":
+                    filterGender === defaultFilterMale,
+                  "bg-opacity-20 text-[#FFC107]":
+                    filterGender !== defaultFilterMale,
+                },
+              )}
+            >
               <IoMaleOutline />
-              <span>Anggota Laki-laki : { countMale }</span>
+              <span>Anggota Laki-laki : {countMale}</span>
             </div>
-            <div onClick={handleFilterGender(defaultFilterFemale)} className={clsx(
-              "flex cursor-pointer items-center gap-2 rounded-lg border border-red-500 bg-red-500 bg-opacity-20 px-4 py-1 text-sm font-normal",
-              {
-                "bg-opacity-100 text-white" : filterGender === defaultFilterFemale,
-                "border-opacity-20 text-[#DC3545]": filterGender !== defaultFilterFemale,
-              }
-            )}>
+            <div
+              onClick={handleFilterGender(defaultFilterFemale)}
+              className={clsx(
+                "flex cursor-pointer items-center gap-2 rounded-lg border border-red-500 bg-red-500 bg-opacity-20 px-4 py-1 text-sm font-normal",
+                {
+                  "bg-opacity-100 text-white":
+                    filterGender === defaultFilterFemale,
+                  "border-opacity-20 text-[#DC3545]":
+                    filterGender !== defaultFilterFemale,
+                },
+              )}
+            >
               <IoFemaleOutline />
-              <span>Anggota Perempuan : { countFemale }</span>
+              <span>Anggota Perempuan : {countFemale}</span>
             </div>
           </div>
         </div>
 
         <div className="overflow-y-hidden" ref={printRef}>
-  <table {...getTableProps()} className="min-w-full bg-white">
-    <thead>
-      {headerGroups.map((headerGroup, index) => (
-        <tr
-          {...headerGroup.getHeaderGroupProps()}
-          key={index}
-          className="bg-[#17a3b8]"
-        >
-          {headerGroup.headers.map((column, colIndex) => (
-            <th
-              {...column.getHeaderProps()}
-              key={colIndex}
-              className="whitespace-nowrap px-4 py-3 text-left text-sm font-semibold text-white"
-            >
-              {column.render("Header")}
-            </th>
-          ))}
-        </tr>
-      ))}
-    </thead>
-    <tbody {...getTableBodyProps()}>
-      {loading ? (
-        <tr className="mt-4 ">
-          <td colSpan={headerGroups[0].headers.length} className="text-center py-6 ">
-          <LoadingDots/>
-          </td>
-        </tr>
-      ) : (
-        rows.map((row, index) => {
-          prepareRow(row);
-          return (
-            <tr
-              {...row.getRowProps()}
-              key={index}
-              className={`border-t text-xs font-light ${
-                row.index % 2 === 0 ? "bg-gray-100" : "bg-white"
-              }`}
-            >
-              {row.cells.map((cell, cellIndex) => (
-                <td
-                  {...cell.getCellProps()}
-                  key={cellIndex}
-                  className="px-4 py-2"
+          <table {...getTableProps()} className="min-w-full bg-white">
+            <thead>
+              {headerGroups.map((headerGroup, index) => (
+                <tr
+                  {...headerGroup.getHeaderGroupProps()}
+                  key={index}
+                  className="bg-[#17a3b8]"
                 >
-                  { cell.render("Cell") }
-                </td>
+                  {headerGroup.headers.map((column, colIndex) => (
+                    <th
+                      {...column.getHeaderProps()}
+                      key={colIndex}
+                      className="whitespace-nowrap px-4 py-3 text-left text-sm font-semibold text-white"
+                    >
+                      {column.render("Header")}
+                    </th>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          );
-        })
-      )}
-    </tbody>
-  </table>
-</div>
-
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {loading ? (
+                <tr className="mt-4">
+                  <td
+                    colSpan={headerGroups[0].headers.length}
+                    className="py-6 text-center"
+                  >
+                    <LoadingDots />
+                  </td>
+                </tr>
+              ) : (
+                rows.map((row, index) => {
+                  prepareRow(row);
+                  return (
+                    <tr
+                      {...row.getRowProps()}
+                      key={index}
+                      className={`border-t text-xs font-light ${
+                        row.index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                      }`}
+                    >
+                      {row.cells.map((cell, cellIndex) => (
+                        <td
+                          {...cell.getCellProps()}
+                          key={cellIndex}
+                          className="px-4 py-2"
+                        >
+                          {cell.render("Cell")}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
 
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center">
@@ -338,7 +367,7 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
             count={pageCount}
             page={currentPage + 1}
             onChange={(_, newPage) => setCurrentPage(newPage - 1)}
-             color="standard"
+            color="standard"
             shape="rounded"
             sx={{
               "& .MuiPaginationItem-root": {
@@ -363,21 +392,31 @@ const Table: React.FC<TableProps> = ({ searchQuery, filterRegions, filterByStatu
               },
             }}
             renderItem={(item) => (
-<PaginationItem
-      {...item}
-      sx={{
-        borderTopLeftRadius: item.type === "previous" ? "15px !important" : "0px",
-        borderBottomLeftRadius: item.type === "previous" ? "15px !important" : "0px",
-        borderTopRightRadius: item.type === "next" ? "15px !important" : "0px",
-        borderBottomRightRadius: item.type === "next" ? "15px !important" : "0px",
-        paddingLeft:  item.type === "previous" || item.type === "next" ?  "20px !important" : "10px",
-        paddingRight:  item.type === "previous" || item.type === "next" ?  "20px !important" : "10px",
-      }}
-      components={{
-        previous: () => <span>Sebelumnya</span>,
-        next: () => <span>Selanjutnya</span>,
-      }}
-    />
+              <PaginationItem
+                {...item}
+                sx={{
+                  borderTopLeftRadius:
+                    item.type === "previous" ? "15px !important" : "0px",
+                  borderBottomLeftRadius:
+                    item.type === "previous" ? "15px !important" : "0px",
+                  borderTopRightRadius:
+                    item.type === "next" ? "15px !important" : "0px",
+                  borderBottomRightRadius:
+                    item.type === "next" ? "15px !important" : "0px",
+                  paddingLeft:
+                    item.type === "previous" || item.type === "next"
+                      ? "20px !important"
+                      : "10px",
+                  paddingRight:
+                    item.type === "previous" || item.type === "next"
+                      ? "20px !important"
+                      : "10px",
+                }}
+                components={{
+                  previous: () => <span>Sebelumnya</span>,
+                  next: () => <span>Selanjutnya</span>,
+                }}
+              />
             )}
           />
         </div>

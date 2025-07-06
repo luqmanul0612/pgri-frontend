@@ -1,11 +1,20 @@
-import { FC } from "react";
+"use client";
+import { FC, useState } from "react";
+import dynamic from "next/dynamic";
+
+const PrinterDtc = dynamic(() => import("./components/printer-dtc"), {
+  ssr: false,
+});
 
 interface pageProps {
   params: Promise<any>;
   searchParams?: Promise<any>;
 }
 
-const page: FC<pageProps> = async () => {
+const Page: FC<pageProps> = () => {
+  const [selected, setSelected] = useState<string | null>();
+
+  if (selected === "Printer DTC") return <PrinterDtc />;
   return (
     <div className="inline-flex w-full flex-col items-center justify-center gap-9 px-4">
       {
@@ -304,11 +313,12 @@ const page: FC<pageProps> = async () => {
             (label) => (
               <div
                 key={label}
-                className="flex w-[180px] items-center justify-center rounded-[10px] bg-primary px-2.5 py-3"
+                className={`flex w-[180px] cursor-pointer items-center justify-center rounded-[10px] bg-primary px-2.5 py-3`}
+                onClick={() => setSelected(label)}
               >
-                <button className="text-sm font-normal text-[#f5f7fb]">
+                <span className={`text-sm font-normal text-[#f5f7fb]`}>
                   {label}
-                </button>
+                </span>
               </div>
             ),
           )}
@@ -318,4 +328,4 @@ const page: FC<pageProps> = async () => {
   );
 };
 
-export default page;
+export default Page;

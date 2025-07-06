@@ -1,9 +1,12 @@
 import React from "react";
-import { Card, CardBody, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 
-interface CardPelatihanProps {
-
-}
+interface CardPelatihanProps {}
 
 interface CardPelatihanProps {
   onClick?: () => void;
@@ -14,9 +17,14 @@ const CardPelatihan: React.FC<CardPelatihanProps> = ({ onClick }) => {
     <div onClick={onClick}>
       <Card className={"hover:bg-white hover:shadow-2xl"}>
         <CardHeader>
-          <img className={"h-[250px] bg-cover"} height={"200"} src="/assets/pelatihan.png" alt="pelatihan" />
+          <img
+            className={"h-[250px] bg-cover"}
+            height={"200"}
+            src="/assets/pelatihan.png"
+            alt="pelatihan"
+          />
         </CardHeader>
-        <CardBody>
+        <CardContent>
           <div>
             <div className={"flex justify-between"}>
               <p className={"text-[10px]"}>Tanggal Mulai</p>
@@ -24,7 +32,9 @@ const CardPelatihan: React.FC<CardPelatihanProps> = ({ onClick }) => {
             </div>
             <div className={"flex justify-between"}>
               <p className={"text-left text-[10px]"}>Tempat Pelatihan</p>
-              <p className={"text-right text-[10px]"}>Gedung Guru Kabupaten Banyumas</p>
+              <p className={"text-right text-[10px]"}>
+                Gedung Guru Kabupaten Banyumas
+              </p>
             </div>
             <div className={"flex justify-between"}>
               <p className={"text-[10px]"}>Biaya</p>
@@ -40,15 +50,21 @@ const CardPelatihan: React.FC<CardPelatihanProps> = ({ onClick }) => {
             </div>
           </div>
           <div className={"mt-2.5"}>
-            <h2 className={"font-semibold mb-2 text-xs"}>Metode Pengajaran Dengan AI Untuk Guru</h2>
+            <h2 className={"mb-2 text-xs font-semibold"}>
+              Metode Pengajaran Dengan AI Untuk Guru
+            </h2>
             <div>
-              <p className={"line-clamp-2 text-[10px]"}>Pelatihan ini dirancang untuk guru dan pendidik yang ingin
-                memahami dan mengimplementasikan teknologi kecerdasan buatan (AI) dalam metode pengajaran mereka. Dengan
-                memanfaatkan AI, guru dapat meningkatkan kualitas pembelajaran, menyesuaikan materi dengan kebutuhan
-                individu siswa, serta meningkatkan efisiensi dalam pengelolaan kelas dan penilaian.</p>
+              <p className={"line-clamp-2 text-[10px]"}>
+                Pelatihan ini dirancang untuk guru dan pendidik yang ingin
+                memahami dan mengimplementasikan teknologi kecerdasan buatan
+                (AI) dalam metode pengajaran mereka. Dengan memanfaatkan AI,
+                guru dapat meningkatkan kualitas pembelajaran, menyesuaikan
+                materi dengan kebutuhan individu siswa, serta meningkatkan
+                efisiensi dalam pengelolaan kelas dan penilaian.
+              </p>
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     </div>
   );
