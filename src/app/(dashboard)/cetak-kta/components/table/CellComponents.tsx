@@ -127,3 +127,43 @@ export const YesNoCell: React.FC<YesNoCellProps> = ({ value }) => {
     </div>
   );
 };
+
+interface CheckboxCellProps {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+export const CheckboxCell: React.FC<CheckboxCellProps> = ({ checked, onChange }) => {
+  return (
+    <div className="flex items-center justify-center">
+      <div className="relative h-6 w-6">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          className="absolute h-6 w-6 cursor-pointer opacity-0"
+        />
+        <div className={`h-5 w-5 left-[2px] top-[2px] absolute ${
+          checked ? "bg-[#db3d35]" : "bg-transparent"
+        } ${
+          checked ? "" : "outline outline-[1.50px] outline-offset-[-0.75px] outline-[#17191c]"
+        }`}>
+          {checked && (
+            <div className="absolute left-[7.75px] top-[9.17px] h-[5.66px] w-[8.50px] outline outline-[1.50px] outline-offset-[-0.75px] outline-white transform -translate-x-1/2 -translate-y-1/2">
+              <svg width="8.5" height="5.66" viewBox="0 0 8.5 5.66" fill="none">
+                <path
+                  d="M0.75 2.83L2.83 4.91L7.75 0"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          )}
+        </div>
+        <div className="absolute left-0 top-0 h-6 w-6 opacity-0 border-[1.50px] border-[#17191c]" />
+      </div>
+    </div>
+  );
+};

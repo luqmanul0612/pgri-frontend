@@ -2,6 +2,7 @@
 import { FC, useState } from "react";
 import dynamic from "next/dynamic";
 import PrinterDtcNonBlanko from "./components/printer-dtc-non-blanko";
+import PrinterNonDtc from "./components/printer-non-dtc";
 
 const PrinterDtc = dynamic(() => import("./components/printer-dtc"), {
   ssr: false,
@@ -24,6 +25,8 @@ const Page: FC<pageProps> = () => {
     return <PrinterDtc onBack={() => setSelected(null)} />;
   if (selected === "Printer DTC Non-Blangko")
     return <PrinterDtcNonBlanko onBack={() => setSelected(null)} />;
+  if (selected === "Printer Non-DTC")
+    return <PrinterNonDtc onBack={() => setSelected(null)} />;
 
   return (
     <div className="inline-flex w-full flex-col items-center justify-center gap-9 px-4">

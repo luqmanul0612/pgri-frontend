@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   flexRender,
+  ColumnDef,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 
@@ -15,9 +16,13 @@ import { sampleData } from "./sampleData";
 
 interface TableKtaProps {
   data?: CetakKtaTableData[];
+  columns?: ColumnDef<CetakKtaTableData>[];
 }
 
-export const TableKta: React.FC<TableKtaProps> = ({ data = sampleData }) => {
+export const TableKta: React.FC<TableKtaProps> = ({
+  data = sampleData,
+  columns: columnsProp = columns,
+}) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -28,7 +33,7 @@ export const TableKta: React.FC<TableKtaProps> = ({ data = sampleData }) => {
   const pageSizeOptions = [5, 10, 20, 50, 100];
 
   const handlePageSizeChange = (newPageSize: number) => {
-    setPagination(prev => ({
+    setPagination((prev) => ({
       ...prev,
       pageSize: newPageSize,
       pageIndex: 0, // Reset to first page when changing page size
@@ -38,20 +43,23 @@ export const TableKta: React.FC<TableKtaProps> = ({ data = sampleData }) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setShowPageSizeDropdown(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   const table = useReactTable({
     data,
-    columns,
+    columns: columnsProp,
     state: {
       pagination,
     },
@@ -73,7 +81,16 @@ export const TableKta: React.FC<TableKtaProps> = ({ data = sampleData }) => {
                 style={{ minWidth: "max-content", width: "auto" }}
               >
                 {/* Column Header - tidak terpotong, panjang menyesuaikan */}
-                <div className="inline-flex items-center justify-start gap-2.5 self-stretch bg-[#17a3b8] px-2.5 py-4">
+                <div
+                  className={`inline-flex items-center justify-start gap-2.5 self-stretch bg-[#17a3b8] px-2.5 py-4 ${
+                    columnIndex === 0 ? "rounded-tl-2xl" : ""
+                  } ${
+                    columnIndex ===
+                    table.getHeaderGroups()[0].headers.length - 1
+                      ? "rounded-tr-2xl"
+                      : ""
+                  }`}
+                >
                   <div className="text-sm font-semibold text-[#f5f7fb]">
                     {flexRender(
                       header.column.columnDef.header,
@@ -104,12 +121,12 @@ export const TableKta: React.FC<TableKtaProps> = ({ data = sampleData }) => {
           </div>
 
           {/* Pagination Footer */}
-          <div className="flex w-full flex-wrap items-center justify-between gap-4 px-4 py-3 relative">
+          <div className="relative flex w-full flex-wrap items-center justify-between gap-4 rounded-b-2xl px-4 py-3">
             {/* Jumlah Data & Info Halaman */}
             <div className="flex items-center gap-4">
               {/* Dropdown Jumlah Data */}
               <div className="relative" ref={dropdownRef}>
-                <button 
+                <button
                   className="flex items-center rounded-lg border border-[#17a3b8] px-4 py-1.5 text-sm text-[#17a3b8]"
                   onClick={() => setShowPageSizeDropdown(!showPageSizeDropdown)}
                 >
@@ -117,12 +134,14 @@ export const TableKta: React.FC<TableKtaProps> = ({ data = sampleData }) => {
                   <ChevronDown className="ml-2 h-4 w-4" />
                 </button>
                 {showPageSizeDropdown && (
-                  <div className="absolute bottom-full left-0 mb-1 min-w-full bg-white border border-[#17a3b8] rounded-lg shadow-lg z-50 overflow-visible">
+                  <div className="absolute bottom-full left-0 z-50 mb-1 min-w-full overflow-visible rounded-lg border border-[#17a3b8] bg-white shadow-lg">
                     {pageSizeOptions.map((size) => (
                       <button
                         key={size}
-                        className={`w-full px-4 py-2 text-left text-sm hover:bg-[#e0f7fb] first:rounded-t-lg last:rounded-b-lg ${
-                          pagination.pageSize === size ? 'bg-[#17a3b8] text-white hover:bg-[#17a3b8]' : 'text-[#17a3b8]'
+                        className={`w-full px-4 py-2 text-left text-sm first:rounded-t-lg last:rounded-b-lg hover:bg-[#e0f7fb] ${
+                          pagination.pageSize === size
+                            ? "bg-[#17a3b8] text-white hover:bg-[#17a3b8]"
+                            : "text-[#17a3b8]"
                         }`}
                         onClick={(e) => {
                           e.preventDefault();
