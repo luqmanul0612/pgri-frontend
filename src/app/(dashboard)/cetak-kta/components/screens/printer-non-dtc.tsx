@@ -168,14 +168,6 @@ const PrinterNonDtc: FC<PrinterDtcProps> = ({ onBack }) => {
       <div className="w-full max-w-7xl overflow-x-scroll">
         <TableKta columns={columnsNonDtc} data={data} />
       </div>
-      <div className="flex justify-end">
-        <button
-          className="mt-2 rounded bg-primary px-4 py-2 text-white"
-          onClick={handleCetak}
-        >
-          Cetak
-        </button>
-      </div>
     </div>
   );
 };

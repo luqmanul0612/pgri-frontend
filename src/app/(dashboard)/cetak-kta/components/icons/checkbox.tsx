@@ -24,12 +24,14 @@ export const Checkbox: FC<CheckboxProps> = ({
   }, [indeterminate]);
 
   return (
-    <label className={`relative inline-block cursor-pointer ${className}`}>
+    <label
+      className={`relative inline-flex h-[24px] w-[24px] cursor-pointer items-center justify-center ${className}`}
+    >
       {/* Native checkbox */}
       <input
         ref={inputRef}
         type="checkbox"
-        className="peer absolute z-10 h-full w-full cursor-pointer opacity-0"
+        className="peer absolute inset-0 h-full w-full cursor-pointer opacity-0"
         onChange={onChange}
         checked={checked}
       />
@@ -40,7 +42,7 @@ export const Checkbox: FC<CheckboxProps> = ({
         height="24"
         viewBox="0 0 24 24"
         fill="none"
-        className="absolute -top-[15px] left-0 peer-checked:hidden"
+        className="peer-checked:hidden"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
@@ -66,7 +68,7 @@ export const Checkbox: FC<CheckboxProps> = ({
         height="24"
         viewBox="0 0 24 24"
         fill="none"
-        className="absolute -top-[15px] left-0 hidden peer-checked:block"
+        className="hidden peer-checked:block"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path

@@ -1,11 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CetakKtaTableData } from "./types";
-import {
-  CheckboxCell,
-  PhotoCell,
-  QRCodeCell,
-  StatusCell,
-} from "./CellComponents";
+import { PhotoCell, QRCodeCell, StatusCell } from "./CellComponents";
 import { Checkbox } from "../icons/checkbox";
 
 export const columnsNonDtc: ColumnDef<CetakKtaTableData>[] = [
@@ -21,23 +16,18 @@ export const columnsNonDtc: ColumnDef<CetakKtaTableData>[] = [
   },
   {
     accessorKey: "selected",
-    header: () => (
-      <Checkbox className="mr-4" strokeColor="#F5F7FB" onChange={() => {}} />
-    ),
-    cell: ({ row }) => (
-      <Checkbox className="mr-4" strokeColor="#17191c" onChange={() => {}} />
-    ),
-    size: 50,
+    header: () => <Checkbox strokeColor="#F5F7FB" onChange={() => {}} />,
+    cell: ({ row }) => <Checkbox strokeColor="#17191c" onChange={() => {}} />,
+    size: 70,
   },
   {
     accessorKey: "npa",
-    header: "NPA",
+    header: () => <span className="">NPA</span>,
     cell: ({ getValue }) => (
       <div className="flex-1 justify-start text-xs font-normal text-[#17191c]">
         {getValue() as string}
       </div>
     ),
-    size: 120,
   },
   {
     accessorKey: "nik",
@@ -47,7 +37,6 @@ export const columnsNonDtc: ColumnDef<CetakKtaTableData>[] = [
         {getValue() as string}
       </div>
     ),
-    size: 160,
   },
   {
     accessorKey: "namaAnggota",
@@ -57,7 +46,6 @@ export const columnsNonDtc: ColumnDef<CetakKtaTableData>[] = [
         {getValue() as string}
       </div>
     ),
-    size: 200,
   },
   {
     accessorKey: "tempatLahir",
@@ -67,7 +55,6 @@ export const columnsNonDtc: ColumnDef<CetakKtaTableData>[] = [
         {getValue() as string}
       </div>
     ),
-    size: 120,
   },
   {
     accessorKey: "tanggalLahir",
@@ -77,7 +64,6 @@ export const columnsNonDtc: ColumnDef<CetakKtaTableData>[] = [
         {getValue() as string}
       </div>
     ),
-    size: 150,
   },
   {
     accessorKey: "foto",
@@ -88,13 +74,11 @@ export const columnsNonDtc: ColumnDef<CetakKtaTableData>[] = [
         alt={`Foto ${row.original.namaAnggota}`}
       />
     ),
-    size: 90,
   },
   {
     accessorKey: "qrCode",
     header: "QR Code",
     cell: () => <QRCodeCell />,
-    size: 100,
   },
   {
     accessorKey: "status",
@@ -102,6 +86,5 @@ export const columnsNonDtc: ColumnDef<CetakKtaTableData>[] = [
     cell: ({ getValue }) => (
       <StatusCell status={getValue() as "active" | "inactive"} />
     ),
-    size: 80,
   },
 ];
