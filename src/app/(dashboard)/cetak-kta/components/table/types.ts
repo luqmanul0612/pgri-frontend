@@ -10,6 +10,7 @@ export interface CetakKtaTableData {
   cetakKtaBiasa: boolean
   cetakKtaMultiPayment: boolean
   status: 'active' | 'inactive'
+  selected?: boolean
 }
 
 export interface ActionButtonType {

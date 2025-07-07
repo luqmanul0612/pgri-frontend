@@ -12,6 +12,7 @@ export const sampleData: CetakKtaTableData[] = [
     cetakKtaBiasa: true,
     cetakKtaMultiPayment: true,
     status: "inactive",
+    selected: true,
   },
   {
     id: 2,
@@ -24,6 +25,7 @@ export const sampleData: CetakKtaTableData[] = [
     cetakKtaBiasa: true,
     cetakKtaMultiPayment: true,
     status: "active",
+    selected: false,
   },
   {
     id: 3,
@@ -35,6 +37,7 @@ export const sampleData: CetakKtaTableData[] = [
     cetakKtaBiasa: true,
     cetakKtaMultiPayment: false,
     status: "inactive",
+    selected: false,
   },
   {
     id: 4,
@@ -47,6 +50,7 @@ export const sampleData: CetakKtaTableData[] = [
     cetakKtaBiasa: true,
     cetakKtaMultiPayment: true,
     status: "active",
+    selected: false,
   },
   {
     id: 5,
@@ -59,6 +63,7 @@ export const sampleData: CetakKtaTableData[] = [
     cetakKtaBiasa: true,
     cetakKtaMultiPayment: true,
     status: "active",
+    selected: false,
   },
   {
     id: 6,
@@ -71,6 +76,7 @@ export const sampleData: CetakKtaTableData[] = [
     cetakKtaBiasa: false,
     cetakKtaMultiPayment: false,
     status: "active",
+    selected: false,
   },
   {
     id: 7,
@@ -83,6 +89,7 @@ export const sampleData: CetakKtaTableData[] = [
     cetakKtaBiasa: true,
     cetakKtaMultiPayment: true,
     status: "active",
+    selected: false,
   },
   {
     id: 8,
@@ -95,6 +102,7 @@ export const sampleData: CetakKtaTableData[] = [
     cetakKtaBiasa: true,
     cetakKtaMultiPayment: true,
     status: "active",
+    selected: false,
   },
   {
     id: 9,
@@ -107,6 +115,7 @@ export const sampleData: CetakKtaTableData[] = [
     cetakKtaBiasa: true,
     cetakKtaMultiPayment: true,
     status: "active",
+    selected: false,
   },
   {
     id: 10,
@@ -119,6 +128,7 @@ export const sampleData: CetakKtaTableData[] = [
     cetakKtaBiasa: true,
     cetakKtaMultiPayment: true,
     status: "active",
+    selected: false,
   },
   {
     id: 11,
@@ -131,5 +141,6 @@ export const sampleData: CetakKtaTableData[] = [
     cetakKtaBiasa: true,
     cetakKtaMultiPayment: true,
     status: "active",
+    selected: false,
   },
 ];

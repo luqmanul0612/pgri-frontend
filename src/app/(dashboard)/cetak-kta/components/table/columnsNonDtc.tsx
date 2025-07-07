@@ -6,6 +6,7 @@ import {
   QRCodeCell,
   StatusCell,
 } from "./CellComponents";
+import { Checkbox } from "../icons/checkbox";
 
 export const columnsNonDtc: ColumnDef<CetakKtaTableData>[] = [
   {
@@ -20,14 +21,11 @@ export const columnsNonDtc: ColumnDef<CetakKtaTableData>[] = [
   },
   {
     accessorKey: "selected",
-    header: "",
+    header: () => (
+      <Checkbox className="mr-4" strokeColor="#F5F7FB" onChange={() => {}} />
+    ),
     cell: ({ row }) => (
-      <CheckboxCell
-        checked={row.getIsSelected()}
-        onChange={(checked) => {
-          row.toggleSelected(checked);
-        }}
-      />
+      <Checkbox className="mr-4" strokeColor="#17191c" onChange={() => {}} />
     ),
     size: 50,
   },

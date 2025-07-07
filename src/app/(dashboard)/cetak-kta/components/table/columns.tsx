@@ -6,6 +6,7 @@ import {
   QRCodeCell,
   StatusCell,
   YesNoCell,
+  CheckboxCell,
 } from "./CellComponents";
 
 export const columns: ColumnDef<CetakKtaTableData>[] = [

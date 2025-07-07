@@ -1,33 +1,11 @@
-"use client";
-import { FC, useState } from "react";
-import dynamic from "next/dynamic";
-import PrinterDtcNonBlanko from "./components/printer-dtc-non-blanko";
-import PrinterNonDtc from "./components/printer-non-dtc";
-
-const PrinterDtc = dynamic(() => import("./components/printer-dtc"), {
-  ssr: false,
-});
+import { FC } from "react";
 
 interface pageProps {
   params: Promise<any>;
   searchParams?: Promise<any>;
 }
 
-const Page: FC<pageProps> = () => {
-  const printerType = [
-    "Printer DTC",
-    "Printer DTC Non-Blangko",
-    "Printer Non-DTC",
-  ];
-  const [selected, setSelected] = useState<string | null>();
-
-  if (selected === "Printer DTC")
-    return <PrinterDtc onBack={() => setSelected(null)} />;
-  if (selected === "Printer DTC Non-Blangko")
-    return <PrinterDtcNonBlanko onBack={() => setSelected(null)} />;
-  if (selected === "Printer Non-DTC")
-    return <PrinterNonDtc onBack={() => setSelected(null)} />;
-
+const page: FC<pageProps> = async () => {
   return (
     <div className="inline-flex w-full flex-col items-center justify-center gap-9 px-4">
       {
@@ -321,22 +299,24 @@ const Page: FC<pageProps> = () => {
         <div className="text-center text-sm font-normal text-primary">
           Pilih Jenis Cetak:
         </div>
-        <div className="flex flex-wrap justify-center gap-4">
-          {printerType.map((label) => (
-            <div
-              key={label}
-              className={`flex w-[180px] cursor-pointer items-center justify-center rounded-[10px] bg-primary px-2.5 py-3`}
-              onClick={() => setSelected(label)}
-            >
-              <span className={`text-sm font-normal text-[#f5f7fb]`}>
-                {label}
-              </span>
-            </div>
-          ))}
+              <div className="flex flex-wrap justify-center gap-4">
+                  
+          {["Printer DTC", "Printer DTC Non-Blangko", "Printer Non-DTC"].map(
+            (label) => (
+              <div
+                key={label}
+                className="flex w-[180px] items-center justify-center rounded-[10px] bg-primary px-2.5 py-3"
+              >
+                <button className="text-sm font-normal text-[#f5f7fb]">
+                  {label}
+                </button>
+              </div>
+            ),
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default Page;
+export default page;

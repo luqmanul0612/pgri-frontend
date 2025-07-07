@@ -1,11 +1,11 @@
 import { FC } from "react";
-import { TableKta } from "./table/table";
+import { TableKta } from "../table/table";
 
 interface PrinterDtcProps {
   onBack?: () => void;
 }
 
-const PrinterDtcNonBlanko: FC<PrinterDtcProps> = ({ onBack }) => {
+const PrinterDtc: FC<PrinterDtcProps> = ({ onBack }) => {
   return (
     <div className="flex w-full flex-col gap-4">
       {/* Header */}
@@ -23,7 +23,7 @@ const PrinterDtcNonBlanko: FC<PrinterDtcProps> = ({ onBack }) => {
           </svg>
         </div>
         <div className="text-base font-semibold text-[#17191c]">
-          Data Tabel Cetak KTA Dengan Printer DTC Tanpa Blanko
+          Data Tabel Cetak KTA Dengan Printer DTC
         </div>
       </div>
 
@@ -92,4 +92,4 @@ const PrinterDtcNonBlanko: FC<PrinterDtcProps> = ({ onBack }) => {
   );
 };
 
-export default PrinterDtcNonBlanko;
+export default PrinterDtc;
