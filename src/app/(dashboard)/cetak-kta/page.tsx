@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { FC } from "react";
 import { useState } from "react";
 import PrinterDTC from "./components/screens/printer-dtc";
@@ -10,14 +10,21 @@ interface pageProps {
   searchParams?: Promise<any>;
 }
 
-const page: FC<pageProps> = () => {
+const Page: FC<pageProps> = () => {
   const [selectedPrinter, setSelectedPrinter] = useState<string | null>(null);
-  const printerType = ["Printer DTC", "Printer DTC Non-Blangko", "Printer Non-DTC"]
-  
-  if (selectedPrinter === "Printer DTC") return <PrinterDTC onBack={() => setSelectedPrinter(null)} />;
-  if (selectedPrinter === "Printer DTC Non-Blangko") return <PrinterDTCNonBlanko onBack={() => setSelectedPrinter(null)} />;
-  if (selectedPrinter === "Printer Non-DTC") return <PrinterNonDTC onBack={() => setSelectedPrinter(null)} />;
-  
+  const printerType = [
+    "Printer DTC",
+    "Printer DTC Non-Blangko",
+    "Printer Non-DTC",
+  ];
+
+  if (selectedPrinter === "Printer DTC")
+    return <PrinterDTC onBack={() => setSelectedPrinter(null)} />;
+  if (selectedPrinter === "Printer DTC Non-Blangko")
+    return <PrinterDTCNonBlanko onBack={() => setSelectedPrinter(null)} />;
+  if (selectedPrinter === "Printer Non-DTC")
+    return <PrinterNonDTC onBack={() => setSelectedPrinter(null)} />;
+
   return (
     <div className="inline-flex w-full flex-col items-center justify-center gap-9 px-4">
       {
@@ -311,27 +318,24 @@ const page: FC<pageProps> = () => {
         <div className="text-center text-sm font-normal text-primary">
           Pilih Jenis Cetak:
         </div>
-              <div className="flex flex-wrap justify-center gap-4">
-                  
-          {printerType.map(
-            (label) => (
-              <div
-                key={label}
-                className="flex w-[180px] items-center justify-center rounded-[10px] bg-primary px-2.5 py-3"
+        <div className="flex flex-wrap justify-center gap-4">
+          {printerType.map((label) => (
+            <div
+              key={label}
+              className="flex w-[180px] items-center justify-center rounded-[10px] bg-primary px-2.5 py-3"
+            >
+              <button
+                className="text-sm font-normal text-[#f5f7fb]"
+                onClick={() => setSelectedPrinter(label)}
               >
-                <button 
-                  className="text-sm font-normal text-[#f5f7fb]"
-                  onClick={() => setSelectedPrinter(label)}
-                >
-                  {label}
-                </button>
-              </div>
-            ),
-          )}
+                {label}
+              </button>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
 };
 
-export default page;
+export default Page;
