@@ -5,7 +5,7 @@ interface PrinterDtcProps {
   onBack?: () => void;
 }
 
-const PrinterDtc: FC<PrinterDtcProps> = ({ onBack }) => {
+const PrinterDtcNonBlanko: FC<PrinterDtcProps> = ({ onBack }) => {
   return (
     <div className="flex w-full flex-col gap-4">
       {/* Header */}
@@ -23,7 +23,7 @@ const PrinterDtc: FC<PrinterDtcProps> = ({ onBack }) => {
           </svg>
         </div>
         <div className="text-base font-semibold text-[#17191c]">
-          Data Tabel Cetak KTA Dengan Printer DTC
+          Data Tabel Cetak KTA Dengan Printer DTC Tanpa Blanko
         </div>
       </div>
 
@@ -92,4 +92,4 @@ const PrinterDtc: FC<PrinterDtcProps> = ({ onBack }) => {
   );
 };
 
-export default PrinterDtc;
+export default PrinterDtcNonBlanko;
