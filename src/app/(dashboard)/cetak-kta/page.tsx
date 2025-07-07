@@ -1,11 +1,23 @@
+"use client"
 import { FC } from "react";
+import { useState } from "react";
+import PrinterDTC from "./components/screens/printer-dtc";
+import PrinterDTCNonBlanko from "./components/screens/printer-dtc-non-blanko";
+import PrinterNonDTC from "./components/screens/printer-non-dtc";
 
 interface pageProps {
   params: Promise<any>;
   searchParams?: Promise<any>;
 }
 
-const page: FC<pageProps> = async () => {
+const page: FC<pageProps> = () => {
+  const [selectedPrinter, setSelectedPrinter] = useState<string | null>(null);
+  const printerType = ["Printer DTC", "Printer DTC Non-Blangko", "Printer Non-DTC"]
+  
+  if (selectedPrinter === "Printer DTC") return <PrinterDTC onBack={() => setSelectedPrinter(null)} />;
+  if (selectedPrinter === "Printer DTC Non-Blangko") return <PrinterDTCNonBlanko onBack={() => setSelectedPrinter(null)} />;
+  if (selectedPrinter === "Printer Non-DTC") return <PrinterNonDTC onBack={() => setSelectedPrinter(null)} />;
+  
   return (
     <div className="inline-flex w-full flex-col items-center justify-center gap-9 px-4">
       {
@@ -301,13 +313,16 @@ const page: FC<pageProps> = async () => {
         </div>
               <div className="flex flex-wrap justify-center gap-4">
                   
-          {["Printer DTC", "Printer DTC Non-Blangko", "Printer Non-DTC"].map(
+          {printerType.map(
             (label) => (
               <div
                 key={label}
                 className="flex w-[180px] items-center justify-center rounded-[10px] bg-primary px-2.5 py-3"
               >
-                <button className="text-sm font-normal text-[#f5f7fb]">
+                <button 
+                  className="text-sm font-normal text-[#f5f7fb]"
+                  onClick={() => setSelectedPrinter(label)}
+                >
                   {label}
                 </button>
               </div>
