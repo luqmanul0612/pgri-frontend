@@ -1,35 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import BannerSlider from "@/app/components/BannerSlider";
+import BannerSlider from "@/app/components/molecules/banner-slider";
 import CardDashboard from "@/app/components/CardDashboard";
-import Image, { StaticImageData } from "next/image";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from "recharts";
-import { ChangeEvent, FC, useEffect, useState } from "react";
-import { IoIosArrowBack } from "react-icons/io";
-import { MdDashboard } from "react-icons/md";
-import { RiGroup2Fill } from "react-icons/ri";
-import { IoIosArrowForward } from "react-icons/io";
+import { FC, useEffect } from "react";
 import Card from "@/app/components/Card";
-import { FormField } from "@/app/components/FormField";
-import SelectField from "@/app/components/SelectField";
 import { Button } from "@/components/ui/button";
 import { IoIosArrowDown } from "react-icons/io";
 import Cookies from "js-cookie";
-// import { getDataProfile } from "./serverActions/getDataProfile";
-import dummyChartLine from "@/../public/dummy/dummy-chart-line.png";
-import dummyIconStat from "@/../public/icon/group-white.png";
 import { Filter } from "../components/Filter";
-import clsx from "clsx";
 import DashboardPieChart from "../../components/molecules/dashboard-pie-charts";
 import DashboardGrowthCard from "@/app/components/molecules/dashboard-growth-card";
 import { userAccess } from "@/lib/utils";
+import banner1 from "@/assets/images/banner-1.webp";
 
 interface pageProps {
   params: Promise<{}>;
@@ -37,9 +19,18 @@ interface pageProps {
 
 const Page: FC<pageProps> = ({ params: {} }) => {
   const banners = [
-    { src: "/banner/banner1.png", alt: "Banner 1" },
-    { src: "/banner/banner1.png", alt: "Banner 2" },
-    { src: "/banner/banner1.png", alt: "Banner 3" },
+    {
+      key: "banner-1",
+      image: banner1,
+    },
+    {
+      key: "banner-2",
+      image: banner1,
+    },
+    {
+      key: "banner-3",
+      image: banner1,
+    },
   ];
 
   const registerGrowthData = [
@@ -123,7 +114,7 @@ const Page: FC<pageProps> = ({ params: {} }) => {
       </div>
 
       {/* Banner */}
-      <div className="mt-5 flex flex-col items-center justify-center">
+      <div className="mt-5">
         <BannerSlider banners={banners} />
       </div>
 
@@ -136,7 +127,6 @@ const Page: FC<pageProps> = ({ params: {} }) => {
 
       {userAccess()?.levelId === 1 && (
         <>
-          {" "}
           {/* pie chart statistik */}
           <div className="mt-5 flex flex-row gap-4">
             <Card className="w-full p-6">
