@@ -22,6 +22,7 @@ import { cookies } from "next/headers";
 import { logout } from "./action";
 import { userAccess } from "@/lib/utils";
 import useModalNotVerified from "@/store/use-modal-not-verified";
+import { CetakKta } from "../../../../public/icon/sidebarIcon/CetakKta";
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -89,6 +90,11 @@ const menus: {
     title: "Role",
     href: "/role",
     Icon: MutasiAnggota,
+  },
+  {
+    title: "Cetak KTA",
+    href: "/cetak-kta",
+    Icon: CetakKta,
   },
 ];
 

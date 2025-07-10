@@ -12,7 +12,7 @@ const UangPangkal = () => {
     <div className="w-full max-w-[600px] rounded-2xl border border-[#17a3b8]/20 p-4">
       <div className="flex flex-col items-center rounded-md bg-[#17a3b8]/20 p-5 text-[#17a3b8]">
         <h2 className="text-[16px]">Total Bayar</h2>
-        <h1 className="text-[34px] font-bold">Rp. 15.000</h1>
+        <h1 className="text-[34px] font-bold">Rp15.000</h1>
         <div className="flex text-[12px]">
           <Image
             alt="uang-pangkal"
@@ -36,8 +36,8 @@ const UangPangkal = () => {
       <div className="flex items-center rounded-lg bg-[#ff0000]/10 p-2.5">
         <Danger />
         <p className="ml-2.5 text-xs font-normal text-[#ff0000]">
-          Pastikan anda mengisi semua form, jika terdapat form isian pendaftaran
-          yang terlewatkan maka anda tidak dapat menekan tombol Selanjutnya!
+          Pastikan Anda mengisi semua form, jika terdapat form isian pendaftaran
+          yang terlewatkan maka Anda tidak dapat menekan tombol Selanjutnya!
         </p>
       </div>
 

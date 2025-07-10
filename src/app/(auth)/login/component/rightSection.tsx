@@ -70,7 +70,7 @@ export const RightSection: FC<RightSectionProps> = () => {
             onInput={(e) => {
               setEmail((e.target as HTMLInputElement).value); // Update state on input
             }}
-            placeholder="Masukan Email"
+            placeholder="Masukkan Email"
             className={`rounded-[16px] px-4 py-[0.75rem] ${
               email.length
                 ? "text-[#17A3B8] ring-1 ring-[#17A3B8]"
@@ -90,7 +90,7 @@ export const RightSection: FC<RightSectionProps> = () => {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Masukan Kata Sandi"
+              placeholder="Masukkan Kata Sandi"
               className={`rounded-[16px] px-4 py-[0.75rem] ${
                 password
                   ? "text-[#17A3B8] ring-1 ring-[#17A3B8]"
@@ -142,7 +142,7 @@ export const RightSection: FC<RightSectionProps> = () => {
             onClick={() => router.push("/register")}
             className="cursor-pointer text-[#17A3B8]"
           >
-            Daftar disini
+            Daftar di sini
           </span>
         </p>
       </form>

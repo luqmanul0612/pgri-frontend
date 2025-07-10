@@ -7,6 +7,7 @@ import Card from "@/app/components/Card";
 import { Button } from "@/components/ui/button";
 import { IoIosArrowDown } from "react-icons/io";
 import Cookies from "js-cookie";
+// import { getDataProfile } from "./serverActions/getDataProfile";
 import { Filter } from "../components/Filter";
 import DashboardPieChart from "../../components/molecules/dashboard-pie-charts";
 import DashboardGrowthCard from "@/app/components/molecules/dashboard-growth-card";
