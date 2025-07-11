@@ -24,3 +24,7 @@ export interface PaginationInfo {
   pageSize: number
   totalItems: number
 }
+
+export interface PrinterDtcProps {
+  onBack?: () => void;
+}

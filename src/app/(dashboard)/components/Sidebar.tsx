@@ -23,6 +23,7 @@ import { logout } from "./action";
 import { userAccess } from "@/lib/utils";
 import useModalNotVerified from "@/store/use-modal-not-verified";
 import { CetakKta } from "../../../../public/icon/sidebarIcon/CetakKta";
+import { DataWilayah } from "../../../../public/icon/sidebarIcon/dataWilayah";
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -95,6 +96,11 @@ const menus: {
     title: "Cetak KTA",
     href: "/cetak-kta",
     Icon: CetakKta,
+  },
+  {
+    title: "Data Wilayah",
+    href: "/data-wilayah",
+    Icon: DataWilayah,
   },
 ];
 

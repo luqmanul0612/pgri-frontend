@@ -1,9 +1,8 @@
-import { FC } from "react";
-import { TableKta } from "../table/table";
-
-interface PrinterDtcProps {
-  onBack?: () => void;
-}
+import React, { FC } from "react";
+import { DataTable } from "@/components/table/DataTable";
+import { PrinterDtcProps } from "./types";
+import { columns } from "./columns";
+import { sampleData } from "./data";
 
 const PrinterDtc: FC<PrinterDtcProps> = ({ onBack }) => {
   return (
@@ -13,7 +12,6 @@ const PrinterDtc: FC<PrinterDtcProps> = ({ onBack }) => {
         className="flex cursor-pointer items-center gap-2.5"
         onClick={onBack}
       >
-        {/* Tombol back, klik akan trigger onBack jika ada */}
         <div className="relative cursor-pointer">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
@@ -84,9 +82,14 @@ const PrinterDtc: FC<PrinterDtcProps> = ({ onBack }) => {
         </div>
       </div>
 
-      {/* Optimized Table Component */}
+      {/* Table */}
       <div className="w-full max-w-7xl overflow-x-scroll">
-        <TableKta />
+        <DataTable
+          data={sampleData}
+          columns={columns}
+          pageSize={10}
+          paginationLabel="Orang"
+        />
       </div>
     </div>
   );
