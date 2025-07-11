@@ -208,12 +208,8 @@ const Table: React.FC<TableProps> = ({
   };
 
   const handlePrintPDF = async () => {
-<<<<<<< HEAD
-    const el = printRef.current as unknown as HTMLElement;
-=======
     const el = printRef.current;
     if (!el) return;
->>>>>>> FEATURE/CETAK-KARTU
     const canvas = await html2canvas(el);
     const data = canvas.toDataURL("image/png");
 
