@@ -1,12 +1,12 @@
 import { FC } from "react";
 import { AddAndFilterWilayah } from "../components/addAndFilter";
 
-interface provinsiProps {}
+interface kabupatenProps {}
 
-export const Provinsi: FC<provinsiProps> = ({}) => {
+export const Kelurahan: FC<kabupatenProps> = ({}) => {
   return (
     <div>
-      <AddAndFilterWilayah wilayah="Provinsi" />
+      <AddAndFilterWilayah wilayah="Kelurahan" />
     </div>
   );
 };

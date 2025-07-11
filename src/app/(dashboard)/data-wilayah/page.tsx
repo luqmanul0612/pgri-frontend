@@ -3,6 +3,9 @@
 import { FC, useState } from "react";
 import MapIllustration from "@/assets/icons/data-wilayah/map-illustration";
 import { Provinsi } from "./screens/provinsi";
+import { Kabupaten } from "./screens/kabupaten";
+import { Kecamatan } from "./screens/kecamatan";
+import { Kelurahan } from "./screens/kelurahan";
 
 interface RegionButtonProps {
   label: string;
@@ -11,10 +14,23 @@ interface RegionButtonProps {
 }
 
 const Page: FC = () => {
-  const wilayah = ["provinsi", "kabupaten", "kecamatan", "kelurahan"];
+  const wilayah = [
+    "Provinsi",
+    "Kabupaten/Kota",
+    "Kecamatan",
+    "Desa/Kelurahan",
+  ] as const;
 
-  const [selectedWilayah, setSelectedWilayah] = useState<null | string>(null);
-  if (selectedWilayah === "provinsi") return <Provinsi />;
+  // Ini akan otomatis jadi union type:
+  type Wilayah = (typeof wilayah)[number];
+
+  // Lalu di useState:
+  const [selectedWilayah, setSelectedWilayah] = useState<Wilayah | null>(null);
+
+  if (selectedWilayah === "Provinsi") return <Provinsi />;
+  if (selectedWilayah === "Kabupaten/Kota") return <Kabupaten />;
+  if (selectedWilayah === "Kecamatan") return <Kecamatan />;
+  if (selectedWilayah === "Desa/Kelurahan") return <Kelurahan />;
 
   return (
     <div className="-mt-4 flex flex-col items-center gap-4 px-4 md:gap-4 md:px-6">
@@ -40,15 +56,17 @@ const Page: FC = () => {
           Pilih Data Wilayah:
         </p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <RegionButton
-            label="Provinsi"
-            onClick={() => {
-              setSelectedWilayah("provinsi");
-            }}
-          />
-          <RegionButton label="Kabupaten/Kota" />
-          <RegionButton label="Kecamatan" />
-          <RegionButton label="Desa/Kelurahan" />
+          {wilayah.map((item, i) => {
+            return (
+              <RegionButton
+                key={i}
+                label={item}
+                onClick={() => {
+                  setSelectedWilayah(item);
+                }}
+              />
+            );
+          })}
         </div>
       </div>
     </div>
