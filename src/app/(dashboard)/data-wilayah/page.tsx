@@ -1,6 +1,8 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC } from "react";
+import { useWilayahStore, Wilayah } from "./store/wilayah-store";
+import { wilayah } from "./store/wilayah-store";
 import MapIllustration from "@/assets/icons/data-wilayah/map-illustration";
 import { Provinsi } from "./screens/provinsi";
 import { Kabupaten } from "./screens/kabupaten";
@@ -14,18 +16,7 @@ interface RegionButtonProps {
 }
 
 const Page: FC = () => {
-  const wilayah = [
-    "Provinsi",
-    "Kabupaten/Kota",
-    "Kecamatan",
-    "Desa/Kelurahan",
-  ] as const;
-
-  // Ini akan otomatis jadi union type:
-  type Wilayah = (typeof wilayah)[number];
-
-  // Lalu di useState:
-  const [selectedWilayah, setSelectedWilayah] = useState<Wilayah | null>(null);
+  const { selectedWilayah, setSelectedWilayah } = useWilayahStore();
 
   if (selectedWilayah === "Provinsi") return <Provinsi />;
   if (selectedWilayah === "Kabupaten/Kota") return <Kabupaten />;
@@ -56,7 +47,7 @@ const Page: FC = () => {
           Pilih Data Wilayah:
         </p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {wilayah.map((item, i) => {
+          {wilayah.map((item: Wilayah, i: number) => {
             return (
               <RegionButton
                 key={i}

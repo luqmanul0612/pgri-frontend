@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useWilayahStore } from "../store/wilayah-store";
 
 export const AddAndFilterWilayah = ({ wilayah }: { wilayah: string }) => {
   const [kodeWilayah, setKodeWilayah] = useState("");
   const [namaWilayah, setNamaWilayah] = useState("");
+  const { deleteSelectedWilayah } = useWilayahStore();
 
   const handleSimpanData = () => {
     console.log({ kodeWilayah, namaWilayah });
@@ -11,7 +13,12 @@ export const AddAndFilterWilayah = ({ wilayah }: { wilayah: string }) => {
   return (
     <div>
       <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2.5">
+        <div
+          className="flex cursor-pointer items-center gap-2.5"
+          onClick={() => {
+            deleteSelectedWilayah();
+          }}
+        >
           <svg
             width="24"
             height="24"
