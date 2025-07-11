@@ -2,7 +2,7 @@
 "use client";
 import BannerSlider from "@/app/components/molecules/banner-slider";
 import CardDashboard from "@/app/components/CardDashboard";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import Card from "@/app/components/Card";
 import { Button } from "@/components/ui/button";
 import { IoIosArrowDown } from "react-icons/io";
@@ -83,6 +83,12 @@ const Page: FC<pageProps> = ({ params: {} }) => {
 
   const COLORS = ["#BF19B8", "#DC3545", "#007BFF", "#FFC107", "#0EC516"];
 
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   useEffect(() => {
     const token = Cookies.get("token");
 
@@ -126,7 +132,7 @@ const Page: FC<pageProps> = ({ params: {} }) => {
 
       {/* Ending Filter berdasarkan provinsi, kota, kec, status pegawai */}
 
-      {userAccess()?.levelId === 1 && (
+      {isClient && userAccess()?.levelId === 1 && (
         <>
           {/* pie chart statistik */}
           <div className="mt-5 flex flex-row gap-4">
