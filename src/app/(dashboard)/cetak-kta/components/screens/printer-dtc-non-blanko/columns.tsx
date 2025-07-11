@@ -1,13 +1,11 @@
+import React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { CetakKtaTableData } from "./types";
-import {
-  ActionCell,
-  PhotoCell,
-  QRCodeCell,
-  StatusCell,
-  YesNoCell,
-  CheckboxCell,
-} from "./CellComponents";
+import { ActionCell } from "./cells/ActionCell";
+import { PhotoCell } from "./cells/PhotoCell";
+import { QRCodeCell } from "./cells/QRCodeCell";
+import { StatusCell } from "./cells/StatusCell";
+import { YesNoCell } from "./cells/YesNoCell";
 
 export const columns: ColumnDef<CetakKtaTableData>[] = [
   {

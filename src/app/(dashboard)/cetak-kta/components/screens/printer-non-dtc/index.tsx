@@ -1,25 +1,18 @@
 import React, { FC, useState } from "react";
-import { TableKta } from "../table/table";
-import { columnsNonDtc as baseColumnsNonDtc } from "../table/columnsNonDtc";
-import { CetakKtaTableData } from "../table/types";
-import { sampleData } from "../table/sampleData";
-import { Checkbox } from "../icons/checkbox";
-
-interface PrinterDtcProps {
-  onBack?: () => void;
-}
+import { DataTable } from "@/components/table/DataTable";
+import { Checkbox } from "../../icons/checkbox";
+import { CetakKtaTableData, PrinterDtcProps } from "./types";
+import { createColumns } from "./columns";
+import { sampleData } from "./data";
 
 const PrinterNonDtc: FC<PrinterDtcProps> = ({ onBack }) => {
-  // State untuk data dan selected
   const [data, setData] = useState<CetakKtaTableData[]>(sampleData);
 
-  // Handler select all
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
     setData((prev) => prev.map((row) => ({ ...row, selected: checked })));
   };
 
-  // Handler select per baris
   const handleSelectRow =
     (rowId: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const checked = e.target.checked;
@@ -30,44 +23,12 @@ const PrinterNonDtc: FC<PrinterDtcProps> = ({ onBack }) => {
       );
     };
 
-  // Handler tombol cetak
   const handleCetak = () => {
     const selectedIds = data.filter((row) => row.selected).map((row) => row.id);
     console.log("ID yang dicentang:", selectedIds);
   };
 
-  // Inject handler ke kolom
-  const columnsNonDtc = baseColumnsNonDtc.map((col: any) => {
-    if (col.accessorKey === "selected") {
-      return {
-        ...col,
-        id: col.id ?? String(col.accessorKey ?? Math.random()),
-        header: () => {
-          return (
-            <Checkbox
-              strokeColor="#F5F7FB" // putih untuk header
-              className="mx-auto"
-              onChange={handleSelectAll}
-              checked={data.length > 0 && data.every((row) => row.selected)}
-              indeterminate={
-                data.some((row) => row.selected) &&
-                !data.every((row) => row.selected)
-              }
-            />
-          );
-        },
-        cell: ({ row }: { row: { original: CetakKtaTableData } }) => (
-          <Checkbox
-            className="mx-auto"
-            strokeColor="#17191c"
-            checked={!!row.original.selected}
-            onChange={handleSelectRow(row.original.id)}
-          />
-        ),
-      };
-    }
-    return { ...col, id: col.id ?? String(col.accessorKey ?? Math.random()) };
-  });
+  const columnsNonDtc = createColumns(data, handleSelectAll, handleSelectRow, Checkbox);
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -76,7 +37,6 @@ const PrinterNonDtc: FC<PrinterDtcProps> = ({ onBack }) => {
         className="flex cursor-pointer items-center gap-2.5"
         onClick={onBack}
       >
-        {/* Tombol back, klik akan trigger onBack jika ada */}
         <div className="relative cursor-pointer">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
@@ -166,7 +126,12 @@ const PrinterNonDtc: FC<PrinterDtcProps> = ({ onBack }) => {
       </div>
 
       <div className="w-full max-w-7xl overflow-x-scroll">
-        <TableKta columns={columnsNonDtc} data={data} />
+        <DataTable
+          data={data}
+          columns={columnsNonDtc}
+          pageSize={10}
+          paginationLabel="Orang"
+        />
       </div>
     </div>
   );

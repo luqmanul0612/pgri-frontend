@@ -10,33 +10,39 @@ import {
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 
-import { CetakKtaTableData } from "./types";
-import { columns } from "./columns";
-import { sampleData } from "./sampleData";
-
-interface TableKtaProps {
-  data?: CetakKtaTableData[];
-  columns?: ColumnDef<CetakKtaTableData>[];
+interface DataTableProps<TData> {
+  data: TData[];
+  columns: ColumnDef<TData>[];
+  pageSize?: number;
+  pageSizeOptions?: number[];
+  className?: string;
+  headerClassName?: string;
+  cellClassName?: string;
+  paginationLabel?: string;
 }
 
-export const TableKta: React.FC<TableKtaProps> = ({
-  data = sampleData,
-  columns: columnsProp = columns,
-}) => {
+export function DataTable<TData>({
+  data,
+  columns,
+  pageSize = 10,
+  pageSizeOptions = [5, 10, 20, 50, 100],
+  className = "",
+  headerClassName = "",
+  cellClassName = "",
+  paginationLabel = "Orang",
+}: DataTableProps<TData>) {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize,
   });
   const [showPageSizeDropdown, setShowPageSizeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const pageSizeOptions = [5, 10, 20, 50, 100];
 
   const handlePageSizeChange = (newPageSize: number) => {
     setPagination((prev) => ({
       ...prev,
       pageSize: newPageSize,
-      pageIndex: 0, // Reset to first page when changing page size
+      pageIndex: 0,
     }));
     setShowPageSizeDropdown(false);
   };
@@ -59,7 +65,7 @@ export const TableKta: React.FC<TableKtaProps> = ({
 
   const table = useReactTable({
     data,
-    columns: columnsProp,
+    columns,
     state: {
       pagination,
     },
@@ -68,33 +74,28 @@ export const TableKta: React.FC<TableKtaProps> = ({
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  // Calculate total defined width
-  const totalDefinedWidth = columnsProp.reduce((sum, col) => {
+  const totalDefinedWidth = columns.reduce((sum, col) => {
     return sum + (col.size || 0);
   }, 0);
 
-  // Count columns without defined size
-  const columnsWithoutSize = columnsProp.filter((col) => !col.size).length;
+  const columnsWithoutSize = columns.filter((col) => !col.size).length;
 
-  // Function to get column width
   const getColumnWidth = (column: any) => {
-    const columnDef = columnsProp.find((col) => col.id === column.id);
+    const columnDef = columns.find((col) => col.id === column.id);
 
     if (columnDef?.size) {
       return `${columnDef.size}px`;
     }
 
-    // If there are columns without size, distribute remaining space equally
     if (columnsWithoutSize > 0) {
       return `calc((100% - ${totalDefinedWidth}px) / ${columnsWithoutSize})`;
     }
 
-    // Fallback to auto
     return "auto";
   };
 
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className={`flex w-full flex-col gap-2 ${className}`}>
       <div className="w-full overflow-x-auto">
         <table className="w-full table-auto rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-[#17a3b8]/20">
           <thead>
@@ -113,7 +114,7 @@ export const TableKta: React.FC<TableKtaProps> = ({
                       columnIndex === headerGroup.headers.length - 1
                         ? "rounded-tr-2xl"
                         : ""
-                    }`}
+                    } ${headerClassName}`}
                   >
                     <div className="text-sm font-semibold text-[#f5f7fb]">
                       {flexRender(
@@ -134,7 +135,7 @@ export const TableKta: React.FC<TableKtaProps> = ({
                     key={cell.id}
                     className={`h-[58px] p-2.5 ${
                       rowIndex % 2 === 0 ? "bg-white" : "bg-[#f5f7fb]"
-                    }`}
+                    } ${cellClassName}`}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -143,7 +144,6 @@ export const TableKta: React.FC<TableKtaProps> = ({
             ))}
           </tbody>
 
-          {/* Pagination Footer */}
           <tfoot>
             <tr>
               <td
@@ -151,9 +151,7 @@ export const TableKta: React.FC<TableKtaProps> = ({
                 className="p-0"
               >
                 <div className="relative flex w-full flex-wrap items-center justify-between gap-4 rounded-b-2xl px-4 py-3">
-                  {/* Jumlah Data & Info Halaman */}
                   <div className="flex items-center gap-4">
-                    {/* Dropdown Jumlah Data */}
                     <div className="relative" ref={dropdownRef}>
                       <button
                         className="flex items-center rounded-lg border border-[#17a3b8] px-4 py-1.5 text-sm text-[#17a3b8]"
@@ -161,7 +159,7 @@ export const TableKta: React.FC<TableKtaProps> = ({
                           setShowPageSizeDropdown(!showPageSizeDropdown)
                         }
                       >
-                        {pagination.pageSize} Orang
+                        {pagination.pageSize} {paginationLabel}
                         <ChevronDown className="ml-2 h-4 w-4" />
                       </button>
                       {showPageSizeDropdown && (
@@ -180,7 +178,7 @@ export const TableKta: React.FC<TableKtaProps> = ({
                                 handlePageSizeChange(size);
                               }}
                             >
-                              {size} Orang
+                              {size} {paginationLabel}
                             </button>
                           ))}
                         </div>
@@ -192,7 +190,6 @@ export const TableKta: React.FC<TableKtaProps> = ({
                     </span>
                   </div>
 
-                  {/* Navigasi Halaman */}
                   <div className="flex items-center overflow-hidden rounded-lg border border-[#17a3b8] text-sm text-[#17a3b8]">
                     <button
                       className="px-2 py-1.5 hover:bg-[#e0f7fb] disabled:opacity-50"
@@ -209,7 +206,6 @@ export const TableKta: React.FC<TableKtaProps> = ({
                       <ChevronLeft className="h-4 w-4" />
                     </button>
 
-                    {/* Previous Page */}
                     {pagination.pageIndex > 0 && (
                       <button
                         className="px-3 py-1.5 hover:bg-[#e0f7fb]"
@@ -221,12 +217,10 @@ export const TableKta: React.FC<TableKtaProps> = ({
                       </button>
                     )}
 
-                    {/* Current Page */}
                     <span className="bg-[#17a3b8] px-3 py-1.5 font-bold text-white">
                       {pagination.pageIndex + 1}
                     </span>
 
-                    {/* Next Page */}
                     {pagination.pageIndex + 1 < table.getPageCount() && (
                       <button
                         className="px-3 py-1.5 hover:bg-[#e0f7fb]"
@@ -238,7 +232,6 @@ export const TableKta: React.FC<TableKtaProps> = ({
                       </button>
                     )}
 
-                    {/* Ellipsis and Last Page */}
                     {pagination.pageIndex + 2 < table.getPageCount() && (
                       <>
                         <span className="px-3 py-1.5">...</span>
@@ -279,4 +272,4 @@ export const TableKta: React.FC<TableKtaProps> = ({
       </div>
     </div>
   );
-};
+}

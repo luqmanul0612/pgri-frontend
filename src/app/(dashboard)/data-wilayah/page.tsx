@@ -1,5 +1,8 @@
-import { FC } from "react";
+"use client";
+
+import { FC, useState } from "react";
 import MapIllustration from "@/assets/icons/data-wilayah/map-illustration";
+import { Provinsi } from "./screens/provinsi";
 
 interface RegionButtonProps {
   label: string;
@@ -7,16 +10,12 @@ interface RegionButtonProps {
   onClick?: () => void;
 }
 
-const RegionButton: FC<RegionButtonProps> = ({ label, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-[#f5f7fb] transition-colors hover:opacity-90`}
-  >
-    <span className="truncate">{label}</span>
-  </button>
-);
+const Page: FC = () => {
+  const wilayah = ["provinsi", "kabupaten", "kecamatan", "kelurahan"];
 
-const Page: FC = async () => {
+  const [selectedWilayah, setSelectedWilayah] = useState<null | string>(null);
+  if (selectedWilayah === "provinsi") return <Provinsi />;
+
   return (
     <div className="-mt-4 flex flex-col items-center gap-4 px-4 md:gap-4 md:px-6">
       <MapIllustration />
@@ -41,7 +40,12 @@ const Page: FC = async () => {
           Pilih Data Wilayah:
         </p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <RegionButton label="Provinsi" isActive />
+          <RegionButton
+            label="Provinsi"
+            onClick={() => {
+              setSelectedWilayah("provinsi");
+            }}
+          />
           <RegionButton label="Kabupaten/Kota" />
           <RegionButton label="Kecamatan" />
           <RegionButton label="Desa/Kelurahan" />
@@ -52,3 +56,12 @@ const Page: FC = async () => {
 };
 
 export default Page;
+
+const RegionButton: FC<RegionButtonProps> = ({ label, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-[#f5f7fb] transition-colors hover:opacity-90`}
+  >
+    <span className="truncate">{label}</span>
+  </button>
+);

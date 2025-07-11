@@ -1,9 +1,16 @@
+import React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { CetakKtaTableData } from "./types";
-import { PhotoCell, QRCodeCell, StatusCell } from "./CellComponents";
-import { Checkbox } from "../icons/checkbox";
+import { PhotoCell } from "./cells/PhotoCell";
+import { QRCodeCell } from "./cells/QRCodeCell";
+import { StatusCell } from "./cells/StatusCell";
 
-export const columnsNonDtc: ColumnDef<CetakKtaTableData>[] = [
+export const createColumns = (
+  data: CetakKtaTableData[],
+  handleSelectAll: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  handleSelectRow: (rowId: number) => (e: React.ChangeEvent<HTMLInputElement>) => void,
+  CheckboxComponent: React.ComponentType<any>
+): ColumnDef<CetakKtaTableData>[] => [
   {
     accessorKey: "id",
     header: "NO.",
@@ -16,8 +23,28 @@ export const columnsNonDtc: ColumnDef<CetakKtaTableData>[] = [
   },
   {
     accessorKey: "selected",
-    header: () => <Checkbox strokeColor="#F5F7FB" onChange={() => {}} />,
-    cell: ({ row }) => <Checkbox strokeColor="#17191c" onChange={() => {}} />,
+    header: () => {
+      return (
+        <CheckboxComponent
+          strokeColor="#F5F7FB"
+          className="mx-auto"
+          onChange={handleSelectAll}
+          checked={data.length > 0 && data.every((row) => row.selected)}
+          indeterminate={
+            data.some((row) => row.selected) &&
+            !data.every((row) => row.selected)
+          }
+        />
+      );
+    },
+    cell: ({ row }: { row: { original: CetakKtaTableData } }) => (
+      <CheckboxComponent
+        className="mx-auto"
+        strokeColor="#17191c"
+        checked={!!row.original.selected}
+        onChange={handleSelectRow(row.original.id)}
+      />
+    ),
     size: 70,
   },
   {
