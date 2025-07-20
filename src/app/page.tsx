@@ -5,7 +5,7 @@ export default async function Home() {
   const identity = await getIdentity();
 
   if (identity?.status == 200) {
-    redirect("/admin");
+    redirect("/dashboard");
   } else {
     redirect("/login");
   }

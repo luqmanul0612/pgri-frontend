@@ -10,7 +10,7 @@ import { IoIosCloseCircle } from "react-icons/io";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import VerifikasiModal from "../component/VerifikasiModal";
 import TolakModal from "../component/TolakModal";
-import { userAccess } from "@/lib/utils";
+import useAuth from "@/store/useAuth";
 
 interface pageProps {
   params: {
@@ -20,6 +20,7 @@ interface pageProps {
 
 const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
   const router = useRouter();
+  const { auth } = useAuth();
   const [memberData, setMemberData] = useState<IMemberByIdResponse | null>(
     null,
   );
@@ -371,7 +372,7 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
       </TabGroup>
 
       {/* button verify */}
-      {userAccess()?.levelId === 1 && (
+      {auth.levelId === 1 && (
         <div className="mt-5 flex space-x-4">
           <button
             onClick={() => {

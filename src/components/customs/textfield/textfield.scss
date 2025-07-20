@@ -1,0 +1,97 @@
+.textfiled-root {
+  display: flex;
+}
+.textfield-input-container {
+  display: flex;
+  position: relative;
+}
+
+.textfield-label {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: 4px;
+  color: #116475;
+  transition: 0.2s all ease-in-out;
+}
+.textfield-root:focus-within .textfield-label {
+  color: #116475;
+}
+.textfield-input {
+  border: 1px solid #4dd0e1;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  height: 44px;
+  outline: none;
+  padding: 0 16px;
+  color: #17a3b8;
+  width: 100%;
+  transition:
+    0.2s color ease-in-out,
+    0.2s border ease-in-out,
+    0.2s background-color ease-in-out;
+}
+.textfield-have-end-icon {
+  padding-right: 45px;
+}
+.textfield-input.error {
+  border: 1px solid #ef4444;
+}
+.textfield-input:hover {
+  background-color: #f8fafc;
+}
+.textfield-input:focus {
+  border: 1px solid #17a3b8;
+  background-color: #fff;
+}
+.textfield-input:disabled {
+  background-color: #e2e8f0;
+  color: #94a3b8;
+}
+.textfield-input::placeholder {
+  color: #94a3b8;
+}
+.textfield-helper-text {
+  font-size: 12px;
+  font-weight: 400;
+  margin: 0;
+  margin-top: 2px;
+  color: #64748b;
+  &.error {
+    color: #ef4444;
+  }
+}
+
+.textfield-password-button {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  height: fit-content;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #475569;
+  border-radius: 8px;
+  padding: 2px;
+  transition:
+    0.2s color ease-in-out,
+    0.2s background-color ease-in-out;
+  &:hover {
+    background-color: #e2e8f0;
+  }
+  &:active {
+    background-color: #f8fafc;
+  }
+}
+
+.textfield-end-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}

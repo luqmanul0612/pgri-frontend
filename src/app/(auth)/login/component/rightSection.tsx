@@ -12,10 +12,12 @@ import logo from "../../../../../public/assets/logo.png";
 import { handleLogin } from "../serverAction/login";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import useAuth from "@/store/useAuth";
 
 interface RightSectionProps {}
 
 export const RightSection: FC<RightSectionProps> = () => {
+  const { setAuth } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,15 +31,14 @@ export const RightSection: FC<RightSectionProps> = () => {
     event.preventDefault();
     setIsLoading(true);
 
-    const res = await handleLogin(email, password, rememberMe);
-
-    if (res?.success) {
+    try {
+      const res = await handleLogin(email, password, rememberMe);
       toast({ title: "Berhasil Login" });
-
-      router.push("/admin");
-    } else {
+      setAuth({ auth: res.data });
+      router.push("/dashboard");
+    } catch (error: any) {
       setIsError(true);
-      setErrorMessage(res?.error?.message || "An error occurred");
+      setErrorMessage(error?.message || "An error occurred");
       setIsLoading(false);
     }
   };

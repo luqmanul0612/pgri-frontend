@@ -20,10 +20,10 @@ import { Bahasa } from "../../../../public/icon/sidebarIcon/Bahasa";
 import { Logout } from "../../../../public/icon/sidebarIcon/Logout";
 import { cookies } from "next/headers";
 import { logout } from "./action";
-import { userAccess } from "@/lib/utils";
 import useModalNotVerified from "@/store/use-modal-not-verified";
 import { CetakKta } from "../../../../public/icon/sidebarIcon/CetakKta";
 import { DataWilayah } from "../../../../public/icon/sidebarIcon/dataWilayah";
+import useAuth from "@/store/useAuth";
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -191,14 +191,14 @@ export const MenuItem: FC<MenuProps> = ({
   onClick,
   verify,
 }) => {
+  const { auth } = useAuth();
   const pathname = usePathname();
   const { setShowModalNotVerified } = useModalNotVerified();
 
   const isActive = (href: string) => pathname === href;
   const onClickLink: MouseEventHandler<HTMLAnchorElement> = (e) => {
-    const access = userAccess();
     if (verify) {
-      if (!access?.isVerified) {
+      if (!auth.isVerified) {
         e.preventDefault();
         setShowModalNotVerified(true);
         return;

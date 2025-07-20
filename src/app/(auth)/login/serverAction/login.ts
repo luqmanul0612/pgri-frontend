@@ -1,7 +1,15 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use server";
 
+import { decodeJwt } from "@/lib/utils";
 import { cookies } from "next/headers";
+
+export type TokenValue = {
+  exp: number;
+  sub: string;
+  level_id: number;
+  is_verified: boolean;
+};
 
 export async function handleLogin(
   email: string,
@@ -20,17 +28,12 @@ export async function handleLogin(
     });
     const result = await response.json();
     if (result.status !== 200) {
-      return {
-        success: false,
-        error: {
-          name: "LoginError",
-          message: result?.errors ?? result?.errors[0],
-        },
-      };
+      throw new Error(result?.errors ?? result?.errors[0]);
     }
 
     const user = result.data;
     const token = result.data.token;
+    const tokenValue = decodeJwt<TokenValue>(token as string);
 
     cookies().set("auth", JSON.stringify(user), {
       expires: remember ? 30 : undefined,
@@ -42,8 +45,13 @@ export async function handleLogin(
       path: "/",
     });
 
-    return { success: true };
+    return {
+      data: {
+        isVerified: !!tokenValue?.is_verified,
+        levelId: (user.level_id ?? 3) as number,
+      },
+    };
   } catch (error) {
-    console.error("Error: ", error);
+    throw error;
   }
 }

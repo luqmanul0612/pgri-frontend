@@ -11,8 +11,12 @@ import PasswordSuccess from "../../../../../public/assets/passwordSuccess";
 import { setCookies } from "@/serverActions/setCookies";
 import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 import { useRegistrationFormStore } from "@/store/use-registration-form";
+import useAuth from "@/store/useAuth";
+import { TokenValue } from "../../login/serverAction/login";
+import { decodeJwt } from "@/lib/utils";
 
 const PasswordForm = () => {
+  const { setAuth } = useAuth();
   const [password2, setPassword2] = useState("");
   const [checkbox, setCheckbox] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,8 +78,16 @@ const PasswordForm = () => {
 
     // simpan token ke cookies
     if (res.data.token) {
-      setCookies("token", res.data.token);
+      const token = res.data.token;
+      setCookies("token", token);
       setCookies("auth", res.data);
+      const tokenValue = decodeJwt<TokenValue>(token as string);
+      setAuth({
+        auth: {
+          isVerified: !!tokenValue?.is_verified,
+          levelId: tokenValue?.level_id ?? 3,
+        },
+      });
     }
 
     setIsSuccess(true);

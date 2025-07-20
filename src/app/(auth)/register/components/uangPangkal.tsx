@@ -1,13 +1,67 @@
-import React from "react";
+import React, { use, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Danger from "../../../../../public/assets/danger";
 import { useRouter } from "next/navigation";
 import { useRegistrationStepStore } from "@/store/use-registration-step-store";
+import { submitPayment } from "../serverActions/payment";
+declare global {
+  interface Window {
+    loadJokulCheckout: (value: string) => void;
+  }
+}
 
 const UangPangkal = () => {
   const router = useRouter();
   const { setStep } = useRegistrationStepStore();
+  const handlerPayment = async () => {
+    const res = await submitPayment("606", {
+      channel: "bri",
+      payment_method: "virtual_account",
+    });
+    console.log("first", res);
+    window.loadJokulCheckout(res.data?.payment_page);
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      const popup = document.getElementById("jokul_checkout_modal");
+      popup?.remove();
+    }, 5000);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("message", function (event) {
+      console.log("Received message:", event.data);
+
+      if (event.data?.status === "SUCCESS") {
+        console.log("Payment success!");
+      } else if (event.data?.status === "FAILED") {
+        console.log("Payment failed!");
+      } else if (event.data?.status === "CLOSED") {
+        console.log("Popup closed without payment");
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src =
+      "https://sandbox.doku.com/jokul-checkout-js/v1/jokul-checkout-1.0.0.js";
+    script.async = true;
+    script.onerror = () => {
+      console.error("Failed to load script");
+    };
+    document.body.appendChild(script);
+    script.onload = () => {
+      console.log("script loaded");
+    };
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <div className="w-full max-w-[600px] rounded-2xl border border-[#17a3b8]/20 p-4">
       <div className="flex flex-col items-center rounded-md bg-[#17a3b8]/20 p-5 text-[#17a3b8]">
@@ -44,11 +98,16 @@ const UangPangkal = () => {
       <div className="mb-4 mt-12 flex gap-4">
         <Button
           className="border-red w-full rounded-2xl border bg-white text-[#17a3b8] ring-1 ring-[#17a3b8]"
-          onClick={() => router.push("/")}
+          onClick={() => router.push("/dashboard")}
         >
           Lewati
         </Button>
-        <Button className="w-full rounded-2xl bg-[#17a3b8]">Bayar</Button>
+        <Button
+          className="w-full rounded-2xl bg-[#17a3b8]"
+          onClick={handlerPayment}
+        >
+          Bayar
+        </Button>
       </div>
       <Button
         className="w-full rounded-2xl bg-[#ff0000]"
