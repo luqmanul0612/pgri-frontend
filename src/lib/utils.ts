@@ -16,21 +16,3 @@ export function decodeJwt<T>(token: string): T | null {
     return null;
   }
 }
-
-export function userAccess(): {
-  isVerified: boolean;
-  levelId: number;
-} | null {
-  try {
-    const token = Cookies.get("token") || "";
-    const [, payload] = token.split(".");
-    const decoded = atob(payload);
-    const parsed = JSON.parse(decoded);
-    return {
-      isVerified: parsed.is_verified,
-      levelId: parsed.level_id,
-    };
-  } catch (e) {
-    return null;
-  }
-}

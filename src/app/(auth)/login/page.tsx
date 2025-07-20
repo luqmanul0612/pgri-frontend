@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 export default function Home() {
   const token = cookies().get("token")?.value;
-  if (token) redirect("/admin");
+  if (token) redirect("/dashboard");
 
   return (
     <div className="flex h-screen w-full flex-col bg-[#F5F7FB]">

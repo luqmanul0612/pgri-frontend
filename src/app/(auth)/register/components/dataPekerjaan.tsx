@@ -8,7 +8,6 @@ import { FormField } from "@/app/components/FormField";
 import clsx from "clsx";
 import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 import { useGetRegionStore } from "@/store/use-get-region-store";
-import { IDataPekerjaan } from "@/interfaces/IDataPekerjaan";
 import { useFormPekerjaanStore } from "@/store/use-data-pekerjaan-store";
 
 export const DataPekerjaan = ({}) => {

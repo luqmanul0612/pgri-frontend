@@ -19,7 +19,7 @@ const config = {
     },
     extend: {
       borderColor: {
-        'custom-aqua': 'rgba(23, 163, 184, 0.20)',
+        "custom-aqua": "rgba(23, 163, 184, 0.20)",
       },
       boxShadow: {
         "custom-shadow": "0px 0px 8px 0px rgba(0, 0, 0, 0.25)",
@@ -35,6 +35,17 @@ const config = {
           DEFAULT: "#17a3b8",
           foreground: "hsl(var(--primary-foreground))",
           light: "rgba(23,163,184,0.20)",
+          50: "#e0f7fa",
+          100: "#b2ebf2",
+          200: "#80deea",
+          300: "#4dd0e1",
+          400: "#26c6da",
+          500: "#17a3b8",
+          600: "#178fa3",
+          700: "#147a8c",
+          800: "#116475",
+          900: "#0e4f5e",
+          950: "#0a3a47",
         },
         primaryBlack: {
           DEFAULT: "#17191C",
