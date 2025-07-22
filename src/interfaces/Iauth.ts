@@ -14,7 +14,7 @@ export interface IUser {
   email: string;
   gender: string;
   latest_education: string;
-  relegion: string;
+  religion: string;
   level_id: number;
   npa_number: any;
   status: number;
