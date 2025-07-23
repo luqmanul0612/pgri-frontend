@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { toast } from "sonner";
 
 // Reusable Components
 interface InfoFieldProps {
@@ -21,15 +22,20 @@ interface PaymentOptionProps {
   label: string;
   isExpanded?: boolean;
   children?: React.ReactNode;
+  onClick?: () => void;
 }
 
 const PaymentOptionItem: FC<PaymentOptionProps> = ({
   label,
   isExpanded = false,
   children,
+  onClick,
 }) => (
   <div className="flex w-full flex-col gap-2">
-    <div className="flex w-full items-center justify-between">
+    <div
+      className="flex w-full cursor-pointer items-center justify-between"
+      onClick={onClick}
+    >
       <span className="flex-1 text-xs font-normal text-gray-800">{label}</span>
       {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
     </div>
@@ -42,19 +48,36 @@ const PaymentOptionItem: FC<PaymentOptionProps> = ({
 interface VirtualAccountOptionProps {
   name: string;
   isSelected?: boolean;
+  onClick?: () => void;
 }
 
 const VirtualAccountOption: FC<VirtualAccountOptionProps> = ({
   name,
   isSelected = false,
+  onClick,
 }) => (
-  <div className="flex w-full items-center gap-2.5">
+  <div
+    className="flex w-full cursor-pointer items-center gap-2.5"
+    onClick={onClick}
+  >
     {isSelected ? <CheckboxChecked /> : <CheckboxUnchecked />}
     <span className="flex-1 text-xs font-normal text-gray-800">{name}</span>
   </div>
 );
 
 export const PaymentOption: FC = () => {
+  const showNotImplementedToast = (method: string) => {
+    toast.warning("Fitur Belum Tersedia", {
+      description: `Maaf, ${method} belum diimplementasikan. Untuk saat ini baru VA BRI yang tersedia.`,
+    });
+  };
+
+  const handleVASelection = (vaName: string) => {
+    if (vaName !== "VA BRI") {
+      showNotImplementedToast(vaName);
+    }
+  };
+
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-sm flex-col gap-4 p-4 sm:max-h-[727px] sm:min-h-0">
       <div className="flex flex-1 flex-col gap-2">
@@ -93,28 +116,57 @@ export const PaymentOption: FC = () => {
               Metode Pembayaran
             </h2>
             <div className="flex flex-col gap-2">
-              <PaymentOptionItem label="Bayar Tunai di Mitra/Agen" />
+              <PaymentOptionItem
+                label="Bayar Tunai di Mitra/Agen"
+                onClick={() =>
+                  showNotImplementedToast("Bayar Tunai di Mitra/Agen")
+                }
+              />
 
               <PaymentOptionItem label="Virtual Account" isExpanded>
                 <VirtualAccountOption name="VA BRI" isSelected />
-                <VirtualAccountOption name="VA BCA" />
-                <VirtualAccountOption name="VA Mandiri" />
-                <VirtualAccountOption name="VA BNI" />
-                <VirtualAccountOption name="VA BSI" />
-                <VirtualAccountOption name="VA Bank Jago" />
+                <VirtualAccountOption
+                  name="VA BCA"
+                  onClick={() => handleVASelection("VA BCA")}
+                />
+                <VirtualAccountOption
+                  name="VA Mandiri"
+                  onClick={() => handleVASelection("VA Mandiri")}
+                />
+                <VirtualAccountOption
+                  name="VA BNI"
+                  onClick={() => handleVASelection("VA BNI")}
+                />
+                <VirtualAccountOption
+                  name="VA BSI"
+                  onClick={() => handleVASelection("VA BSI")}
+                />
+                <VirtualAccountOption
+                  name="VA Bank Jago"
+                  onClick={() => handleVASelection("VA Bank Jago")}
+                />
               </PaymentOptionItem>
 
-              <PaymentOptionItem label="Transfer Bank" />
-              <PaymentOptionItem label="E-Wallet" />
-              <PaymentOptionItem label="Kartu Kredit/Debit" />
+              <PaymentOptionItem
+                label="Transfer Bank"
+                onClick={() => showNotImplementedToast("Transfer Bank")}
+              />
+              <PaymentOptionItem
+                label="E-Wallet"
+                onClick={() => showNotImplementedToast("E-Wallet")}
+              />
+              <PaymentOptionItem
+                label="Kartu Kredit/Debit"
+                onClick={() => showNotImplementedToast("Kartu Kredit/Debit")}
+              />
             </div>
           </section>
         </div>
       </div>
 
       {/* OK Button */}
-      <button className="flex w-full items-center justify-center gap-2.5 rounded-lg bg-gray-300 p-4">
-        <span className="text-sm font-normal text-gray-500">OK</span>
+      <button className="flex w-full items-center justify-center gap-2.5 rounded-lg bg-primary p-4">
+        <span className="text-sm font-normal text-white">OK</span>
       </button>
     </div>
   );

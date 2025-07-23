@@ -15,7 +15,8 @@ const UangPangkal = () => {
   const router = useRouter();
   const { setStep } = useRegistrationStepStore();
   const handlerPayment = async () => {
-    const res = await submitPayment("606", {
+    // userid dapetin dari token saja
+    const res = await submitPayment({
       channel: "bri",
       payment_method: "virtual_account",
     });
