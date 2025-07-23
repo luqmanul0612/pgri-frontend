@@ -5,7 +5,6 @@ import Danger from "../../../../../public/assets/danger";
 import { useRouter } from "next/navigation";
 import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 import { submitPayment } from "../serverActions/payment";
-import useAuth from "@/store/useAuth";
 declare global {
   interface Window {
     loadJokulCheckout: (value: string) => void;
@@ -14,10 +13,10 @@ declare global {
 
 const UangPangkal = () => {
   const router = useRouter();
-  const { auth } = useAuth();
   const { setStep } = useRegistrationStepStore();
   const handlerPayment = async () => {
-    const res = await submitPayment(auth.id, {
+    // userid dapetin dari token saja
+    const res = await submitPayment({
       channel: "bri",
       payment_method: "virtual_account",
     });

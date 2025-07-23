@@ -1,21 +1,33 @@
-import { FC } from "react";
+"use client";
+import { FC, MouseEvent, useState } from "react";
 import Image from "next/image";
 import warning from "@/../public/icon/warning.png";
 import userIcon from "@/../public/icon/userIcon.png";
 import messageIcon from "@/../public/icon/email-icon.png";
 import phoneIcon from "@/../public/icon/phone-icon.png";
-
-interface pageProps {
-  params: Promise<any>;
-  searchParams?: Promise<any>;
-}
+import { PaymentOption } from "./screens/payment-option";
+import { PaymentSuccess } from "./screens/payment-success";
 
 // ANCHOR: Entry point
 // #region Entry point
 
-const page: FC<pageProps> = async ({ params, searchParams }) => {
+const Page: FC = () => {
+  const screens = ["initial", "paymentOption", "paymentSuccess"] as const;
+
+  const [activeScreen, setActiveScreen] =
+    useState<(typeof screens)[number]>("initial");
+
+  function handleSubmit(event: MouseEvent<HTMLButtonElement>): void {
+    event.preventDefault();
+
+    setActiveScreen("paymentOption");
+  }
+
+  if (activeScreen == "paymentOption") return <PaymentOption />;
+  if (activeScreen == "paymentSuccess") return <PaymentSuccess />;
+
   return (
-    <div className="relative mx-auto h-screen w-full space-y-4 overflow-hidden bg-[#f5f7fb] p-4">
+    <div className="relative mx-auto h-screen min-h-[660px] w-full space-y-4 overflow-hidden bg-[#f5f7fb] p-4">
       {/* Main Content - simplified structure */}
       <div>
         <h2 className="text-sm font-bold text-primary">
@@ -46,14 +58,17 @@ const page: FC<pageProps> = async ({ params, searchParams }) => {
       </div>
 
       {/* Button - positioned absolutely at the bottom */}
-      <button className="absolute bottom-6 left-4 right-4 rounded-lg bg-primary p-4 text-sm text-white">
+      <button
+        onClick={handleSubmit}
+        className="absolute bottom-6 left-4 right-4 rounded-lg bg-primary p-4 text-sm text-white"
+      >
         Bayar
       </button>
     </div>
   );
 };
 
-export default page;
+export default Page;
 // #endregion
 
 // ANCHOR: Internal components
