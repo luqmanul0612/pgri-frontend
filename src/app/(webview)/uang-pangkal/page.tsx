@@ -5,17 +5,12 @@ import userIcon from "@/../public/icon/userIcon.png";
 import messageIcon from "@/../public/icon/email-icon.png";
 import phoneIcon from "@/../public/icon/phone-icon.png";
 
-interface pageProps {
-  params: Promise<any>;
-  searchParams?: Promise<any>;
-}
-
 // ANCHOR: Entry point
 // #region Entry point
 
-const page: FC<pageProps> = async ({ params, searchParams }) => {
+const page: FC = async () => {
   return (
-    <div className="relative mx-auto h-screen w-full space-y-4 overflow-hidden bg-[#f5f7fb] p-4">
+    <div className="relative mx-auto h-screen min-h-[660px] w-full space-y-4 overflow-hidden bg-[#f5f7fb] p-4">
       {/* Main Content - simplified structure */}
       <div>
         <h2 className="text-sm font-bold text-primary">
