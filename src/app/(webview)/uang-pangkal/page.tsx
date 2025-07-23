@@ -15,7 +15,7 @@ const Page: FC = () => {
   const screens = ["initial", "paymentOption", "paymentSuccess"] as const;
 
   const [activeScreen, setActiveScreen] =
-    useState<(typeof screens)[number]>("initial");
+    useState<(typeof screens)[number]>("paymentOption");
 
   function handleSubmit(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
@@ -23,7 +23,8 @@ const Page: FC = () => {
     setActiveScreen("paymentOption");
   }
 
-  if (activeScreen == "paymentOption") return <PaymentOption setActiveScreen={setActiveScreen} />;
+  if (activeScreen == "paymentOption")
+    return <PaymentOption setActiveScreen={setActiveScreen} />;
   if (activeScreen == "paymentSuccess") return <PaymentSuccess />;
 
   return (
