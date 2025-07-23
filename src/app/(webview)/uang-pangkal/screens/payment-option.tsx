@@ -53,6 +53,10 @@ interface VirtualAccountOptionProps {
   onClick?: () => void;
 }
 
+interface PaymentOptionComponentProps {
+  setActiveScreen: (screen: "initial" | "paymentOption" | "paymentSuccess") => void;
+}
+
 const VirtualAccountOption: FC<VirtualAccountOptionProps> = ({
   name,
   isSelected = false,
@@ -67,7 +71,7 @@ const VirtualAccountOption: FC<VirtualAccountOptionProps> = ({
   </div>
 );
 
-export const PaymentOption: FC = () => {
+export const PaymentOption: FC<PaymentOptionComponentProps> = ({ setActiveScreen }) => {
   const [userData, setUserData] = useState<{
     name: string;
     email: string;
@@ -134,6 +138,7 @@ export const PaymentOption: FC = () => {
         payment_method: "virtual_account",
       });
       window.loadJokulCheckout(res.data?.payment_page);
+      setActiveScreen("paymentSuccess");
     } catch (error) {
       console.error("Payment error:", error);
       toast.error("Gagal memproses pembayaran");

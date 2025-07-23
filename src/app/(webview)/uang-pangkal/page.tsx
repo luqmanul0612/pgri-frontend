@@ -23,7 +23,7 @@ const Page: FC = () => {
     setActiveScreen("paymentOption");
   }
 
-  if (activeScreen == "paymentOption") return <PaymentOption />;
+  if (activeScreen == "paymentOption") return <PaymentOption setActiveScreen={setActiveScreen} />;
   if (activeScreen == "paymentSuccess") return <PaymentSuccess />;
 
   return (
