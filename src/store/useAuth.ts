@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 export interface AuthProps {
   auth: {
+    id: string;
     isVerified: boolean;
     levelId: number;
   };
@@ -14,6 +15,7 @@ interface AuthState extends AuthProps {
 
 const initialData: AuthProps = {
   auth: {
+    id: "",
     isVerified: false,
     levelId: 3,
   },

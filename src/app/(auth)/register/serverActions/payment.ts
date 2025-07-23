@@ -9,7 +9,7 @@ interface PaymentBody {
 
 export async function submitPayment(userId: string, body: PaymentBody) {
   const url = process.env.HOST + `/api/v1/payments/${userId}/register`;
-  const token = "";
+  const token = cookies().get("token")?.value;
   try {
     const response = await fetch(url, {
       method: "POST",

@@ -84,6 +84,7 @@ const PasswordForm = () => {
       const tokenValue = decodeJwt<TokenValue>(token as string);
       setAuth({
         auth: {
+          id: res?.data?.id,
           isVerified: !!tokenValue?.is_verified,
           levelId: tokenValue?.level_id ?? 3,
         },

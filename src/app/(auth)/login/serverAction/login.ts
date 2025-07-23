@@ -47,6 +47,7 @@ export async function handleLogin(
 
     return {
       data: {
+        id: user.id,
         isVerified: !!tokenValue?.is_verified,
         levelId: (user.level_id ?? 3) as number,
       },

@@ -5,6 +5,7 @@ import Danger from "../../../../../public/assets/danger";
 import { useRouter } from "next/navigation";
 import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 import { submitPayment } from "../serverActions/payment";
+import useAuth from "@/store/useAuth";
 declare global {
   interface Window {
     loadJokulCheckout: (value: string) => void;
@@ -13,36 +14,15 @@ declare global {
 
 const UangPangkal = () => {
   const router = useRouter();
+  const { auth } = useAuth();
   const { setStep } = useRegistrationStepStore();
   const handlerPayment = async () => {
-    const res = await submitPayment("606", {
+    const res = await submitPayment(auth.id, {
       channel: "bri",
       payment_method: "virtual_account",
     });
-    console.log("first", res);
     window.loadJokulCheckout(res.data?.payment_page);
   };
-
-  useEffect(() => {
-    setTimeout(() => {
-      const popup = document.getElementById("jokul_checkout_modal");
-      popup?.remove();
-    }, 5000);
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("message", function (event) {
-      console.log("Received message:", event.data);
-
-      if (event.data?.status === "SUCCESS") {
-        console.log("Payment success!");
-      } else if (event.data?.status === "FAILED") {
-        console.log("Payment failed!");
-      } else if (event.data?.status === "CLOSED") {
-        console.log("Popup closed without payment");
-      }
-    });
-  }, []);
 
   useEffect(() => {
     const script = document.createElement("script");
