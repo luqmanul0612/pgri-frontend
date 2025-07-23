@@ -6,6 +6,7 @@ import userIcon from "@/../public/icon/userIcon.png";
 import messageIcon from "@/../public/icon/email-icon.png";
 import phoneIcon from "@/../public/icon/phone-icon.png";
 import { PaymentOption } from "./screens/payment-option";
+import { PaymentSuccess } from "./screens/payment-success";
 
 // ANCHOR: Entry point
 // #region Entry point
@@ -16,13 +17,14 @@ const Page: FC = () => {
   const [activeScreen, setActiveScreen] =
     useState<(typeof screens)[number]>("initial");
 
-  if (activeScreen == "paymentOption") return <PaymentOption />;
-
   function handleSubmit(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
 
     setActiveScreen("paymentOption");
   }
+
+  if (activeScreen == "paymentOption") return <PaymentOption />;
+  if (activeScreen == "paymentSuccess") return <PaymentSuccess />;
 
   return (
     <div className="relative mx-auto h-screen min-h-[660px] w-full space-y-4 overflow-hidden bg-[#f5f7fb] p-4">
