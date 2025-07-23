@@ -1,5 +1,6 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { getUserIdentity } from "../serverActions/getUserIdentity";
 
 // Reusable Components
 interface InfoFieldProps {
@@ -66,6 +67,30 @@ const VirtualAccountOption: FC<VirtualAccountOptionProps> = ({
 );
 
 export const PaymentOption: FC = () => {
+  const [userData, setUserData] = useState<{
+    name: string;
+    email: string;
+    phoneNumber: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const data = await getUserIdentity();
+        // data dari api hanya nama, email dan nomor tidak dapat
+        setUserData(data);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+        toast.error("Gagal memuat data pengguna");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   const showNotImplementedToast = (method: string) => {
     toast.warning("Fitur Belum Tersedia", {
       description: `Maaf, ${method} belum diimplementasikan. Untuk saat ini baru VA BRI yang tersedia.`,
@@ -94,17 +119,25 @@ export const PaymentOption: FC = () => {
             <div className="flex flex-col gap-4">
               <InfoField
                 label="Nama Anggota"
-                value="Mohammad Alfath, MM, S.Kom"
+                value={
+                  loading ? "Loading..." : userData?.name || "Tidak tersedia"
+                }
                 icon={<UserIcon />}
               />
               <InfoField
                 label="Email"
-                value="alfath.ui.ux@gmail.com"
+                value={
+                  loading ? "Loading..." : userData?.email || "Tidak tersedia"
+                }
                 icon={<MailIcon />}
               />
               <InfoField
                 label="Nomor Handphone"
-                value="+6285726293030"
+                value={
+                  loading
+                    ? "Loading..."
+                    : userData?.phoneNumber || "Tidak tersedia"
+                }
                 icon={<PhoneIcon />}
               />
             </div>

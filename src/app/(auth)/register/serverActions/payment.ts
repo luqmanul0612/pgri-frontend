@@ -8,7 +8,7 @@ interface PaymentBody {
   channel: string;
 }
 
-type TokenValue = {
+export type TokenValue = {
   exp: number;
   sub: string;
   level_id: number;
@@ -22,7 +22,6 @@ export async function submitPayment(body: PaymentBody) {
   // Get user ID from JWT token
   const tokenValue = decodeJwt<TokenValue>(token);
 
-  // ini harus dipastikan dulu isinya
   const userId = tokenValue?.sub;
 
   if (!userId) {
