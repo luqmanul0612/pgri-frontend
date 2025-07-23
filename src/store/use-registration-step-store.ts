@@ -6,6 +6,6 @@ interface IStep {
 }
 
 export const useRegistrationStepStore = create<IStep>((set) => ({
-  step: 1,
+  step: 4,
   setStep: (step) => set({ step }),
 }));

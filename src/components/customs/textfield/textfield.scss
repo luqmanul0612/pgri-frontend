@@ -18,7 +18,7 @@
   color: #116475;
 }
 .textfield-input {
-  border: 1px solid #4dd0e1;
+  border: 1px solid #17a3b833;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 400;
@@ -31,6 +31,9 @@
     0.2s color ease-in-out,
     0.2s border ease-in-out,
     0.2s background-color ease-in-out;
+}
+.textfield-have-start-icon {
+  padding-left: 45px;
 }
 .textfield-have-end-icon {
   padding-right: 45px;
@@ -92,6 +95,13 @@
 .textfield-end-icon {
   position: absolute;
   right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.textfield-start-icon {
+  position: absolute;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
 }

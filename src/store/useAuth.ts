@@ -6,6 +6,9 @@ export interface AuthProps {
     id: string;
     isVerified: boolean;
     levelId: number;
+    name: string;
+    email: string;
+    phoneNumber: string;
   };
 }
 
@@ -16,6 +19,9 @@ interface AuthState extends AuthProps {
 const initialData: AuthProps = {
   auth: {
     id: "",
+    name: "",
+    email: "",
+    phoneNumber: "",
     isVerified: false,
     levelId: 3,
   },

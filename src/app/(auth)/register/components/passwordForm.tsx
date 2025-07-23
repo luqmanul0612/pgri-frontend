@@ -85,6 +85,9 @@ const PasswordForm = () => {
       setAuth({
         auth: {
           id: res?.data?.id,
+          name: res?.data?.name,
+          email: res?.data?.email,
+          phoneNumber: res?.data?.phone_number,
           isVerified: !!tokenValue?.is_verified,
           levelId: tokenValue?.level_id ?? 3,
         },

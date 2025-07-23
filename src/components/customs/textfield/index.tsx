@@ -9,6 +9,7 @@ interface AdditionalProps {
   error?: boolean;
   helperText?: string;
   type?: "text" | "password";
+  startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
 }
 
@@ -16,7 +17,8 @@ type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> &
   AdditionalProps;
 
 const TextField = forwardRef<HTMLInputElement, Props>((props, ref) => {
-  const { className, label, helperText, error, endIcon, ...rest } = props;
+  const { className, label, helperText, error, endIcon, startIcon, ...rest } =
+    props;
   const [show, setShow] = useState(true);
 
   const onClickPasswordButton: React.MouseEventHandler<HTMLButtonElement> = (
@@ -31,11 +33,13 @@ const TextField = forwardRef<HTMLInputElement, Props>((props, ref) => {
     <label className={clsx("textfield-root", className)}>
       {!!label && <p className="textfield-label">{label}</p>}
       <div className={"textfield-input-container"}>
+        {!!startIcon && <div className="textfield-start-icon">{startIcon}</div>}
         <input
           {...rest}
           ref={ref}
           className={clsx("textfield-input", {
             error,
+            "textfield-have-start-icon": !!startIcon,
             "textfield-have-end-icon":
               !!props.endIcon || props.type === "password",
           })}

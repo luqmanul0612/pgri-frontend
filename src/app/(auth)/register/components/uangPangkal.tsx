@@ -14,38 +14,12 @@ declare global {
 const UangPangkal = () => {
   const router = useRouter();
   const { setStep } = useRegistrationStepStore();
-  const handlerPayment = async () => {
-    // userid dapetin dari token saja
-    const res = await submitPayment({
-      channel: "bri",
-      payment_method: "virtual_account",
-    });
-    window.loadJokulCheckout(res.data?.payment_page);
-  };
-
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src =
-      "https://sandbox.doku.com/jokul-checkout-js/v1/jokul-checkout-1.0.0.js";
-    script.async = true;
-    script.onerror = () => {
-      console.error("Failed to load script");
-    };
-    document.body.appendChild(script);
-    script.onload = () => {
-      console.log("script loaded");
-    };
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
 
   return (
     <div className="w-full max-w-[600px] rounded-2xl border border-[#17a3b8]/20 p-4">
       <div className="flex flex-col items-center rounded-md bg-[#17a3b8]/20 p-5 text-[#17a3b8]">
         <h2 className="text-[16px]">Total Bayar</h2>
-        <h1 className="text-[34px] font-bold">Rp15.000</h1>
+        <h1 className="text-[34px] font-bold">Rp45.000</h1>
         <div className="flex text-[12px]">
           <Image
             alt="uang-pangkal"
@@ -83,7 +57,7 @@ const UangPangkal = () => {
         </Button>
         <Button
           className="w-full rounded-2xl bg-[#17a3b8]"
-          onClick={handlerPayment}
+          onClick={() => router.push("/register/payment")}
         >
           Bayar
         </Button>

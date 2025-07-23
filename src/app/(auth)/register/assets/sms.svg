@@ -1,0 +1,22 @@
+<svg
+  viewBox="0 0 25 24"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M17.333 20.5H7.33301C4.33301 20.5 2.33301 19 2.33301 15.5V8.5C2.33301 5 4.33301 3.5 7.33301 3.5H17.333C20.333 3.5 22.333 5 22.333 8.5V15.5C22.333 19 20.333 20.5 17.333 20.5Z"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-miterlimit="10"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M17.333 9L14.203 11.5C13.173 12.32 11.483 12.32 10.453 11.5L7.33301 9"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-miterlimit="10"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
