@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getUserIdentity } from "../serverActions/getUserIdentity";
+import { submitPayment } from "@/app/(auth)/register/serverActions/payment";
 
 // Reusable Components
 interface InfoFieldProps {
@@ -73,6 +74,8 @@ export const PaymentOption: FC = () => {
     phoneNumber: string;
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedChannel, setSelectedChannel] = useState("bri");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -91,6 +94,21 @@ export const PaymentOption: FC = () => {
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src =
+      "https://sandbox.doku.com/jokul-checkout-js/v1/jokul-checkout-1.0.0.js";
+    script.async = true;
+    script.onerror = () => {
+      console.error("Failed to load script");
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   const showNotImplementedToast = (method: string) => {
     toast.warning("Fitur Belum Tersedia", {
       description: `Maaf, ${method} belum diimplementasikan. Untuk saat ini baru VA BRI yang tersedia.`,
@@ -100,6 +118,27 @@ export const PaymentOption: FC = () => {
   const handleVASelection = (vaName: string) => {
     if (vaName !== "VA BRI") {
       showNotImplementedToast(vaName);
+    }
+  };
+
+  const handlePayment = async () => {
+    if (!selectedChannel) {
+      toast.error("Silakan pilih metode pembayaran");
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const res = await submitPayment({
+        channel: selectedChannel,
+        payment_method: "virtual_account",
+      });
+      window.loadJokulCheckout(res.data?.payment_page);
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast.error("Gagal memproses pembayaran");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -198,8 +237,14 @@ export const PaymentOption: FC = () => {
       </div>
 
       {/* OK Button */}
-      <button className="flex w-full items-center justify-center gap-2.5 rounded-lg bg-primary p-4">
-        <span className="text-sm font-normal text-white">OK</span>
+      <button 
+        className="flex w-full items-center justify-center gap-2.5 rounded-lg bg-primary p-4 disabled:opacity-50 disabled:cursor-not-allowed"
+        onClick={handlePayment}
+        disabled={isProcessing || loading || !selectedChannel}
+      >
+        <span className="text-sm font-normal text-white">
+          {isProcessing ? "Memproses..." : "OK"}
+        </span>
       </button>
     </div>
   );
