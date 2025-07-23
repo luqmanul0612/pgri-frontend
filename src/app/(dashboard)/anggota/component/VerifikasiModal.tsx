@@ -35,7 +35,7 @@ const VerifikasiModal: React.FC<ModalProps> = ({ isOpen, onClose, data }) => {
         Silakan verifikasi Anggota, jika data yang di unggah sesuai dengan ketentuan PGRI
         </div>
         <div className="mb-2 text-center text-xs font-bold text-[#ff0000]">
-        “Pastikan anda sudah mengecek Data Pribadi - Data Pekerjaan - Foto”
+        “Pastikan Anda sudah mengecek Data Pribadi - Data Pekerjaan - Foto”
         </div>
 
         <div className="mt-4 flex cursor-pointer items-center justify-center rounded-xl bg-primary p-4 text-sm text-white transition-all duration-300 hover:opacity-70">

@@ -21,6 +21,8 @@ import { Logout } from "../../../../public/icon/sidebarIcon/Logout";
 import { cookies } from "next/headers";
 import { logout } from "./action";
 import useModalNotVerified from "@/store/use-modal-not-verified";
+import { CetakKta } from "../../../../public/icon/sidebarIcon/CetakKta";
+import { DataWilayah } from "../../../../public/icon/sidebarIcon/dataWilayah";
 import useAuth from "@/store/useAuth";
 
 interface SidebarProps {
@@ -36,7 +38,7 @@ const menus: {
 }[] = [
   {
     title: "Dashboard",
-    href: "/dashboard",
+    href: "/admin",
     Icon: dashboard,
   },
   {
@@ -89,6 +91,16 @@ const menus: {
     title: "Role",
     href: "/role",
     Icon: MutasiAnggota,
+  },
+  {
+    title: "Cetak KTA",
+    href: "/cetak-kta",
+    Icon: CetakKta,
+  },
+  {
+    title: "Data Wilayah",
+    href: "/data-wilayah",
+    Icon: DataWilayah,
   },
 ];
 

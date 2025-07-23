@@ -2,8 +2,6 @@
 "use client";
 import React, { useEffect, useState, Fragment, useRef } from "react";
 import { useTable, Column } from "react-table";
-import ReactPaginate from "react-paginate";
-import Image from "next/image";
 import Card from "@/app/components/Card";
 import { IoFemaleOutline, IoMaleOutline } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
@@ -159,7 +157,7 @@ const Table: React.FC<TableProps> = ({
   const [loading, setLoading] = useState(true);
   const [countMale, setCountMale] = useState<number>(0);
   const [countFemale, setCountFemale] = useState<number>(0);
-  const printRef = useRef<HTMLDivElement>(null);
+  const printRef = useRef<HTMLDivElement | null>(null);
   const [filterGender, setFilterGender] = useState<string>("");
   const defaultFilterMale: string = "laki-laki";
   const defaultFilterFemale: string = "perempuan";
@@ -210,7 +208,8 @@ const Table: React.FC<TableProps> = ({
   };
 
   const handlePrintPDF = async () => {
-    const el = printRef.current as unknown as HTMLElement;
+    const el = printRef.current;
+    if (!el) return;
     const canvas = await html2canvas(el);
     const data = canvas.toDataURL("image/png");
 

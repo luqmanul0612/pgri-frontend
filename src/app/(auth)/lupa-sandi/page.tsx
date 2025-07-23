@@ -40,8 +40,8 @@ const Page: FC<pageProps> = ({ params: {} }) => {
           <div className="flex w-full items-center gap-1 rounded-lg bg-[#ff0000]/10 px-2.5 py-1.5">
             <Danger />
             <p className="text-xs font-normal text-[#ff0000]">
-              Silakan masukan email yang terdaftar kamu untuk melakukan
-              perbaikan kata sandi
+              Silakan masukkan email Anda yang terdaftar untuk melakukan
+              pengantian kata sandi
             </p>
           </div>
           <div className="flex w-full flex-col items-start gap-1">
@@ -53,7 +53,7 @@ const Page: FC<pageProps> = ({ params: {} }) => {
                 setEmail(e.currentTarget.value);
               }}
               className={`rounded-2xl border bg-inherit py-3 pl-4 pr-3 text-sm ${email ? "text-[#17A3B8] ring-1 ring-[#17A3B8]" : "border-[#919191]"}`}
-              placeholder="Masukan Email"
+              placeholder="Masukkan Email"
             />
           </div>
         </div>

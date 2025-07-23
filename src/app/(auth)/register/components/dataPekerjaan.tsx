@@ -75,7 +75,6 @@ export const DataPekerjaan = ({}) => {
     setFormData({
       [id]: value,
     });
-    // console.log(`${id}:`, value);
   };
 
   return (

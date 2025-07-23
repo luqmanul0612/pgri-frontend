@@ -1278,7 +1278,7 @@ const EditAnggota: React.FC<pageProps> = () => {
                 setCheckBoxAgree(e.target.checked);
               }}
               type={"checkbox"}
-              id={"relegion"}
+              id={"religion"}
             />
             <p className={"text-[14px]"}>Data yang saya ubah sudah sesui</p>
           </div>

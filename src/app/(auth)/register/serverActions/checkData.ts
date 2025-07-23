@@ -15,7 +15,7 @@ export async function checkRegistrationData(
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  const raw = JSON.stringify({ ...body, relegion: body.religion }); // Use the typed body
+  const raw = JSON.stringify({ ...body, religion: body.religion }); // Use the typed body
 
   const requestOptions: RequestInit = {
     method: "POST",

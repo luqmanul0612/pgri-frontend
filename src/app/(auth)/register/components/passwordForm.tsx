@@ -126,8 +126,8 @@ const PasswordForm = () => {
             Buat Kata Sandi
           </h2>
           <p className="self-stretch text-xs font-normal text-[#17191c]">
-            Kata Sandi yang anda buat harus berbeda dengan kata sandi yang
-            sebelumnya anda gunakan
+            Kata Sandi yang Anda buat harus berbeda dengan kata sandi yang
+            sebelumnya Anda gunakan
           </p>
         </div>
         <div className="flex flex-col items-start justify-start gap-4 self-stretch">

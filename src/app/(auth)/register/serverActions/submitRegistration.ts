@@ -12,7 +12,7 @@ export async function submitRegistration(registrationData: IFormData) {
       },
       body: JSON.stringify({
         ...registrationData,
-        relegion: registrationData.religion,
+        religion: registrationData.religion,
       }),
     });
     const res = await response.json();
