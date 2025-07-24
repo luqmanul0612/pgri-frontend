@@ -24,6 +24,7 @@ import useModalNotVerified from "@/store/use-modal-not-verified";
 import { CetakKta } from "../../../../public/icon/sidebarIcon/CetakKta";
 import { DataWilayah } from "../../../../public/icon/sidebarIcon/dataWilayah";
 import useAuth from "@/store/useAuth";
+import { QrCode } from "../../../../public/icon/sidebarIcon/qr-code";
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -101,6 +102,11 @@ const menus: {
     title: "Data Wilayah",
     href: "/data-wilayah",
     Icon: DataWilayah,
+  },
+  {
+    title: "Scan QR Code KTA",
+    href: "/qr-code",
+    Icon: QrCode,
   },
 ];
 
