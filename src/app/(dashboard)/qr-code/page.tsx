@@ -4,10 +4,12 @@ import { ChevronDownIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import qrIllustration from "./assets/qrIllustration.png";
+import { Scan } from "./screens/scan";
 
 export default function Page() {
   const [selectedActivity, setSelectedActivity] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
 
   const activities = [
     "Pengecekan KTA Anggota",
@@ -17,6 +19,16 @@ export default function Page() {
     "Rapat Koordinasi",
     "Pelatihan Guru",
   ];
+
+  function handleSubmit() {
+    setIsScanning(true);
+  }
+
+  function handleBackToMain() {
+    setIsScanning(false);
+  }
+
+  if (isScanning) return <Scan onBackToMain={handleBackToMain} />;
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8">
@@ -84,6 +96,9 @@ export default function Page() {
           </div>
 
           <button
+            onClick={() => {
+              handleSubmit();
+            }}
             disabled={!selectedActivity}
             className={`w-full rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
               selectedActivity
