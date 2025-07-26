@@ -9,6 +9,17 @@ export interface AuthProps {
     name: string;
     email: string;
     phoneNumber: string;
+    createdAt: string;
+    nik: string;
+    npaNumber: string;
+    dob: string;
+    birthPlace: string;
+    latestEducation: string;
+    gender: string;
+    religion: string;
+    bloodType: string;
+    address: string;
+    postalCode: string;
   };
 }
 
@@ -24,6 +35,17 @@ const initialData: AuthProps = {
     phoneNumber: "",
     isVerified: false,
     levelId: 3,
+    createdAt: "",
+    address: "",
+    nik: "",
+    npaNumber: "",
+    dob: "",
+    birthPlace: "",
+    latestEducation: "",
+    gender: "",
+    religion: "",
+    bloodType: "",
+    postalCode: "",
   },
 };
 

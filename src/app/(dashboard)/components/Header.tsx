@@ -2,9 +2,7 @@
 import { IoIosArrowBack } from "react-icons/io";
 import Image from "next/image";
 import Link from "next/link";
-import { IUser } from "@/interfaces/Iauth";
-import { useEffect, useState } from "react";
-import { getAuthCookies } from "@/serverActions/getAuthCookies";
+import useAuth from "@/store/useAuth";
 
 interface TopNavbarProps {
   isSidebarOpen: boolean;
@@ -15,13 +13,7 @@ export const Header: React.FC<TopNavbarProps> = ({
   isSidebarOpen,
   handleSidebarToggle,
 }) => {
-  const [userData, setUserData] = useState<IUser>();
-  useEffect(() => {
-    (async () => {
-      const user = await getAuthCookies();
-      setUserData(user);
-    })();
-  }, []);
+  const { auth } = useAuth();
 
   return (
     <div
@@ -54,14 +46,14 @@ export const Header: React.FC<TopNavbarProps> = ({
         </div>
 
         {/* User Profile */}
-        <div className="flex items-center">
-          <div>
-            <h1 className="text-[12px] font-semibold text-white">
-              {userData?.name}
-            </h1>
-            <h5 className="text-right text-[10px] text-[#FFC107]">Online</h5>
-          </div>
-          <Link href={"/login"}>
+        <Link href="/my-profile">
+          <button className="flex items-center rounded-[8px] px-3 py-1 transition-all hover:bg-primary-600">
+            <div>
+              <h1 className="text-[12px] font-semibold text-white">
+                {auth?.name}
+              </h1>
+              <h5 className="text-right text-[10px] text-[#FFC107]">Online</h5>
+            </div>
             <div className="ml-2 h-[40px] w-[40px] rounded-full bg-pink-200">
               <Image
                 src={"/assets/profileNew.png"}
@@ -71,8 +63,8 @@ export const Header: React.FC<TopNavbarProps> = ({
                 className="rounded-full"
               />
             </div>
-          </Link>
-        </div>
+          </button>
+        </Link>
       </div>
     </div>
   );

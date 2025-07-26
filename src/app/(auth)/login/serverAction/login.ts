@@ -53,6 +53,17 @@ export async function handleLogin(
         phoneNumber: user.phone_number,
         isVerified: !!tokenValue?.is_verified,
         levelId: (user.level_id ?? 3) as number,
+        createdAt: user.created_at,
+        address: user?.address,
+        birthPlace: user?.birth_place,
+        bloodType: user?.blood_type,
+        dob: user?.dob,
+        gender: user?.gender,
+        latestEducation: user?.latest_education,
+        nik: user?.nik,
+        npaNumber: user?.npa_number,
+        postalCode: user?.postal_code,
+        religion: user?.religion,
       },
     };
   } catch (error) {

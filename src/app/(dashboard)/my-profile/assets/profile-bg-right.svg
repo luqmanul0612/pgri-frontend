@@ -1,0 +1,42 @@
+<svg width="1160" height="220" fill="none" version="1.1" viewBox="0 0 1160 220" xmlns="http://www.w3.org/2000/svg">
+ <path transform="translate(0,20)" d="m887.31 190-216.36 139.01 177.8 63.176z" fill="#e6edea" mask="url(#mask51)"/>
+ <path transform="translate(0,20)" d="m651.13 301.12 236.18-111.12-216.36 139.01z" fill="#f4f1f4" mask="url(#mask50)"/>
+ <path transform="translate(0,20)" d="m848.75 392.18 86.76-34.002-48.2-168.18z" fill="#c0dfdc" mask="url(#mask49)"/>
+ <path transform="translate(0,20)" d="m887.31 190 207.8 169.04-159.6-0.859z" fill="#f4f1f4" mask="url(#mask48)"/>
+ <path transform="translate(0,20)" d="m1096.3 305.73-77.12-160.24 156.64 88.807z" fill="#e6edea" mask="url(#mask45)"/>
+ <g fill="#f4f1f4">
+  <path transform="translate(0,20)" d="m1178.1 105.47-1.61 33.466-51.41-19.307z" mask="url(#mask44)"/>
+  <path transform="translate(0,20)" d="m956.4 169.83 32.133 64.356-72.974-50.082z" mask="url(#mask42)"/>
+  <path transform="translate(0,20)" d="m1152.4 99.036 72.3-23.168-38.56-20.594z" mask="url(#mask41)"/>
+  <path transform="translate(0,20)" d="m636.81 204.38 65.066-15.446-29.056-28.218z" mask="url(#mask40)"/>
+ </g>
+ <defs>
+  <mask id="mask40" maskUnits="userSpaceOnUse">
+   <path d="m1192-141.73h-1205v643.56h1205z" fill="#fff"/>
+  </mask>
+  <mask id="mask41" maskUnits="userSpaceOnUse">
+   <path d="m1192-141.73h-1205v643.56h1205z" fill="#fff"/>
+  </mask>
+  <mask id="mask42" maskUnits="userSpaceOnUse">
+   <path d="m1192-141.73h-1205v643.56h1205z" fill="#fff"/>
+  </mask>
+  <mask id="mask44" maskUnits="userSpaceOnUse">
+   <path d="m1192-141.73h-1205v643.56h1205z" fill="#fff"/>
+  </mask>
+  <mask id="mask45" maskUnits="userSpaceOnUse">
+   <path d="m1192-141.73h-1205v643.56h1205z" fill="#fff"/>
+  </mask>
+  <mask id="mask48" maskUnits="userSpaceOnUse">
+   <path d="m1192-141.73h-1205v643.56h1205z" fill="#fff"/>
+  </mask>
+  <mask id="mask49" maskUnits="userSpaceOnUse">
+   <path d="m1192-141.73h-1205v643.56h1205z" fill="#fff"/>
+  </mask>
+  <mask id="mask50" maskUnits="userSpaceOnUse">
+   <path d="m1192-141.73h-1205v643.56h1205z" fill="#fff"/>
+  </mask>
+  <mask id="mask51" maskUnits="userSpaceOnUse">
+   <path d="m1192-141.73h-1205v643.56h1205z" fill="#fff"/>
+  </mask>
+ </defs>
+</svg>
