@@ -1,9 +1,9 @@
 "use client";
-import { FC, MouseEvent, MouseEventHandler } from "react";
+import { FC, MouseEventHandler } from "react";
 import { IoIosArrowForward } from "react-icons/io";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { dashboard } from "../../../../public/icon/sidebarIcon/dashboard";
 import { Anggota } from "../../../../public/icon/sidebarIcon/anggota";
 import { permohonan } from "../../../../public/icon/sidebarIcon/permohonan";
@@ -14,13 +14,10 @@ import { PerlindunganGuru } from "../../../../public/icon/sidebarIcon/Perlindung
 import { IuranTagihan } from "../../../../public/icon/sidebarIcon/iuranTagihan";
 import { AspirasiGuru } from "../../../../public/icon/sidebarIcon/AspirasiGuru";
 import { MutasiAnggota } from "../../../../public/icon/sidebarIcon/MutasiAnggota";
-import { Button } from "@/components/ui/button";
 import { Setting } from "../../../../public/icon/sidebarIcon/Setting";
 import { Bahasa } from "../../../../public/icon/sidebarIcon/Bahasa";
 import { Logout } from "../../../../public/icon/sidebarIcon/Logout";
-import { cookies } from "next/headers";
 import { logout } from "./action";
-import useModalNotVerified from "@/store/use-modal-not-verified";
 import { CetakKta } from "../../../../public/icon/sidebarIcon/CetakKta";
 import { DataWilayah } from "../../../../public/icon/sidebarIcon/dataWilayah";
 import useAuth from "@/store/useAuth";
@@ -39,7 +36,7 @@ const menus: {
 }[] = [
   {
     title: "Dashboard",
-    href: "/admin",
+    href: "/dashboard",
     Icon: dashboard,
   },
   {
@@ -198,15 +195,15 @@ export const MenuItem: FC<MenuProps> = ({
   verify,
 }) => {
   const { auth } = useAuth();
+  const router = useRouter();
   const pathname = usePathname();
-  const { setShowModalNotVerified } = useModalNotVerified();
 
   const isActive = (href: string) => pathname === href;
   const onClickLink: MouseEventHandler<HTMLAnchorElement> = (e) => {
     if (verify) {
       if (!auth.isVerified) {
         e.preventDefault();
-        setShowModalNotVerified(true);
+        router.push("/account-verification");
         return;
       }
     }

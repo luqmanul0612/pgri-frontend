@@ -13,6 +13,7 @@ import PrinterIcon from "./assets/printer.svg";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import Button from "@/components/customs/button";
+import { useRouter } from "next/navigation";
 
 interface pageProps {
   params: Promise<{}>;
@@ -20,6 +21,7 @@ interface pageProps {
 
 const Page: FC<pageProps> = ({ params: {} }) => {
   const { auth } = useAuth();
+  const router = useRouter();
   const joinYear = dayjs(auth.createdAt).year();
 
   const userData = [
@@ -70,6 +72,20 @@ const Page: FC<pageProps> = ({ params: {} }) => {
     { label: "Mata Pelajaran", value: "Jaringan" },
   ];
 
+  const handlePrint = () => {
+    if (!auth.isVerified) {
+      router.push("/account-verification");
+      return;
+    }
+  };
+
+  const handleEditProfile = () => {
+    if (!auth.isVerified) {
+      router.push("/account-verification");
+      return;
+    }
+  };
+
   return (
     <div>
       <h3 className="text-base font-semibold text-black">Profilku</h3>
@@ -109,12 +125,14 @@ const Page: FC<pageProps> = ({ params: {} }) => {
           <Button
             variant="secondary"
             endIcon={<PrinterIcon width={18} height={18} />}
+            onClick={handlePrint}
           >
             Cetak Data Profil
           </Button>
           <Button
             variant="secondary"
             endIcon={<UserEditIcon width={18} height={18} />}
+            onClick={handleEditProfile}
           >
             Edit Profil
           </Button>
