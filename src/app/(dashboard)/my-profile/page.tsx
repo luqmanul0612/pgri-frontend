@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import useAuth from "@/store/useAuth";
 import ProfileBgLeft from "./assets/profile-bg-left.svg";
 import ProfileBgRight from "./assets/profile-bg-right.svg";
@@ -14,13 +14,36 @@ import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import Button from "@/components/customs/button";
 import { useRouter } from "next/navigation";
+import { getInstitution } from "./action/getInstitution";
 
 interface pageProps {
   params: Promise<{}>;
 }
 
+interface InstitutionData {
+  stage: string;
+  province: string;
+  province_code: string;
+  city: string;
+  city_code: string;
+  district: string;
+  district_code: string;
+  sub_district: string;
+  sub_district_code: string;
+  name: string;
+  job_title: string;
+  address: string;
+  grade: string;
+  employee_status: string;
+  educator_certificate: boolean;
+  study_subjects: string;
+  created_at: string;
+  updated_at: string;
+}
+
 const Page: FC<pageProps> = ({ params: {} }) => {
   const { auth } = useAuth();
+  const [institution, setInstitution] = useState<InstitutionData | null>(null);
   const router = useRouter();
   const joinYear = dayjs(auth.createdAt).year();
 
@@ -51,25 +74,24 @@ const Page: FC<pageProps> = ({ params: {} }) => {
   ];
 
   const jobData = [
-    { label: "Provinsi Tempat Tugas", value: "Jawa Tengah" },
+    { label: "Provinsi Tempat Tugas", value: institution?.province || "-" },
     {
       label: "Kabupaten/Kota/Kota Administrasi Tempat Tugas",
-      value: "Banyumas",
+      value: institution?.city || "-",
     },
-    { label: "Kecamatan/Cabang/Distrik Tempat Tugas", value: "Ajibarang" },
-    { label: "Desa/Kelurahan", value: "Pancasan" },
-    { label: "Nama Instansi Tempat Tugas", value: "Universitas PGRI Banyumas" },
+    { label: "Kecamatan/Cabang/Distrik Tempat Tugas", value: institution?.district || "-" },
+    { label: "Desa/Kelurahan", value: institution?.sub_district || "-" },
+    { label: "Nama Instansi Tempat Tugas", value: institution?.name || "-" },
     {
       label: "Alamat Tempat Tugas",
-      value:
-        "Jl. Veteran No.07 RT001/RW001 Kec. Pancasan, Ajibarang, Kab.Banyumas, Jawa Tengah",
+      value: institution?.address || "-",
     },
-    { label: "Pekerjaan", value: "Dosen" },
-    { label: "Status Kepegawaian", value: "Dosen ASN" },
-    { label: "Pangkat Golongan", value: "-" },
-    { label: "Sertifikasi Pendidik", value: "Sudah" },
-    { label: "Jenjang Mengajar", value: "Lainnya" },
-    { label: "Mata Pelajaran", value: "Jaringan" },
+    { label: "Pekerjaan", value: institution?.job_title || "-" },
+    { label: "Status Kepegawaian", value: institution?.employee_status || "-" },
+    { label: "Pangkat Golongan", value: institution?.grade || "-" },
+    { label: "Sertifikasi Pendidik", value: institution?.educator_certificate ? "Sudah" : "Belum" },
+    { label: "Jenjang Mengajar", value: institution?.stage || "-" },
+    { label: "Mata Pelajaran", value: institution?.study_subjects || "-" },
   ];
 
   const handlePrint = () => {
@@ -85,6 +107,14 @@ const Page: FC<pageProps> = ({ params: {} }) => {
       return;
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      const data = await getInstitution();
+      setInstitution(data.data);
+    })();
+    console.log("first");
+  }, []);
 
   return (
     <div>

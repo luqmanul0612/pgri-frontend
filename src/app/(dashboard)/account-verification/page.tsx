@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import Auth from "./assets/auth.svg";
 import Button from "@/components/customs/button";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ interface pageProps {
 
 const Page: FC<pageProps> = ({ params: {} }) => {
   const router = useRouter();
+
 
   return (
     <div className="flex h-[calc(100vh_-_150px)] flex-col items-center justify-center">
@@ -27,10 +28,7 @@ const Page: FC<pageProps> = ({ params: {} }) => {
         </p>
         <div className="mt-9 flex gap-6">
           <Button>Verifikasi Sekarang</Button>
-          <Button
-            variant="secondary"
-            onClick={() => router.push("/dashboard")}
-          >
+          <Button variant="secondary" onClick={() => router.push("/dashboard")}>
             Verifikasi di Aplikasi PGRIKU
           </Button>
         </div>
