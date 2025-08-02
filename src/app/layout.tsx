@@ -11,6 +11,9 @@ const inter = Roboto({
 export const metadata: Metadata = {
   title: "PGRI",
   description: "Persatuan Guru Republik Indonesia",
+  icons: {
+    icon: "/pgri-logo.svg",
+  },
 };
 
 export default function RootLayout({

@@ -1,18 +1,17 @@
 "use client";
 
 import { FC, FormEvent, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 import { Eye, EyeOff } from "lucide-react";
-import logo from "../../../../../public/assets/logo.png";
 import { handleLogin } from "../serverAction/login";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import useAuth from "@/store/useAuth";
+import PgriLogo from "../../../../../public/pgri-logo.svg";
 
 interface RightSectionProps {}
 
@@ -46,7 +45,7 @@ export const RightSection: FC<RightSectionProps> = () => {
   return (
     <section className="flex h-[76vh] max-h-[500px] min-h-[456px] w-[31%] max-w-[500px] flex-col items-center justify-between">
       <div className="flex flex-col items-center space-y-[0.3rem]">
-        <Image src={logo} alt="logo pgri" height={100} width={100} />
+        <PgriLogo width={80} height={80} />
         <p className="text-[1.6rem] font-bold">Welcome back!</p>
         <p className="text-center">
           Kartu Tanda Anggota Persatuan Guru Republik Indonesia

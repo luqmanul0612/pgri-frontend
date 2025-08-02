@@ -113,7 +113,6 @@ const Page: FC<pageProps> = ({ params: {} }) => {
       const data = await getInstitution();
       setInstitution(data.data);
     })();
-    console.log("first");
   }, []);
 
   return (

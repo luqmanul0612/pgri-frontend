@@ -22,6 +22,7 @@ import { CetakKta } from "../../../../public/icon/sidebarIcon/CetakKta";
 import { DataWilayah } from "../../../../public/icon/sidebarIcon/dataWilayah";
 import useAuth from "@/store/useAuth";
 import { QrCode } from "../../../../public/icon/sidebarIcon/qr-code";
+import PgriLogo from "../../../../public/pgri-logo.svg";
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -138,8 +139,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       className={`fixed z-10 h-screen bg-[#17191C] text-white transition-all duration-500 ${isSidebarOpen ? "w-[247px]" : "w-[63px]"}`}
     >
       <div className="flex h-[80px] items-center gap-4 pl-3 opacity-100 transition-all duration-300">
-        <Image src={"/logo/logo.png"} alt="logo" width={40} height={40} />
-
+        <PgriLogo width={40} height={40} />
         <span
           className={`overflow-hidden text-nowrap text-[16px] font-bold ${isSidebarOpen ? "" : "hidden"}`}
         >
