@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import Danger from "../../../../../public/assets/danger";
 import { FormField } from "@/app/components/FormField";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import "./dob.css";
@@ -10,6 +9,7 @@ import {
   IFormData,
   useRegistrationFormStore,
 } from "@/store/use-registration-form";
+import Button from "@/components/customs/button";
 
 const FormComponent = () => {
   const { isLoading, errors, formData, updateField, sendFormForCheck } =
@@ -385,16 +385,16 @@ const FormComponent = () => {
 
           <div className="flex gap-4">
             <Button
-              className="w-[200px] rounded-2xl bg-[#ff0000]"
+              variant="secondary"
+              type="button"
               onClick={() => {
-                router.back();
+                router.push("/login");
               }}
             >
               Kembali
             </Button>
 
             <Button
-              className="w-[200px] rounded-2xl bg-[#17a3b8]"
               type="submit"
               disabled={isLoading}
             >

@@ -33,17 +33,17 @@ export const useFormPekerjaanStore = create<FormPekerjaanState>()(
         const { formData } = get();
         const { setStep } = useRegistrationStepStore.getState();
 
-        let incomplete = false;
-        Object.entries(formData).forEach((item) => {
-          if (
-            (!item[1] && item[0] != "educator_certificate") ||
-            (item[1] === undefined && item[0] == "educator_certificate")
-          ) {
-            toast.error(`Anda belum mengisi data: ${item[0]}`);
-            incomplete = true;
-          }
-        });
-        if (incomplete) return;
+        // let incomplete = false;
+        // Object.entries(formData).forEach((item) => {
+        //   if (
+        //     (!item[1] && item[0] != "educator_certificate") ||
+        //     (item[1] === undefined && item[0] == "educator_certificate")
+        //   ) {
+        //     toast.error(`Anda belum mengisi data: ${item[0]}`);
+        //     incomplete = true;
+        //   }
+        // });
+        // if (incomplete) return;
 
         const toastId = toast.loading("Menyimpan data...");
         try {

@@ -1,0 +1,213 @@
+.select-root {
+  display: flex;
+  flex-direction: column;
+}
+.select-label {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: 4px;
+  color: #1e293b;
+  transition: 0.2s all ease-in-out;
+}
+.select-label.disabled {
+  color: #94a3b8;
+}
+.select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  padding: 0 16px;
+  line-height: 1;
+  font-size: 14px;
+  font-weight: 400;
+  height: 44px;
+  gap: 5px;
+  color: #17a3b8;
+  background-color: #fff;
+  outline: none;
+  cursor: pointer;
+  transition:
+    0.2s color ease-in-out,
+    0.2s border ease-in-out,
+    0.2s box-shadow ease-in-out,
+    0.2s background-color ease-in-out;
+}
+.select-trigger.error {
+  border: 1px solid #ef4444;
+}
+.select-trigger:hover {
+  background-color: #f8fafc;
+}
+.select-trigger:focus {
+  border: 1px solid #17a3b8;
+  box-shadow: 0 0 0 3px #f1f5f9;
+}
+.select-trigger[data-placeholder] {
+  color: #94a3b8;
+}
+.select-trigger:disabled {
+  cursor: default;
+  background-color: #e2e8f0;
+}
+.select-placeholder {
+  display: -webkit-box;
+  text-align: start;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+}
+.select-empty {
+  font-size: 14px;
+  font-weight: 400;
+  color: #64748b;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.select-icon {
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+
+.arrow-icon {
+  color: #64748b;
+  width: 20px;
+  height: 20px;
+}
+.arrow-icon.disabled {
+  color: #94a3b8;
+}
+
+.select-content {
+  overflow: hidden;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow:
+    0px 10px 38px -10px rgba(22, 23, 24, 0.35),
+    0px 10px 20px -15px rgba(22, 23, 24, 0.2);
+  width: var(--radix-select-trigger-width);
+  max-height: var(--radix-select-content-available-height);
+  transform: height 1000ms ease-in-out;
+  transform-origin: top center;
+  animation-duration: 200ms;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+
+.select-content[data-state="open"] {
+  animation-name: select-fade-in-down;
+}
+
+.select-content[data-state="closed"] {
+  animation-name: select-fade-out-up;
+}
+
+.select-viewport {
+  padding: 5px;
+  max-height: 300px;
+}
+
+.select-item {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1e293b;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 35px 0 25px;
+  position: relative;
+  user-select: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+.select-item[data-disabled] {
+  color: var(--mauve-8);
+  pointer-events: none;
+}
+.select-item[data-highlighted] {
+  outline: none;
+  background-color: #f1f5f9;
+}
+.select-item[data-state="checked"] {
+  background-color: #e0f7fa;
+  color: #17a3b8;
+}
+
+.select-item-indicator {
+  position: absolute;
+  right: 10px;
+  width: 20px;
+  color: #17a3b8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.select-scroll-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 25px;
+  cursor: default;
+}
+.select-scroll-icon {
+  height: 20px;
+  color: #64748b;
+}
+
+.select-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+.select-spinner .loader {
+  z-index: 1;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 5px solid;
+  border-color: #e2e8f0;
+  border-right-color: #17a3b8;
+  animation: select-spinner 1s infinite linear;
+}
+
+@keyframes select-spinner {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes select-fade-in-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes select-fade-out-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}

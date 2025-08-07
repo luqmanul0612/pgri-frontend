@@ -3,12 +3,13 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import Danger from "../../../../../public/assets/danger";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { FormField } from "@/app/components/FormField";
 import clsx from "clsx";
 import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 import { useGetRegionStore } from "@/store/use-get-region-store";
 import { useFormPekerjaanStore } from "@/store/use-data-pekerjaan-store";
+import Button from "@/components/customs/button";
+import { useRouter } from "next/navigation";
 
 export const DataPekerjaan = ({}) => {
   const {
@@ -29,6 +30,7 @@ export const DataPekerjaan = ({}) => {
     fetchKecamatan,
     fetchKelurahan,
   } = useGetRegionStore();
+  const router = useRouter();
   const { setStep } = useRegistrationStepStore();
   const { formData, setFormData, handleSubmit } = useFormPekerjaanStore();
 
@@ -82,10 +84,29 @@ export const DataPekerjaan = ({}) => {
       <form onSubmit={handleSubmit}>
         <div className="flex flex-wrap gap-6">
           <div className="flex flex-1 flex-col gap-6">
+            {/* Nama Instansi Tempat Tugas */}
+            <FormField label="Nama Instansi Tempat Tugas" required>
+              <Input
+                required
+                type="text"
+                id="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className={clsx(
+                  "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3",
+                  formData.name
+                    ? "border-[#17a3b8]/20 text-[#17a3b8]"
+                    : "border-gray-300 text-gray-400",
+                )}
+                placeholder="Nama Instansi Tempat Tugas"
+                autoComplete="off"
+              />
+            </FormField>
             {/* Provinsi Tempat Tugas */}
-            <FormField label="Provinsi Tempat Tugas">
+            <FormField label="Provinsi Tempat Tugas" required>
               <div className="relative">
                 <select
+                  required
                   id="provinsi"
                   value={selectedProvince}
                   onChange={(event: ChangeEvent<HTMLSelectElement>) => {
@@ -130,9 +151,13 @@ export const DataPekerjaan = ({}) => {
             </FormField>
 
             {/* Kabupaten/Kota Tempat Tugas */}
-            <FormField label="Kabupaten/Kota Tempat Tugas">
+            <FormField
+              label="Kabupaten/Kota/Kota Administrasi Tempat Tugas"
+              required
+            >
               <div className="relative">
                 <select
+                  required
                   id="kabupaten"
                   value={selectedKabupatenKota}
                   onChange={(event: ChangeEvent<HTMLSelectElement>) => {
@@ -177,9 +202,10 @@ export const DataPekerjaan = ({}) => {
             </FormField>
 
             {/* Kecamatan Tempat Tugas */}
-            <FormField label="Kecamatan Tempat Tugas">
+            <FormField label="Kecamatan/Cabang/Distrik Tempat Tugas" required>
               <div className="relative">
                 <select
+                  required
                   id="kecamatan"
                   value={selectedKecamatan}
                   onChange={(event: ChangeEvent<HTMLSelectElement>) => {
@@ -223,9 +249,10 @@ export const DataPekerjaan = ({}) => {
             </FormField>
 
             {/* Kelurahan/Desa Tempat Tugas */}
-            <FormField label="Desa/Kelurahan Tempat Tugas">
+            <FormField label="Desa/Kelurahan Tempat Tugas" required>
               <div className="relative">
                 <select
+                  required
                   id="kelurahan"
                   value={selectedKelurahan}
                   onChange={(event: ChangeEvent<HTMLSelectElement>) => {
@@ -267,27 +294,10 @@ export const DataPekerjaan = ({}) => {
               </div>
             </FormField>
 
-            {/* Nama Instansi Tempat Tugas */}
-            <FormField label="Nama Instansi Tempat Tugas">
-              <Input
-                type="text"
-                id="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className={clsx(
-                  "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3",
-                  formData.name
-                    ? "border-[#17a3b8]/20 text-[#17a3b8]"
-                    : "border-gray-300 text-gray-400",
-                )}
-                placeholder="Nama Instansi Tempat Tugas"
-                autoComplete="off"
-              />
-            </FormField>
-
             {/* Alamat Tempat Tugas */}
-            <FormField label="Alamat Tempat Tugas">
+            <FormField label="Alamat Tempat Tugas" required>
               <textarea
+                required
                 id="address"
                 value={formData.address}
                 onChange={handleTextAreaInputChange}
@@ -554,17 +564,17 @@ export const DataPekerjaan = ({}) => {
           </div>
 
           <div className="flex gap-4">
-            <Button
-              className="w-[200px] rounded-2xl border bg-white text-[#17a3b8] ring-1 ring-[#17a3b8]"
-              onClick={() => setStep(4)}
+            {/* <Button
+              type="button"
+              variant="secondary"
+              onClick={() => router.push("/login")}
             >
-              Lewati
-            </Button>
+              Kembali
+            </Button> */}
             <Button
-              className="w-[200px] rounded-2xl bg-[#17a3b8]"
               type="submit"
             >
-              Submit
+              Selanjutnya
             </Button>
           </div>
         </div>

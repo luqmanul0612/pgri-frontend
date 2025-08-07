@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Danger from "../../../../../public/assets/danger";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { submitRegistration } from "../serverActions/submitRegistration";
 import { ScaleLoader } from "react-spinners";
 import { toast } from "@/components/ui/use-toast";
@@ -14,6 +13,8 @@ import { useRegistrationFormStore } from "@/store/use-registration-form";
 import useAuth from "@/store/useAuth";
 import { TokenValue } from "../../login/serverAction/login";
 import { decodeJwt } from "@/lib/utils";
+import Button from "@/components/customs/button";
+import Checkbox from "@/components/customs/checkbox";
 
 const PasswordForm = () => {
   const { setAuth } = useAuth();
@@ -201,11 +202,10 @@ const PasswordForm = () => {
       <div className="flex w-full flex-col items-start justify-start gap-2.5 self-stretch">
         <div className="flex flex-row gap-2">
           <div>
-            <input
-              type="checkbox"
+            <Checkbox
               id="agreement"
               checked={checkbox}
-              onChange={(e) => setCheckbox(e.target.checked)}
+              onCheckedChange={(checked) => setCheckbox(!!checked)}
               className=""
             />
           </div>
@@ -222,27 +222,30 @@ const PasswordForm = () => {
           </Label>
         </div>
       </div>
-      <Button
-        type="button"
-        onClick={handleSubmit}
-        disabled={!checkbox || !formData.password || !password2 || isLoading}
-        className="w-full rounded-2xl bg-[#17a3b8] p-3.5 text-sm text-white"
-      >
-        {isLoading ? (
-          <ScaleLoader color="white" height={20} />
-        ) : (
-          "Buat Kata Sandi"
-        )}
-      </Button>
-
-      <Button
-        className="w-full rounded-2xl bg-[#ff0000]"
-        onClick={() => {
-          setStep(1);
-        }}
-      >
-        Kembali
-      </Button>
+      <div className="flex w-full gap-4">
+        <Button
+          fullWidth
+          variant="secondary"
+          className="w-full rounded-2xl bg-[#ff0000]"
+          onClick={() => {
+            setStep(1);
+          }}
+        >
+          Kembali
+        </Button>
+        <Button
+          fullWidth
+          type="button"
+          onClick={handleSubmit}
+          disabled={!checkbox || !formData.password || !password2 || isLoading}
+        >
+          {isLoading ? (
+            <ScaleLoader color="white" height={20} />
+          ) : (
+            "Buat Kata Sandi"
+          )}
+        </Button>
+      </div>
 
       {/* modal syarat dan ketentuan */}
       {/* <Transition appear show={isOpen} as={Fragment}>
