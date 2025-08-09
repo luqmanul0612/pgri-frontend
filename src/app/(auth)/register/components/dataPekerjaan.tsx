@@ -1,15 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect } from "react";
 import Danger from "../../../../../public/assets/danger";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/app/components/FormField";
 import clsx from "clsx";
-import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 import { useGetRegionStore } from "@/store/use-get-region-store";
 import { useFormPekerjaanStore } from "@/store/use-data-pekerjaan-store";
 import Button from "@/components/customs/button";
-import { useRouter } from "next/navigation";
 
 export const DataPekerjaan = ({}) => {
   const {
@@ -30,8 +28,6 @@ export const DataPekerjaan = ({}) => {
     fetchKecamatan,
     fetchKelurahan,
   } = useGetRegionStore();
-  const router = useRouter();
-  const { setStep } = useRegistrationStepStore();
   const { formData, setFormData, handleSubmit } = useFormPekerjaanStore();
 
   // get data provinsi
@@ -571,11 +567,7 @@ export const DataPekerjaan = ({}) => {
             >
               Kembali
             </Button> */}
-            <Button
-              type="submit"
-            >
-              Selanjutnya
-            </Button>
+            <Button type="submit">Selanjutnya</Button>
           </div>
         </div>
       </form>

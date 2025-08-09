@@ -19,6 +19,7 @@ const Button = React.forwardRef<
     startIcon,
     isLoading,
     endIcon,
+    fullWidth,
     variant = "primary",
     ...rest
   } = props;
@@ -35,7 +36,7 @@ const Button = React.forwardRef<
         "has-start-icon": !!startIcon,
         "has-end-icon": !!endIcon,
         "is-loading": isLoading,
-        "full-width": props.fullWidth,
+        "full-width": fullWidth,
       })}
       disabled={isLoading || props.disabled}
     >
