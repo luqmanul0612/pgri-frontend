@@ -1,6 +1,6 @@
 "use server";
 
-import { IFormData } from "@/store/use-registration-form";
+import { IUserFormData } from "@/store/use-registration-form";
 
 interface ApiResponse {
   status: number;
@@ -9,7 +9,7 @@ interface ApiResponse {
 }
 
 export async function checkRegistrationData(
-  body: IFormData,
+  body: IUserFormData,
 ): Promise<ApiResponse> {
   const url = process.env.HOST + "/api/v1/auth/check";
   const myHeaders = new Headers();

@@ -1,30 +1,30 @@
-import { useRegistrationStepStore } from "@/store/use-registration-step-store";
+import { useRegistrationFormStore } from "@/store/use-registration-form";
 import React, { Dispatch, SetStateAction } from "react";
 
 const Stepper = () => {
-  const { step, setStep } = useRegistrationStepStore();
+  const { step, setStep } = useRegistrationFormStore();
   return (
     <div className="inline-flex h-[34px] w-[900px] items-center justify-between">
       <Step
         number={1}
         label="Data Pribadi"
-        active={step == 1 || step == 2 || step == 3 || step == 4}
+        active={step >= 1}
         setStep={setStep}
         step={step}
       />
       <Separator />
       <Step
         number={2}
-        label="Buat Kata Sandi"
-        active={step == 2 || step == 3 || step == 4}
+        label="Data Pekerjaan"
+        active={step >= 2}
         setStep={setStep}
         step={step}
       />
       <Separator />
       <Step
         number={3}
-        label="Data Pekerjaan"
-        active={step == 3 || step == 4}
+        label="Buat Kata Sandi"
+        active={step >= 3}
         setStep={setStep}
         step={step}
       />

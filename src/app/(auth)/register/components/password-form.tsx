@@ -3,114 +3,30 @@ import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Danger from "../../../../../public/assets/danger";
 import { Label } from "@/components/ui/label";
-import { submitRegistration } from "../serverActions/submitRegistration";
 import { ScaleLoader } from "react-spinners";
-import { toast } from "@/components/ui/use-toast";
 import PasswordSuccess from "../../../../../public/assets/passwordSuccess";
-import { setCookies } from "@/serverActions/setCookies";
-import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 import { useRegistrationFormStore } from "@/store/use-registration-form";
-import useAuth from "@/store/useAuth";
-import { TokenValue } from "../../login/serverAction/login";
-import { decodeJwt } from "@/lib/utils";
 import Button from "@/components/customs/button";
 import Checkbox from "@/components/customs/checkbox";
 
 const PasswordForm = () => {
-  const { setAuth } = useAuth();
-  const [password2, setPassword2] = useState("");
-  const [checkbox, setCheckbox] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showPassword2, setShowPassword2] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const {
+    passwordFormData,
+    isLoading,
+    updateField,
+    setStep,
+    errors,
+    handlerSubmitForm,
+  } = useRegistrationFormStore();
 
-  const { formData, updateField } = useRegistrationFormStore();
-  const { setStep } = useRegistrationStepStore();
-
-  let [isOpen, setIsOpen] = useState(true);
-
-  function closeModal() {
-    setIsOpen(false);
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await handlerSubmitForm();
   }
 
-  function openModal() {
-    setIsOpen(true);
-  }
-
-  const validatePassword = (password: string) => {
-    const hasNumber = /[0-9]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    return hasNumber && hasLowerCase && hasUpperCase && hasSpecialChar;
-  };
-
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    if (formData.password !== password2) {
-      setError("Kata sandi tidak cocok.");
-      setIsLoading(false);
-      return;
-    }
-    if (formData.password.length < 8) {
-      setError("Kata sandi minimal terdiri dari 8 karakter.");
-      setIsLoading(false);
-      return;
-    }
-    if (!validatePassword(formData.password)) {
-      setError(
-        "Kata sandi harus mengandung minimal 1 angka, 1 huruf kecil, 1 huruf kapital, dan 1 karakter khusus.",
-      );
-      setIsLoading(false);
-      return;
-    }
-    setError(null);
-    // Add form submission logic here
-
-    const res = await submitRegistration(formData);
-
-    if (res.errors) {
-      toast({ title: res.errors ?? res.errors[0], variant: "destructive" });
-      setIsLoading(false);
-      return;
-    }
-
-    // simpan token ke cookies
-    if (res.data.token) {
-      const token = res.data.token;
-      setCookies("token", token);
-      setCookies("auth", res.data);
-      const tokenValue = decodeJwt<TokenValue>(token as string);
-      setAuth({
-        auth: {
-          id: res?.data?.id,
-          name: res?.data?.name,
-          email: res?.data?.email,
-          phoneNumber: res?.data?.phone_number,
-          isVerified: !!tokenValue?.is_verified,
-          levelId: tokenValue?.level_id ?? 3,
-          createdAt: res?.data?.created_at,
-          address: res?.data?.address,
-          birthPlace: res?.data?.birth_place,
-          bloodType: res?.data?.blood_type,
-          dob: res?.data?.dob,
-          gender: res?.data?.gender,
-          latestEducation: res?.data?.latest_education,
-          nik: res?.data?.nik,
-          npaNumber: res?.data?.npa_number,
-          postalCode: res?.data?.postal_code,
-          religion: res?.data?.religion,
-        },
-      });
-    }
-
-    setIsSuccess(true);
-    setIsLoading(false);
-  };
-
-  if (isSuccess)
+  if (passwordFormData.isSubmited)
     return (
       <div className="flex flex-col items-center justify-start gap-10 rounded-2xl border border-[#17a3b8]/20 p-4">
         <PasswordSuccess />
@@ -124,7 +40,7 @@ const PasswordForm = () => {
         </div>
         <button
           onClick={() => {
-            setStep(3);
+            setStep(4);
           }}
           className="flex w-full items-center justify-center rounded-2xl bg-[#17a3b8] p-4"
         >
@@ -134,7 +50,10 @@ const PasswordForm = () => {
     );
 
   return (
-    <div className="flex max-w-[600px] flex-col items-start justify-start gap-5 rounded-2xl border border-[#17a3b8]/20 p-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex max-w-[600px] flex-col items-start justify-start gap-5 rounded-2xl border border-[#17a3b8]/20 p-4"
+    >
       <div className="flex flex-col items-start justify-start gap-4 self-stretch">
         <div className="flex flex-col items-start justify-start gap-4 self-stretch">
           <h2 className="self-stretch text-2xl font-bold text-[#17191c]">
@@ -149,7 +68,7 @@ const PasswordForm = () => {
           <div className="relative flex flex-col items-start justify-start gap-2.5 self-stretch">
             <Label htmlFor="password1">Password Baru</Label>
             <input
-              value={formData.password}
+              value={passwordFormData.password}
               onChange={(e) => {
                 updateField("password", e.target.value);
               }}
@@ -173,18 +92,18 @@ const PasswordForm = () => {
           <div className="relative flex flex-col items-start justify-start gap-2.5 self-stretch">
             <Label htmlFor="password2">Konfirmasi Password Baru</Label>
             <input
-              value={password2}
-              onChange={(e) => setPassword2(e.target.value)}
-              type={showPassword2 ? "text" : "password"}
+              value={passwordFormData.confirmPassword}
+              onChange={(e) => updateField("confirmPassword", e.target.value)}
+              type={showConfirmPassword ? "text" : "password"}
               id="password2"
               className="flex w-full items-center gap-2.5 rounded-2xl border border-[#17a3b8]/20 py-3 pl-4 pr-10"
               placeholder="Konfirmasi Password"
             />
             <div
               className="absolute right-3 top-[65%] translate-y-[-50%] cursor-pointer"
-              onClick={() => setShowPassword2(!showPassword2)}
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
-              {showPassword2 ? (
+              {showConfirmPassword ? (
                 <AiOutlineEyeInvisible fontSize={20} />
               ) : (
                 <AiOutlineEye fontSize={20} />
@@ -193,10 +112,12 @@ const PasswordForm = () => {
           </div>
         </div>
       </div>
-      {error && (
+      {(errors.confirmPassword || errors.password) && (
         <div className="flex max-w-[80%] items-center rounded-lg bg-[#ff0000]/10 p-2.5">
           <Danger />
-          <p className="ml-2.5 text-xs font-normal text-[#ff0000]">{error}</p>
+          <p className="ml-2.5 text-xs font-normal text-[#ff0000]">
+            {errors.password || errors.confirmPassword}
+          </p>
         </div>
       )}
       <div className="flex w-full flex-col items-start justify-start gap-2.5 self-stretch">
@@ -204,8 +125,8 @@ const PasswordForm = () => {
           <div>
             <Checkbox
               id="agreement"
-              checked={checkbox}
-              onCheckedChange={(checked) => setCheckbox(!!checked)}
+              checked={passwordFormData.isAgreed}
+              onCheckedChange={(checked) => updateField("isAgreed", !!checked)}
               className=""
             />
           </div>
@@ -213,10 +134,7 @@ const PasswordForm = () => {
             Dengan ini saya bersedia menjadi Anggota PGRI, menaati AD/ART PGRI,
             memberikan hak pengelolaan dan perlindungan data sesuai UU
             Perlindungan data pribadi.{" "}
-            <span
-              onClick={openModal}
-              className="cursor-pointer font-bold text-[#17a3b8] underline"
-            >
+            <span className="cursor-pointer font-bold text-[#17a3b8] underline">
               Hak dan kewajiban anggota
             </span>
           </Label>
@@ -224,20 +142,25 @@ const PasswordForm = () => {
       </div>
       <div className="flex w-full gap-4">
         <Button
+          type="button"
           fullWidth
           variant="secondary"
           className="w-full rounded-2xl bg-[#ff0000]"
           onClick={() => {
-            setStep(1);
+            setStep(2);
           }}
         >
           Kembali
         </Button>
         <Button
           fullWidth
-          type="button"
-          onClick={handleSubmit}
-          disabled={!checkbox || !formData.password || !password2 || isLoading}
+          type="submit"
+          disabled={
+            !passwordFormData.isAgreed ||
+            !passwordFormData.password ||
+            !passwordFormData.confirmPassword ||
+            isLoading
+          }
         >
           {isLoading ? (
             <ScaleLoader color="white" height={20} />
@@ -355,7 +278,7 @@ const PasswordForm = () => {
           </div>
         </Dialog>
       </Transition> */}
-    </div>
+    </form>
   );
 };
 

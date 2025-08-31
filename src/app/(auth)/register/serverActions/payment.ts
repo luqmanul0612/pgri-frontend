@@ -88,3 +88,28 @@ export const checkStatusPayment = async () => {
     throw error;
   }
 };
+
+export interface IVaChannelsResponse {
+  status: 200;
+  data: Record<string, { name: string }>;
+}
+
+export const getVaChannels = async () => {
+  const cookieStore = cookies();
+  const token = cookieStore.get("token")?.value || "";
+  const url = process.env.HOST + "/api/v1/payments/va/channels";
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const res = await response.json();
+    return res as IVaChannelsResponse;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};

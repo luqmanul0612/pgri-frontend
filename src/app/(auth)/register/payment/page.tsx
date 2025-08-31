@@ -12,6 +12,7 @@ import * as Accordion from "@radix-ui/react-accordion";
 import Checkbox from "@/components/customs/checkbox";
 import {
   checkStatusPayment,
+  getVaChannels,
   IPaymentStatusResponse,
   submitPayment,
 } from "../serverActions/payment";
@@ -19,23 +20,20 @@ import Button from "@/components/customs/button";
 import { useDebouncedCallback } from "@/utils/use-debounce-callback";
 import PaymentSuccessImage from "../assets/payment-success-image.svg";
 import { useRouter } from "next/navigation";
+import { useRegistrationFormStore } from "@/store/use-registration-form";
 
 interface PageProps {
   params: {};
 }
 
-const paymentMethod = [
-  {
-    key: "virtual_account",
-    label: "Virtual Account",
-    channels: [
-      {
-        key: "bri",
-        label: "VA BRI",
-      },
-    ],
-  },
-];
+interface IPaymentMethods {
+  key: string;
+  label: string;
+  channels: {
+    key: string;
+    label: string;
+  }[];
+}
 
 const initialPaymentStatus: IPaymentStatusResponse["data"] = {
   expiry_date: "",
@@ -50,6 +48,8 @@ const initialPaymentStatus: IPaymentStatusResponse["data"] = {
 const Page: FC<PageProps> = ({ params: {} }) => {
   const { auth } = useAuth();
   const router = useRouter();
+  const { resetForm } = useRegistrationFormStore();
+  const [paymentMethod, setPaymentMethod] = useState<IPaymentMethods[]>([]);
   const [paymentStatus, setPaymentStatus] =
     useState<IPaymentStatusResponse["data"]>(initialPaymentStatus);
   const [method, setMethod] = useState("virtual_account");
@@ -63,16 +63,31 @@ const Page: FC<PageProps> = ({ params: {} }) => {
     window.loadJokulCheckout(res.data?.payment_page);
   };
 
+  const fetchVaChannels = useDebouncedCallback(async () => {
+    const res = await getVaChannels();
+    console.log("object", res);
+    setPaymentMethod([
+      {
+        key: "virtual_account",
+        label: "Virtual Account",
+        channels: Object.entries(res.data).map(([key, value]) => ({
+          key,
+          label: value.name,
+        })),
+      },
+    ]);
+  }, 500);
+
   const fetchCheckStatusPayment = useDebouncedCallback(async () => {
     const res = await checkStatusPayment();
     const paymentModal = document.getElementById("jokul_checkout_modal");
-    console.log("first", res);
     if (res.status === 200) {
       setPaymentStatus(res.data);
       if (res.data.status === "pending" && !paymentModal) {
         window.loadJokulCheckout(res.data?.payment_page);
-      } else if (res.data.status === "succeeded" && paymentModal) {
-        paymentModal.remove();
+      } else if (res.data.status === "succeeded") {
+        resetForm();
+        if (paymentModal) paymentModal.remove();
       }
     }
   }, 500);
@@ -94,6 +109,7 @@ const Page: FC<PageProps> = ({ params: {} }) => {
 
   useEffect(() => {
     fetchCheckStatusPayment();
+    fetchVaChannels();
     setInterval(async () => {
       fetchCheckStatusPayment();
     }, 10000);
@@ -201,7 +217,7 @@ const Page: FC<PageProps> = ({ params: {} }) => {
               >
                 <AccordionTrigger>{payMethod.label}</AccordionTrigger>
                 <AccordionContent asChild>
-                  <div className="flex px-3 py-2">
+                  <div className="flex flex-col items-start gap-4 px-3 py-2">
                     {payMethod.channels.map((item) => (
                       <div
                         key={item.key}
@@ -214,7 +230,7 @@ const Page: FC<PageProps> = ({ params: {} }) => {
                         />
                         <label
                           htmlFor={"method" + item.key}
-                          className="text-sm font-normal text-black"
+                          className="cursor-pointer text-sm font-normal text-black"
                         >
                           {item.label}
                         </label>

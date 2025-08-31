@@ -1,21 +1,22 @@
 import React from "react";
 import Danger from "../../../../../public/assets/danger";
 import { useRouter } from "next/navigation";
-import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 import Button from "@/components/customs/button";
+import { useRegistrationFormStore } from "@/store/use-registration-form";
 declare global {
   interface Window {
     loadJokulCheckout: (value: string) => void;
   }
 }
 
-const UangPangkal = () => {
+const InitialPayment = () => {
   const router = useRouter();
+  const { resetForm } = useRegistrationFormStore();
 
   return (
     <div className="w-full max-w-[600px] rounded-2xl border border-[#17a3b8]/20 p-4">
-      <h3 className="text-lg font-bold text-black mb-2">Uang Pangkal</h3>
-      <p className="text-xs font-normal text-black mb-4">
+      <h3 className="mb-2 text-lg font-bold text-black">Uang Pangkal</h3>
+      <p className="mb-4 text-xs font-normal text-black">
         Merupakan uang komitmen untuk seluruh anggota baru PGRI dan wajib
         dibayarkan diawal pendaftaran. Sebagai anggota baru kamu dapat melakukan
         Pembayaran Bank, Alfamart, Indomaret dan lainnya!
@@ -37,7 +38,10 @@ const UangPangkal = () => {
         <Button
           fullWidth
           variant="secondary"
-          onClick={() => router.push("/dashboard")}
+          onClick={() => {
+            resetForm();
+            router.push("/dashboard");
+          }}
         >
           Lewati
         </Button>
@@ -49,4 +53,4 @@ const UangPangkal = () => {
   );
 };
 
-export default UangPangkal;
+export default InitialPayment;

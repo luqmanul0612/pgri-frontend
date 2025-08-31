@@ -4,27 +4,20 @@ import { FormField } from "@/app/components/FormField";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import "./dob.css";
-import { useRegistrationStepStore } from "@/store/use-registration-step-store";
 import {
-  IFormData,
+  TRegisterFormData,
   useRegistrationFormStore,
 } from "@/store/use-registration-form";
 import Button from "@/components/customs/button";
 
-const FormComponent = () => {
-  const { isLoading, errors, formData, updateField, sendFormForCheck } =
+const UserFormComponent = () => {
+  const { isLoading, errors, userFormData, updateField, handlerSubmitForm } =
     useRegistrationFormStore();
-  const { step, setStep } = useRegistrationStepStore();
   const router = useRouter();
 
-  async function handleSubmit(
-    event: React.FormEvent<HTMLFormElement>,
-  ): Promise<void> {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const res = await sendFormForCheck();
-    if (res.success) {
-      setStep(step + 1);
-    }
+    await handlerSubmitForm();
   }
 
   return (
@@ -37,13 +30,16 @@ const FormComponent = () => {
               <Input
                 required
                 id="name"
-                value={formData.name}
+                value={userFormData.name}
                 onChange={(e) => {
-                  updateField(e.target.id as keyof IFormData, e.target.value);
+                  updateField(
+                    e.target.id as keyof TRegisterFormData,
+                    e.target.value,
+                  );
                 }}
                 className={clsx(
                   "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
-                  formData.name
+                  userFormData.name
                     ? "border-[#17a3b8]/20" // Regular border color
                     : "border-gray-300", // Empty state border color
                 )}
@@ -57,14 +53,17 @@ const FormComponent = () => {
               <Input
                 required
                 id="nik"
-                value={formData.nik}
+                value={userFormData.nik}
                 onChange={(e) => {
-                  updateField(e.target.id as keyof IFormData, e.target.value);
+                  updateField(
+                    e.target.id as keyof TRegisterFormData,
+                    e.target.value,
+                  );
                 }}
                 type="number"
                 className={clsx(
                   "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
-                  formData.nik
+                  userFormData.nik
                     ? "border-[#17a3b8]/20" // Regular border color
                     : "border-gray-300", // Empty state border color
                 )}
@@ -78,14 +77,17 @@ const FormComponent = () => {
               <Input
                 required
                 id="email"
-                value={formData.email}
+                value={userFormData.email}
                 onChange={(e) => {
-                  updateField(e.target.id as keyof IFormData, e.target.value);
+                  updateField(
+                    e.target.id as keyof TRegisterFormData,
+                    e.target.value,
+                  );
                 }}
                 type="email"
                 className={clsx(
                   "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
-                  formData.email
+                  userFormData.email
                     ? "border-[#17a3b8]/20" // Regular border color
                     : "border-gray-300", // Empty state border color
                 )}
@@ -99,13 +101,16 @@ const FormComponent = () => {
               <Input
                 required
                 id="birth_place"
-                value={formData.birth_place}
+                value={userFormData.birth_place}
                 onChange={(e) => {
-                  updateField(e.target.id as keyof IFormData, e.target.value);
+                  updateField(
+                    e.target.id as keyof TRegisterFormData,
+                    e.target.value,
+                  );
                 }}
                 className={clsx(
                   "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
-                  formData.birth_place
+                  userFormData.birth_place
                     ? "border-[#17a3b8]/20"
                     : "border-gray-300",
                 )}
@@ -119,14 +124,17 @@ const FormComponent = () => {
               <Input
                 required
                 id="dob"
-                value={formData.dob}
+                value={userFormData.dob}
                 onChange={(e) => {
-                  updateField(e.target.id as keyof IFormData, e.target.value);
+                  updateField(
+                    e.target.id as keyof TRegisterFormData,
+                    e.target.value,
+                  );
                 }}
                 type="date"
                 className={clsx(
                   "flex w-full items-center justify-between gap-2.5 rounded-2xl py-3 pl-4 pr-12", // Adjusted padding to make space for the icon
-                  formData.dob
+                  userFormData.dob
                     ? "border-[#17a3b8]/20 text-[#17a3b8]"
                     : "border-gray-300 text-gray-400",
                 )}
@@ -138,13 +146,16 @@ const FormComponent = () => {
                 <select
                   required
                   id="latest_education"
-                  value={formData.latest_education}
+                  value={userFormData.latest_education}
                   onChange={(e) => {
-                    updateField(e.target.id as keyof IFormData, e.target.value);
+                    updateField(
+                      e.target.id as keyof TRegisterFormData,
+                      e.target.value,
+                    );
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl border-gray-300 bg-transparent py-[8px] pl-4 pr-8 focus:border-[#17a3b8] focus:outline-none",
-                    formData.latest_education
+                    userFormData.latest_education
                       ? "border border-[#17a3b8]/20 text-[#17a3b8]"
                       : "border border-gray-300 text-gray-400",
                   )}
@@ -159,7 +170,7 @@ const FormComponent = () => {
                   <option value="S3">S3</option>
                 </select>
                 <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${formData.latest_education ? "text-[#17a3b8]" : "text-gray-400"}`}
+                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${userFormData.latest_education ? "text-[#17a3b8]" : "text-gray-400"}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -183,13 +194,16 @@ const FormComponent = () => {
                 <select
                   required
                   id="gender"
-                  value={formData.gender}
+                  value={userFormData.gender}
                   onChange={(e) => {
-                    updateField(e.target.id as keyof IFormData, e.target.value);
+                    updateField(
+                      e.target.id as keyof TRegisterFormData,
+                      e.target.value,
+                    );
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl bg-transparent py-[8px] pl-4 pr-8 focus:border-[#17a3b8] focus:outline-none",
-                    formData.gender
+                    userFormData.gender
                       ? "border border-[#17a3b8]/20 text-[#17a3b8]"
                       : "border border-gray-300 text-gray-400",
                   )}
@@ -201,7 +215,7 @@ const FormComponent = () => {
                   <option value="perempuan">Perempuan</option>
                 </select>
                 <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${formData.gender ? "text-[#17a3b8]" : "text-gray-400"}`}
+                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${userFormData.gender ? "text-[#17a3b8]" : "text-gray-400"}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -223,13 +237,16 @@ const FormComponent = () => {
                 <select
                   required
                   id="religion"
-                  value={formData.religion}
+                  value={userFormData.religion}
                   onChange={(e) => {
-                    updateField(e.target.id as keyof IFormData, e.target.value);
+                    updateField(
+                      e.target.id as keyof TRegisterFormData,
+                      e.target.value,
+                    );
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl bg-transparent py-[8px] pl-4 pr-8 text-[#17a3b8] focus:border-[#17a3b8] focus:outline-none",
-                    formData.religion
+                    userFormData.religion
                       ? "border border-[#17a3b8]/20 text-[#17a3b8]"
                       : "border border-gray-300 text-gray-400",
                   )}
@@ -245,7 +262,7 @@ const FormComponent = () => {
                   <option value="Konghucu">Konghucu</option>
                 </select>
                 <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${formData.religion ? "text-[#17a3b8]" : "text-gray-400"}`}
+                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${userFormData.religion ? "text-[#17a3b8]" : "text-gray-400"}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -267,13 +284,16 @@ const FormComponent = () => {
                 <select
                   required
                   id="blood_type"
-                  value={formData.blood_type}
+                  value={userFormData.blood_type}
                   onChange={(e) => {
-                    updateField(e.target.id as keyof IFormData, e.target.value);
+                    updateField(
+                      e.target.id as keyof TRegisterFormData,
+                      e.target.value,
+                    );
                   }}
                   className={clsx(
                     "relative z-10 w-full appearance-none rounded-2xl bg-transparent py-[8px] pl-4 pr-8 text-[#17a3b8] focus:border-[#17a3b8] focus:outline-none",
-                    formData.blood_type
+                    userFormData.blood_type
                       ? "border border-[#17a3b8]/20 text-[#17a3b8]"
                       : "border border-gray-300 text-gray-400",
                   )}
@@ -287,7 +307,7 @@ const FormComponent = () => {
                   <option value="O">O</option>
                 </select>
                 <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${formData.blood_type ? "text-[#17a3b8]" : "text-gray-400"}`}
+                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${userFormData.blood_type ? "text-[#17a3b8]" : "text-gray-400"}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -308,13 +328,18 @@ const FormComponent = () => {
               <Input
                 required
                 id="address"
-                value={formData.address}
+                value={userFormData.address}
                 onChange={(e) => {
-                  updateField(e.target.id as keyof IFormData, e.target.value);
+                  updateField(
+                    e.target.id as keyof TRegisterFormData,
+                    e.target.value,
+                  );
                 }}
                 className={clsx(
                   "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
-                  formData.address ? "border-[#17a3b8]/20" : "border-gray-300",
+                  userFormData.address
+                    ? "border-[#17a3b8]/20"
+                    : "border-gray-300",
                 )}
                 placeholder="Pancasan RT 001/ RW 002 Desa Banteng Kec. Ajibarang"
                 autoComplete="off"
@@ -327,14 +352,17 @@ const FormComponent = () => {
                 <Input
                   required
                   id="postal_code"
-                  value={formData.postal_code}
+                  value={userFormData.postal_code}
                   onChange={(e) => {
-                    updateField(e.target.id as keyof IFormData, e.target.value);
+                    updateField(
+                      e.target.id as keyof TRegisterFormData,
+                      e.target.value,
+                    );
                   }}
                   type="number"
                   className={clsx(
                     "flex w-full items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
-                    formData.postal_code
+                    userFormData.postal_code
                       ? "border border-[#17a3b8]/20"
                       : "border border-gray-300",
                   )}
@@ -351,14 +379,17 @@ const FormComponent = () => {
                 <Input
                   required
                   id="phone_number"
-                  value={formData.phone_number}
+                  value={userFormData.phone_number}
                   onChange={(e) => {
-                    updateField(e.target.id as keyof IFormData, e.target.value);
+                    updateField(
+                      e.target.id as keyof TRegisterFormData,
+                      e.target.value,
+                    );
                   }}
                   type="tel"
                   className={clsx(
                     "flex w-full items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
-                    formData.phone_number
+                    userFormData.phone_number
                       ? "border border-[#17a3b8]/20"
                       : "border border-gray-300",
                   )}
@@ -394,10 +425,7 @@ const FormComponent = () => {
               Kembali
             </Button>
 
-            <Button
-              type="submit"
-              disabled={isLoading}
-            >
+            <Button type="submit" disabled={isLoading}>
               {isLoading ? "Melakukan validasi..." : "Selanjutnya"}
             </Button>
           </div>
@@ -407,4 +435,4 @@ const FormComponent = () => {
   );
 };
 
-export default FormComponent;
+export default UserFormComponent;

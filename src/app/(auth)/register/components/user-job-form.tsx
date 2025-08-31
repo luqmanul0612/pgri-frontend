@@ -6,10 +6,13 @@ import { Input } from "@/components/ui/input";
 import { FormField } from "@/app/components/FormField";
 import clsx from "clsx";
 import { useGetRegionStore } from "@/store/use-get-region-store";
-import { useFormPekerjaanStore } from "@/store/use-data-pekerjaan-store";
 import Button from "@/components/customs/button";
+import {
+  TRegisterFormData,
+  useRegistrationFormStore,
+} from "@/store/use-registration-form";
 
-export const DataPekerjaan = ({}) => {
+const UserJobFormComponent = ({}) => {
   const {
     provinces,
     kabupatenKota,
@@ -28,7 +31,8 @@ export const DataPekerjaan = ({}) => {
     fetchKecamatan,
     fetchKelurahan,
   } = useGetRegionStore();
-  const { formData, setFormData, handleSubmit } = useFormPekerjaanStore();
+  const { userJobFormData, setStep, updateField, handlerSubmitForm } =
+    useRegistrationFormStore();
 
   // get data provinsi
   useEffect(() => {
@@ -58,22 +62,23 @@ export const DataPekerjaan = ({}) => {
   }, [selectedKecamatan]);
 
   useEffect(() => {
-    setFormData({ subdistrict_id: selectedKelurahan });
+    updateField("subdistrict_id", selectedKelurahan);
   }, [selectedKelurahan]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setFormData({
-      [id]: value,
-    });
+    updateField(id as keyof TRegisterFormData, value);
   };
 
   const handleTextAreaInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { id, value } = e.target;
-    setFormData({
-      [id]: value,
-    });
+    updateField(id as keyof TRegisterFormData, value);
   };
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await handlerSubmitForm();
+  }
 
   return (
     <div className="w-full max-w-5xl rounded-2xl border border-[#17a3b8]/20 p-4">
@@ -86,11 +91,11 @@ export const DataPekerjaan = ({}) => {
                 required
                 type="text"
                 id="name"
-                value={formData.name}
+                value={userJobFormData.name}
                 onChange={handleInputChange}
                 className={clsx(
                   "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3",
-                  formData.name
+                  userJobFormData.name
                     ? "border-[#17a3b8]/20 text-[#17a3b8]"
                     : "border-gray-300 text-gray-400",
                 )}
@@ -295,11 +300,11 @@ export const DataPekerjaan = ({}) => {
               <textarea
                 required
                 id="address"
-                value={formData.address}
+                value={userJobFormData.address}
                 onChange={handleTextAreaInputChange}
                 className={clsx(
                   "h-24 w-full rounded-2xl py-3 pl-4 pr-3",
-                  formData.address
+                  userJobFormData.address
                     ? "border border-[#17a3b8]/20 text-[#17a3b8]"
                     : "border border-gray-300 text-gray-400",
                 )}
@@ -315,16 +320,14 @@ export const DataPekerjaan = ({}) => {
               <div className="relative">
                 <select
                   id="job_title"
-                  value={formData.job_title}
+                  value={userJobFormData.job_title}
                   onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                     const { value, id } = e.target;
-                    setFormData({
-                      [id]: value,
-                    });
+                    updateField(id as keyof TRegisterFormData, value);
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
-                    formData.job_title
+                    userJobFormData.job_title
                       ? "border border-[#17a3b8]/20 text-[#17a3b8]"
                       : "border border-gray-300 text-gray-400",
                   )}
@@ -343,7 +346,9 @@ export const DataPekerjaan = ({}) => {
                 </select>
                 <svg
                   className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${
-                    formData.job_title ? "text-[#17a3b8]" : "text-gray-400"
+                    userJobFormData.job_title
+                      ? "text-[#17a3b8]"
+                      : "text-gray-400"
                   }`}
                   fill="none"
                   stroke="currentColor"
@@ -365,16 +370,14 @@ export const DataPekerjaan = ({}) => {
               <div className="relative">
                 <select
                   id="employee_status"
-                  value={formData.employee_status}
+                  value={userJobFormData.employee_status}
                   onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                     const { value, id } = e.target;
-                    setFormData({
-                      [id]: value,
-                    });
+                    updateField(id as keyof TRegisterFormData, value);
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
-                    formData.employee_status
+                    userJobFormData.employee_status
                       ? "border border-[#17a3b8]/20 text-[#17a3b8]"
                       : "border border-gray-300 text-gray-400",
                   )}
@@ -397,7 +400,7 @@ export const DataPekerjaan = ({}) => {
                 </select>
                 <svg
                   className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${
-                    formData.employee_status
+                    userJobFormData.employee_status
                       ? "text-[#17a3b8]"
                       : "text-gray-400"
                   }`}
@@ -421,13 +424,13 @@ export const DataPekerjaan = ({}) => {
               <Input
                 className={clsx(
                   "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3",
-                  formData.grade
+                  userJobFormData.grade
                     ? "border-[#17a3b8]/20 text-[#17a3b8]"
                     : "border-gray-300 text-gray-400",
                 )}
                 placeholder="Pangkat/Golongan"
                 id="grade"
-                value={formData.grade}
+                value={userJobFormData.grade}
                 onChange={handleInputChange}
                 autoComplete="off"
               />
@@ -438,17 +441,17 @@ export const DataPekerjaan = ({}) => {
               <div className="relative">
                 <select
                   id="educator_certificate"
-                  value={formData.educator_certificate ? "true" : "false"}
+                  value={
+                    userJobFormData.educator_certificate ? "true" : "false"
+                  }
                   onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                     const value = e.target.value === "true";
                     const id = e.target.id;
-                    setFormData({
-                      [id]: value,
-                    });
+                    updateField(id as keyof TRegisterFormData, value);
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
-                    formData.educator_certificate
+                    userJobFormData.educator_certificate
                       ? "border border-[#17a3b8]/20 text-[#17a3b8]"
                       : "border border-gray-300 text-gray-400",
                   )}
@@ -458,7 +461,7 @@ export const DataPekerjaan = ({}) => {
                 </select>
                 <svg
                   className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${
-                    formData.educator_certificate
+                    userJobFormData.educator_certificate
                       ? "text-[#17a3b8]"
                       : "text-gray-400"
                   }`}
@@ -482,16 +485,14 @@ export const DataPekerjaan = ({}) => {
               <div className="relative">
                 <select
                   id="stage"
-                  value={formData.stage}
+                  value={userJobFormData.stage}
                   onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                     const { value, id } = e.target;
-                    setFormData({
-                      [id]: value,
-                    });
+                    updateField(id as keyof TRegisterFormData, value);
                   }}
                   className={clsx(
                     "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
-                    formData.stage
+                    userJobFormData.stage
                       ? "border border-[#17a3b8]/20 text-[#17a3b8]"
                       : "border border-gray-300 text-gray-400",
                   )}
@@ -513,7 +514,7 @@ export const DataPekerjaan = ({}) => {
                 </select>
                 <svg
                   className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${
-                    formData.stage ? "text-[#17a3b8]" : "text-gray-400"
+                    userJobFormData.stage ? "text-[#17a3b8]" : "text-gray-400"
                   }`}
                   fill="none"
                   stroke="currentColor"
@@ -535,13 +536,13 @@ export const DataPekerjaan = ({}) => {
               <Input
                 className={clsx(
                   "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3",
-                  formData.study_subjects
+                  userJobFormData.study_subjects
                     ? "border-[#17a3b8]/20 text-[#17a3b8]"
                     : "border-gray-300 text-gray-400",
                 )}
                 placeholder="Mata Pelajaran"
                 id="study_subjects"
-                value={formData.study_subjects}
+                value={userJobFormData.study_subjects}
                 onChange={handleInputChange}
                 autoComplete="off"
               />
@@ -550,23 +551,15 @@ export const DataPekerjaan = ({}) => {
         </div>
 
         {/* Error & Navigation */}
-        <div className="mt-4 flex items-center justify-between">
-          <div className="flex items-center gap-1 rounded-lg bg-[#ff0000]/10 px-2.5 py-[5px]">
-            <Danger />
-            <div className="text-xs font-normal text-[#ff0000]">
-              Pada pendaftaran akun ini kamu boleh langsung melewati proses
-              pengisian data pekerjaan
-            </div>
-          </div>
-
+        <div className="mt-4 flex items-center justify-end">
           <div className="flex gap-4">
-            {/* <Button
+            <Button
               type="button"
               variant="secondary"
-              onClick={() => router.push("/login")}
+              onClick={() => setStep(1)}
             >
               Kembali
-            </Button> */}
+            </Button>
             <Button type="submit">Selanjutnya</Button>
           </div>
         </div>
@@ -574,3 +567,5 @@ export const DataPekerjaan = ({}) => {
     </div>
   );
 };
+
+export default UserJobFormComponent;

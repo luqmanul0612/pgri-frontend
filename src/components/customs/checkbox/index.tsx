@@ -14,7 +14,6 @@ const Checkbox = forwardRef<HTMLButtonElement, Props>((props, ref) => {
       {...rest}
       ref={ref}
       className={clsx("checkbox-root", className, { error })}
-      defaultChecked
     >
       <Lib.Indicator asChild className="checkbox-indicator">
         <Checkmark className="checkbox-icon" />
