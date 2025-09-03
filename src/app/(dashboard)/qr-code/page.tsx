@@ -1,23 +1,22 @@
 "use client";
 
-import { ChevronDownIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import qrIllustration from "./assets/qrIllustration.png";
 import { Scan } from "./screens/scan";
+import { Combobox } from "@/components/ui/combobox";
 
 export default function Page() {
   const [selectedActivity, setSelectedActivity] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
 
   const activities = [
-    "Pengecekan KTA Anggota",
-    "Kegiatan PGRI Pusat",
-    "Kegiatan PGRI Provinsi",
-    "Kegiatan PGRI Daerah",
-    "Rapat Koordinasi",
-    "Pelatihan Guru",
+    { value: "pengecekan-kta", label: "Pengecekan KTA Anggota" },
+    { value: "kegiatan-pgri-pusat", label: "Kegiatan PGRI Pusat" },
+    { value: "kegiatan-pgri-provinsi", label: "Kegiatan PGRI Provinsi" },
+    { value: "kegiatan-pgri-daerah", label: "Kegiatan PGRI Daerah" },
+    { value: "rapat-koordinasi", label: "Rapat Koordinasi" },
+    { value: "pelatihan-guru", label: "Pelatihan Guru" },
   ];
 
   function handleSubmit() {
@@ -60,39 +59,13 @@ export default function Page() {
               Jenis Kegiatan
             </label>
 
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-4 py-3 text-left shadow-sm transition-colors hover:border-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <span
-                  className={`text-sm ${selectedActivity ? "text-gray-900" : "text-gray-500"}`}
-                >
-                  {selectedActivity || "Pilih Kegiatan"}
-                </span>
-                <ChevronDownIcon
-                  className={`h-5 w-5 text-gray-400 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {isDropdownOpen && (
-                <div className="absolute z-10 mt-1 w-full rounded-lg border border-gray-300 bg-white shadow-lg">
-                  {activities.map((activity) => (
-                    <button
-                      key={activity}
-                      onClick={() => {
-                        setSelectedActivity(activity);
-                        setIsDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-3 text-left text-sm text-gray-900 transition-colors first:rounded-t-lg last:rounded-b-lg hover:bg-gray-50"
-                    >
-                      {activity}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            <Combobox
+              options={activities}
+              value={selectedActivity}
+              onValueChange={setSelectedActivity}
+              placeholder="Pilih Kegiatan"
+              searchPlaceholder="Pencarian"
+            />
           </div>
 
           <button
