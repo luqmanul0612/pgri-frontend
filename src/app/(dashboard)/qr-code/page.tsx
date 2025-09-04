@@ -44,7 +44,7 @@ export default function Page() {
     setIsScanning(false);
   }
 
-  if (isScanning) return <Scan onBackToMain={handleBackToMain} />;
+  if (isScanning) return <Scan onBackToMain={handleBackToMain} selectedActivity={selectedActivity} activities={activities} />;
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8">

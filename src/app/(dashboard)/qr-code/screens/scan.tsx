@@ -6,9 +6,11 @@ import { BrowserMultiFormatReader } from "@zxing/browser";
 
 interface ScanProps {
   onBackToMain: () => void;
+  selectedActivity: string;
+  activities: Array<{ value: string; label: string }>;
 }
 
-export const Scan = ({ onBackToMain }: ScanProps) => {
+export const Scan = ({ onBackToMain, selectedActivity, activities }: ScanProps) => {
   const webcamRef = useRef<Webcam>(null);
   const [cameraDevices, setCameraDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>("");
@@ -132,7 +134,7 @@ export const Scan = ({ onBackToMain }: ScanProps) => {
               </div>
               <div className="flex items-center justify-start gap-4">
                 <span className="justify-end text-base font-normal text-[#f5f7fb]">
-                  Pengecekan KTA Anggota
+                  {activities.find(activity => activity.value === selectedActivity)?.label || "Pengecekan KTA Anggota"}
                 </span>
               </div>
             </div>
