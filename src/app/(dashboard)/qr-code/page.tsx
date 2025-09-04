@@ -11,12 +11,29 @@ export default function Page() {
   const [isScanning, setIsScanning] = useState(false);
 
   const activities = [
-    { value: "pengecekan-kta", label: "Pengecekan KTA Anggota" },
+    { value: "pengecekan-kta-anggota", label: "Pengecekan KTA Anggota" },
+    {
+      value: "webinar-pgri-pentingnya-pemahaman-teknologi-untuk-guru-vol-1",
+      label: "Webinar PGRI “Pentingnya Pemahaman Teknologi Untuk Guru Vol.1”",
+    },
+    {
+      value: "pelatihan-khusus-tenaga-it-pgri-banyumas",
+      label: "Pelatihan khusus tenaga IT PGRI Banyumas",
+    },
+    {
+      value: "rapimnas-rapat-pimpinan-nasional-pgri",
+      label: "RAPIMNAS (Rapat Pimpinan Nasional) PGRI",
+    },
     { value: "kegiatan-pgri-pusat", label: "Kegiatan PGRI Pusat" },
     { value: "kegiatan-pgri-provinsi", label: "Kegiatan PGRI Provinsi" },
-    { value: "kegiatan-pgri-daerah", label: "Kegiatan PGRI Daerah" },
-    { value: "rapat-koordinasi", label: "Rapat Koordinasi" },
-    { value: "pelatihan-guru", label: "Pelatihan Guru" },
+    {
+      value: "kegiatan-pgri-daerah-kecamatan",
+      label: "Kegiatan PGRI Daerah/Kecamatan",
+    },
+    {
+      value: "rapat-kordinasi-pgri-jawa-tengah",
+      label: "Rapat Kordinasi PGRI Jawa Tengah",
+    },
   ];
 
   function handleSubmit() {
