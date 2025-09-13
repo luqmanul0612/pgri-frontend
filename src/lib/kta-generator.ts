@@ -5,6 +5,228 @@ export interface KTAGeneratorOptions {
   cardType: "CR80" | "CR79";
 }
 
+export class KTANonBlankoGenerator {
+  private canvas: HTMLCanvasElement;
+  private ctx: CanvasRenderingContext2D;
+  private userImg: HTMLImageElement | null = null;
+  private qrImg: HTMLImageElement | null = null;
+
+  // Dimensions in pixels (8.6cm x 5.4cm at 300 DPI)
+  private readonly cardWidth = 1016; // 8.6cm * 300 DPI / 2.54
+  private readonly cardHeight = 638; // 5.4cm * 300 DPI / 2.54
+
+  // Photo dimensions (2cm x 3cm at 300 DPI)
+  private readonly photoWidth = 236; // 2cm * 300 DPI / 2.54
+  private readonly photoHeight = 354; // 3cm * 300 DPI / 2.54
+
+  // QR code dimensions (2x2cm at 300 DPI)
+  private readonly qrSize = 236; // 2cm * 300 DPI / 2.54
+
+  constructor() {
+    this.canvas = document.createElement("canvas");
+    this.canvas.width = this.cardWidth;
+    this.canvas.height = this.cardHeight;
+    this.ctx = this.canvas.getContext("2d")!;
+  }
+
+  private async loadImage(src: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  private async loadUserPhoto(photoUrl?: string): Promise<void> {
+    if (!photoUrl) return;
+
+    try {
+      this.userImg = await this.loadImage(photoUrl);
+    } catch (error) {
+      console.error("Failed to load user photo:", error);
+      // Continue without photo if loading fails
+    }
+  }
+
+  private async loadQRCode(): Promise<void> {
+    try {
+      // Create a simple QR placeholder for now
+      const qrCanvas = document.createElement("canvas");
+      qrCanvas.width = this.qrSize;
+      qrCanvas.height = this.qrSize;
+      const qrCtx = qrCanvas.getContext("2d")!;
+
+      // Draw QR placeholder pattern
+      qrCtx.fillStyle = "#000";
+      qrCtx.fillRect(0, 0, this.qrSize, this.qrSize);
+      qrCtx.fillStyle = "#fff";
+
+      // Simple QR-like pattern
+      const cellSize = this.qrSize / 25;
+      for (let i = 0; i < 25; i++) {
+        for (let j = 0; j < 25; j++) {
+          if ((i + j) % 2 === 0) {
+            qrCtx.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
+          }
+        }
+      }
+
+      const qrDataUrl = qrCanvas.toDataURL();
+      this.qrImg = await this.loadImage(qrDataUrl);
+    } catch (error) {
+      console.error("Failed to generate QR code:", error);
+    }
+  }
+
+  private drawUserPhoto(): void {
+    if (!this.userImg) return;
+
+    // Same positioning as original KTA
+    const photoX = 53.5;
+    const photoY = 289;
+    const photoScaleWidth = 0.865;
+    const photoScaleHeight = 0.73;
+    const borderRadius = 8;
+
+    const adjustedPhotoWidth = this.photoWidth * photoScaleWidth;
+    const adjustedPhotoHeight = this.photoHeight * photoScaleHeight;
+
+    // Save canvas state
+    this.ctx.save();
+
+    // Create clipping path with rounded corners
+    this.ctx.beginPath();
+    this.ctx.roundRect(
+      photoX,
+      photoY,
+      adjustedPhotoWidth,
+      adjustedPhotoHeight,
+      borderRadius,
+    );
+    this.ctx.clip();
+
+    // Draw image within the clipped area
+    this.ctx.drawImage(
+      this.userImg,
+      photoX,
+      photoY,
+      adjustedPhotoWidth,
+      adjustedPhotoHeight,
+    );
+
+    // Restore canvas state
+    this.ctx.restore();
+  }
+
+  private drawQRCode(): void {
+    if (!this.qrImg) return;
+
+    // Same positioning as original KTA
+    const qrScale = 0.65;
+    const qrMarginRight = 47;
+    const qrMarginBottom = 48;
+    const borderWidth = 2;
+    const borderColor = "#000";
+
+    const adjustedQRSize = this.qrSize * qrScale;
+    const qrX = this.cardWidth - adjustedQRSize - qrMarginRight;
+    const qrY = this.cardHeight - adjustedQRSize - qrMarginBottom;
+
+    // Draw border for QR code
+    this.ctx.strokeStyle = borderColor;
+    this.ctx.lineWidth = borderWidth;
+    this.ctx.strokeRect(
+      qrX - borderWidth / 2,
+      qrY - borderWidth / 2,
+      adjustedQRSize + borderWidth,
+      adjustedQRSize + borderWidth,
+    );
+
+    // Draw QR code
+    this.ctx.drawImage(this.qrImg, qrX, qrY, adjustedQRSize, adjustedQRSize);
+  }
+
+  private drawUserData(data: any): void {
+    // Set text properties
+    this.ctx.fillStyle = "#000";
+    this.ctx.textAlign = "left";
+
+    // Same text positioning as original
+    const textStartX = 300;
+    const nameY = 309;
+    const npaY = 349;
+    const agamaY = 389;
+
+    // Draw name (larger, bold)
+    this.ctx.font = "bold 24px Arial";
+    this.ctx.fillText(data.namaAnggota, textStartX, nameY);
+
+    // Draw NPA
+    this.ctx.font = "20px Arial";
+    this.ctx.fillText(`NPA. ${data.npa}`, textStartX, npaY);
+
+    // Draw agama
+    this.ctx.font = "20px Arial";
+    if (data.agama) {
+      this.ctx.fillText(`AGAMA: ${data.agama.toUpperCase()}`, textStartX, agamaY);
+    }
+  }
+
+  private drawValidityText(): void {
+    // Draw "Berlaku Selama Menjadi Anggota" below photo
+    const photoX = 53.5;
+    const photoY = 289;
+    const photoScaleWidth = 0.865;
+    const photoScaleHeight = 0.73;
+    const adjustedPhotoWidth = this.photoWidth * photoScaleWidth;
+    const adjustedPhotoHeight = this.photoHeight * photoScaleHeight;
+
+    // Calculate center position of photo
+    const photoCenterX = photoX + (adjustedPhotoWidth / 2);
+    const validityY = photoY + adjustedPhotoHeight + 30; // 10px gap + some spacing
+
+    this.ctx.fillStyle = "#000";
+    this.ctx.font = "14px Arial";
+    this.ctx.textAlign = "center"; // Center align text
+
+    // Draw text in two lines, centered with photo
+    this.ctx.fillText("Berlaku Selama", photoCenterX, validityY);
+    this.ctx.fillText("Menjadi Anggota", photoCenterX, validityY + 20);
+  }
+
+  public async generateKTA(options: KTAGeneratorOptions): Promise<string> {
+    const { data } = options;
+
+    try {
+      // Load required assets (no template for non-blanko)
+      await this.loadUserPhoto(data.foto);
+      await this.loadQRCode();
+
+      // Clear canvas with white background
+      this.ctx.fillStyle = "#ffffff";
+      this.ctx.fillRect(0, 0, this.cardWidth, this.cardHeight);
+
+      // Draw components in order
+      this.drawUserPhoto();
+      this.drawUserData(data);
+      this.drawQRCode();
+      this.drawValidityText();
+
+      // Return canvas as data URL
+      return this.canvas.toDataURL("image/png", 1.0);
+    } catch (error) {
+      console.error("Failed to generate KTA Non-Blanko:", error);
+      throw error;
+    }
+  }
+
+  public getCanvas(): HTMLCanvasElement {
+    return this.canvas;
+  }
+}
+
 export class KTAGenerator {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;

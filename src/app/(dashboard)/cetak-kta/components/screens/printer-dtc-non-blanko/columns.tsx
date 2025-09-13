@@ -6,6 +6,7 @@ import { PhotoCell } from "./cells/PhotoCell";
 import { QRCodeCell } from "./cells/QRCodeCell";
 import { StatusCell } from "./cells/StatusCell";
 import { YesNoCell } from "./cells/YesNoCell";
+import { ktaPrintService } from "@/services/kta-print";
 
 export const columns: ColumnDef<CetakKtaTableData>[] = [
   {
@@ -21,12 +22,37 @@ export const columns: ColumnDef<CetakKtaTableData>[] = [
   {
     accessorKey: "actions",
     header: "Aksi",
-    cell: ({ row }) => (
-      <ActionCell
-        onCR80Click={() => console.log("CR80 clicked for row", row.original.id)}
-        onCR79Click={() => console.log("CR79 clicked for row", row.original.id)}
-      />
-    ),
+    cell: ({ row }) => {
+      const handleCR80Print = async (data: CetakKtaTableData) => {
+        try {
+          await ktaPrintService.printKTANonBlanko({
+            data,
+            cardType: 'CR80'
+          });
+        } catch (error) {
+          console.error('Failed to print CR80 Non-Blanko:', error);
+        }
+      };
+
+      const handleCR79Print = async (data: CetakKtaTableData) => {
+        try {
+          await ktaPrintService.printKTANonBlanko({
+            data,
+            cardType: 'CR79'
+          });
+        } catch (error) {
+          console.error('Failed to print CR79 Non-Blanko:', error);
+        }
+      };
+
+      return (
+        <ActionCell
+          data={row.original}
+          onCR80Click={handleCR80Print}
+          onCR79Click={handleCR79Print}
+        />
+      );
+    },
     size: 150,
   },
   {
