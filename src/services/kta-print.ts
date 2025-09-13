@@ -8,17 +8,12 @@ export class KTAPrintService {
       <style>
         @media print {
           @page {
-            size: 8.6cm 5.4cm;
-            margin: 0;
+            margin: 10mm;
           }
-          
+
           body {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
           }
           
           .kta-container {
@@ -196,30 +191,24 @@ export class KTAPrintService {
               .multiple-cards {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 10px;
-                justify-content: center;
+                gap: 5mm;
               }
-              
+
               @media print {
                 .preview-text {
                   display: none !important;
                 }
-                
+
                 .print-button {
                   display: none !important;
                 }
-                
+
                 .multiple-cards {
-                  gap: 0;
+                  gap: 5mm;
                 }
-                
+
                 .kta-container {
                   page-break-inside: avoid;
-                  page-break-after: always;
-                }
-                
-                .kta-container:last-child {
-                  page-break-after: auto;
                 }
               }
             </style>

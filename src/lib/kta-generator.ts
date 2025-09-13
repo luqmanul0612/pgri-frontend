@@ -181,7 +181,7 @@ export class KTAGenerator {
     const textStartX = 300; // Horizontal position (semakin besar = ke kanan)
     const nameY = 309; // Vertical position nama (semakin besar = ke bawah)
     const npaY = 349; // Vertical position NPA (semakin besar = ke bawah)
-    const agamaY = 389; // Vertical position agama (semakin besar = ke bawah)
+    const tempatLahirY = 389; // Vertical position tempat lahir (semakin besar = ke bawah)
     // ====================================
 
     // Draw name (larger, bold)
@@ -192,9 +192,9 @@ export class KTAGenerator {
     this.ctx.font = "20px Arial";
     this.ctx.fillText(`NPA. ${data.npa}`, textStartX, npaY);
 
-    // Draw agama
+    // Draw tempat lahir
     this.ctx.font = "20px Arial";
-    this.ctx.fillText(`AGAMA: ${data.agama.toUpperCase()}`, textStartX, agamaY);
+    this.ctx.fillText(`TEMPAT LAHIR: ${data.tempatLahir.toUpperCase()}`, textStartX, tempatLahirY);
   }
 
   public async generateKTA(options: KTAGeneratorOptions): Promise<string> {
