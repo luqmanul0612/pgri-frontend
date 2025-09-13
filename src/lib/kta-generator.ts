@@ -179,21 +179,21 @@ export class KTAGenerator {
     // ===== MANUAL ADJUSTMENT AREA =====
     // Ubah nilai-nilai ini untuk menyesuaikan posisi text:
     const textStartX = 300; // Horizontal position (semakin besar = ke kanan)
-    const nameY = 304; // Vertical position nama (semakin besar = ke bawah)
-    const npaY = 344; // Vertical position NPA (semakin besar = ke bawah)
-    const agamaY = 384; // Vertical position agama (semakin besar = ke bawah)
+    const nameY = 309; // Vertical position nama (semakin besar = ke bawah)
+    const npaY = 349; // Vertical position NPA (semakin besar = ke bawah)
+    const agamaY = 389; // Vertical position agama (semakin besar = ke bawah)
     // ====================================
 
     // Draw name (larger, bold)
-    this.ctx.font = "bold 22px Arial";
+    this.ctx.font = "bold 24px Arial";
     this.ctx.fillText(data.namaAnggota, textStartX, nameY);
 
     // Draw NPA
-    this.ctx.font = "16px Arial";
+    this.ctx.font = "20px Arial";
     this.ctx.fillText(`NPA. ${data.npa}`, textStartX, npaY);
 
     // Draw agama
-    this.ctx.font = "16px Arial";
+    this.ctx.font = "20px Arial";
     this.ctx.fillText(`AGAMA: ${data.agama.toUpperCase()}`, textStartX, agamaY);
   }
 
