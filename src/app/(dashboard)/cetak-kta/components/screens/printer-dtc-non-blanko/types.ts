@@ -5,7 +5,7 @@ export interface CetakKtaTableData {
   namaAnggota: string
   tempatLahir: string
   tanggalLahir: string
-  agama?: string
+  agama: string
   foto?: string
   qrCode?: string
   cetakKtaBiasa: boolean
