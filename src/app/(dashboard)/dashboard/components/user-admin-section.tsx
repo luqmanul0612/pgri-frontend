@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Filter } from "../../components/Filter";
 import { IoIosArrowDown } from "react-icons/io";
+import CardDashboard from "@/app/components/CardDashboard";
+import BannerSlider from "@/app/components/molecules/banner-slider";
+import banner1 from "@/assets/images/banner-1.webp";
 
 const registerGrowthData = [
   { value: 100 },
@@ -55,9 +58,33 @@ const membershipData = [
 
 const COLORS = ["#BF19B8", "#DC3545", "#007BFF", "#FFC107", "#0EC516"];
 
-const AdminSection = () => {
+const banners = [
+  {
+    key: "banner-1",
+    image: banner1,
+  },
+  {
+    key: "banner-2",
+    image: banner1,
+  },
+  {
+    key: "banner-3",
+    image: banner1,
+  },
+];
+
+const UserAdminSection = () => {
   return (
     <div>
+      <div className="flex gap-6">
+        <CardDashboard name="Data Anggota" total={1000} />
+        <CardDashboard name="Karya Guru" total={200} />
+        <CardDashboard name="Aspirasi Guru" total={230} />
+        <CardDashboard name="Lindungi Guru" total={400} />
+      </div>
+      <div className="mt-5">
+        <BannerSlider banners={banners} />
+      </div>
       <div className="mt-10">
         <Filter />
       </div>
@@ -191,4 +218,4 @@ const AdminSection = () => {
   );
 };
 
-export default AdminSection;
+export default UserAdminSection;

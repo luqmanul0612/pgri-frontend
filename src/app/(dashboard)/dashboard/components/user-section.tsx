@@ -16,6 +16,9 @@ import example4 from "../assets/dummy/example-4.png";
 import Image from "next/image";
 import Button from "@/components/customs/button";
 import { useRouter } from "next/navigation";
+import banner1 from "@/assets/images/banner-1.webp";
+import CardDashboard from "@/app/components/CardDashboard";
+import BannerSlider from "@/app/components/molecules/banner-slider";
 
 const exampleActivities = [
   {
@@ -49,6 +52,21 @@ const exampleActivities = [
   },
 ];
 
+const banners = [
+  {
+    key: "banner-1",
+    image: banner1,
+  },
+  {
+    key: "banner-2",
+    image: banner1,
+  },
+  {
+    key: "banner-3",
+    image: banner1,
+  },
+];
+
 const tabs = [
   { label: "Grid", icon: <Grid /> },
   { label: "List", icon: <List /> },
@@ -59,10 +77,19 @@ const UserSection = () => {
   const [tab, setTab] = useState(0);
   return (
     <div className="flex flex-col">
+      <div className="flex gap-6">
+        <CardDashboard name="Data Anggota" total={1000} />
+        <CardDashboard name="Karya Guru" total={200} />
+        <CardDashboard name="Aspirasi Guru" total={230} />
+        <CardDashboard name="Lindungi Guru" total={400} />
+      </div>
+      <div className="mt-5">
+        <BannerSlider banners={banners} />
+      </div>
       <p className="text-base font-semibold text-black">
         Kegiatan Terkini PGRI (Persatuan Guru Republik Indonesia)
       </p>
-      <p className="text-primary-500 text-sm font-normal">
+      <p className="text-sm font-normal text-primary-500">
         Tersedia untuk kegiatan PGRI Pusat dan daerah
       </p>
       <div className="mt-5 flex justify-between">
@@ -73,7 +100,7 @@ const UserSection = () => {
               className={cn(
                 "flex items-center gap-1 border-b-[3px] border-transparent text-lg font-bold text-slate-400 transition-all",
                 {
-                  "text-primary-500 border-primary-500": idx === tab,
+                  "border-primary-500 text-primary-500": idx === tab,
                 },
               )}
               onClick={() => setTab(idx)}
@@ -94,7 +121,7 @@ const UserSection = () => {
         <div className="mt-[20px] grid grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] gap-[30px]">
           {exampleActivities.map((activity) => (
             <div key={activity.id} className="flex h-full flex-col">
-              <div className="bg-primary-500 rounded-[14px] p-[25px]">
+              <div className="rounded-[14px] bg-primary-500 p-[25px]">
                 <Image
                   alt="image"
                   src={activity.image}
@@ -126,7 +153,7 @@ const UserSection = () => {
         <div className="mt-[20px] flex flex-col gap-6">
           {exampleActivities.map((activity) => (
             <div key={activity.id} className="flex items-center gap-4">
-              <div className="bg-primary-500 rounded-[8px] p-[10px]">
+              <div className="rounded-[8px] bg-primary-500 p-[10px]">
                 <div className="relative aspect-[4/5] w-[80px] rounded-[8px] p-[10px]">
                   <Image
                     alt="image"
@@ -161,16 +188,16 @@ const UserSection = () => {
       <div className="mt-5 flex items-center justify-between">
         <div className="flex flex-col">
           <p className="text-sm font-semibold text-black">Total Kegiatan</p>
-          <p className="text-primary-500 text-xs font-normal">150 Kegiatan</p>
+          <p className="text-xs font-normal text-primary-500">150 Kegiatan</p>
         </div>
         <div className="flex gap-7">
           <button
-            className="bg-primary-500 aspect-square rounded-full border border-transparent p-2 text-white disabled:border-slate-400 disabled:bg-slate-100 disabled:text-slate-400"
+            className="aspect-square rounded-full border border-transparent bg-primary-500 p-2 text-white disabled:border-slate-400 disabled:bg-slate-100 disabled:text-slate-400"
             disabled
           >
             <ArrowUp />
           </button>
-          <button className="bg-primary-500 aspect-square rounded-full border border-transparent p-2 text-white disabled:border-slate-400 disabled:bg-slate-100 disabled:text-slate-400">
+          <button className="aspect-square rounded-full border border-transparent bg-primary-500 p-2 text-white disabled:border-slate-400 disabled:bg-slate-100 disabled:text-slate-400">
             <ArrowDown />
           </button>
         </div>
