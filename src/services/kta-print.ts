@@ -1,4 +1,4 @@
-import { KTAGenerator, KTAGeneratorOptions } from "@/lib/kta-generator";
+import { KTAGenerator, KTANonBlankoGenerator, KTAGeneratorOptions } from "@/lib/kta-generator";
 
 export class KTAPrintService {
   private printWindow: Window | null = null;
@@ -8,17 +8,12 @@ export class KTAPrintService {
       <style>
         @media print {
           @page {
-            size: 8.6cm 5.4cm;
-            margin: 0;
+            margin: 10mm;
           }
-          
+
           body {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
           }
           
           .kta-container {
@@ -166,6 +161,53 @@ export class KTAPrintService {
     }
   }
   
+  public async printKTANonBlanko(options: KTAGeneratorOptions): Promise<void> {
+    try {
+      const generator = new KTANonBlankoGenerator();
+      const imageDataUrl = await generator.generateKTA(options);
+
+      // Create print window
+      this.printWindow = window.open('', '_blank', 'width=800,height=600');
+
+      if (!this.printWindow) {
+        throw new Error('Unable to open print window. Please check popup blocker settings.');
+      }
+
+      // Write HTML content to print window
+      const printHTML = this.createPrintHTML(imageDataUrl, options.data.namaAnggota);
+      this.printWindow.document.write(printHTML);
+      this.printWindow.document.close();
+
+      // Wait for image to load before focusing
+      this.printWindow.addEventListener('load', () => {
+        setTimeout(() => {
+          if (this.printWindow) {
+            this.printWindow.focus();
+          }
+        }, 100);
+      });
+
+    } catch (error) {
+      console.error('Failed to print KTA Non-Blanko:', error);
+
+      // Show user-friendly error message
+      let errorMessage = 'Gagal mencetak KTA Non-Blanko. ';
+
+      if (error instanceof Error) {
+        if (error.message.includes('popup')) {
+          errorMessage += 'Silakan aktifkan popup untuk browser ini.';
+        } else if (error.message.includes('template')) {
+          errorMessage += 'Template kartu tidak dapat dimuat.';
+        } else {
+          errorMessage += 'Silakan coba lagi.';
+        }
+      }
+
+      alert(errorMessage);
+      throw error;
+    }
+  }
+
   public async printMultipleKTA(dataList: KTAGeneratorOptions[]): Promise<void> {
     try {
       const generator = new KTAGenerator();
@@ -196,30 +238,24 @@ export class KTAPrintService {
               .multiple-cards {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 10px;
-                justify-content: center;
+                gap: 5mm;
               }
-              
+
               @media print {
                 .preview-text {
                   display: none !important;
                 }
-                
+
                 .print-button {
                   display: none !important;
                 }
-                
+
                 .multiple-cards {
-                  gap: 0;
+                  gap: 5mm;
                 }
-                
+
                 .kta-container {
                   page-break-inside: avoid;
-                  page-break-after: always;
-                }
-                
-                .kta-container:last-child {
-                  page-break-after: auto;
                 }
               }
             </style>

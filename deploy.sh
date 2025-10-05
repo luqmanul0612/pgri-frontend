@@ -8,7 +8,7 @@ npm ci
 
 echo "Building the app..."
 npm run build
-npm next build
+npm i next build
 
 echo "Restarting PGRI Frontend app with PM2..."
 pm2 restart pgri-frontend

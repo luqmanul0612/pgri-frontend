@@ -1,7 +1,12 @@
 import { FC, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getUserIdentity } from "../serverActions/getUserIdentity";
-import { submitPayment } from "@/app/(auth)/register/serverActions/payment";
+import {
+  submitPayment,
+  checkStatusPayment,
+  IPaymentStatusResponse,
+} from "@/app/(auth)/register/serverActions/payment";
+import { useDebouncedCallback } from "@/utils/use-debounce-callback";
 
 // Reusable Components
 interface InfoFieldProps {
@@ -54,7 +59,9 @@ interface VirtualAccountOptionProps {
 }
 
 interface PaymentOptionComponentProps {
-  setActiveScreen: (screen: "initial" | "paymentOption" | "paymentSuccess") => void;
+  setActiveScreen: (
+    screen: "initial" | "paymentOption" | "paymentSuccess",
+  ) => void;
 }
 
 const VirtualAccountOption: FC<VirtualAccountOptionProps> = ({
@@ -71,7 +78,19 @@ const VirtualAccountOption: FC<VirtualAccountOptionProps> = ({
   </div>
 );
 
-export const PaymentOption: FC<PaymentOptionComponentProps> = ({ setActiveScreen }) => {
+const initialPaymentStatus: IPaymentStatusResponse["data"] = {
+  expiry_date: "",
+  payment_page: "",
+  status: "pending",
+  total_amount: "",
+  transaction_id: "",
+  virtual_account_name: "",
+  virtual_account_no: "",
+};
+
+export const PaymentOption: FC<PaymentOptionComponentProps> = ({
+  setActiveScreen,
+}) => {
   const [userData, setUserData] = useState<{
     name: string;
     email: string;
@@ -80,6 +99,30 @@ export const PaymentOption: FC<PaymentOptionComponentProps> = ({ setActiveScreen
   const [loading, setLoading] = useState(true);
   const [selectedChannel, setSelectedChannel] = useState("bri");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentStatus, setPaymentStatus] =
+    useState<IPaymentStatusResponse["data"]>(initialPaymentStatus);
+
+  const fetchCheckStatusPayment = useDebouncedCallback(async () => {
+    try {
+      const res = await checkStatusPayment();
+      const paymentModal = document.getElementById("jokul_checkout_modal");
+      console.log("Payment status check:", res);
+
+      if (res.status === 200) {
+        setPaymentStatus(res.data);
+        if (res.data.status === "pending" && !paymentModal) {
+          window.loadJokulCheckout(res.data?.payment_page);
+        } else if (res.data.status === "succeeded") {
+          if (paymentModal) {
+            paymentModal.remove();
+          }
+          setActiveScreen("paymentSuccess");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to check payment status:", error);
+    }
+  }, 500);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -113,6 +156,15 @@ export const PaymentOption: FC<PaymentOptionComponentProps> = ({ setActiveScreen
     };
   }, []);
 
+  useEffect(() => {
+    fetchCheckStatusPayment();
+    const interval = setInterval(() => {
+      fetchCheckStatusPayment();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [fetchCheckStatusPayment]);
+
   const showNotImplementedToast = (method: string) => {
     toast.warning("Fitur Belum Tersedia", {
       description: `Maaf, ${method} belum diimplementasikan. Untuk saat ini baru VA BRI yang tersedia.`,
@@ -138,7 +190,8 @@ export const PaymentOption: FC<PaymentOptionComponentProps> = ({ setActiveScreen
         payment_method: "virtual_account",
       });
       window.loadJokulCheckout(res.data?.payment_page);
-      setActiveScreen("paymentSuccess");
+      // Start monitoring payment status immediately after payment submission
+      fetchCheckStatusPayment();
     } catch (error) {
       console.error("Payment error:", error);
       toast.error("Gagal memproses pembayaran");
@@ -242,8 +295,8 @@ export const PaymentOption: FC<PaymentOptionComponentProps> = ({ setActiveScreen
       </div>
 
       {/* OK Button */}
-      <button 
-        className="flex w-full items-center justify-center gap-2.5 rounded-lg bg-primary p-4 disabled:opacity-50 disabled:cursor-not-allowed"
+      <button
+        className="flex w-full items-center justify-center gap-2.5 rounded-lg bg-primary p-4 disabled:cursor-not-allowed disabled:opacity-50"
         onClick={handlePayment}
         disabled={isProcessing || loading || !selectedChannel}
       >
