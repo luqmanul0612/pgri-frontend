@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const skipPaths = [];
+const skipPaths: string[] = [];
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

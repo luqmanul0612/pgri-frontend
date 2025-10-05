@@ -1,14 +1,15 @@
+"use client"
 import React from 'react'
-import HeaderIuranTagihan from "@/app/(dashboard)/iurandantagihan/components/HeaderIuranTagihan";
-import TableIuranTagihan from "@/app/(dashboard)/iurandantagihan/components/TableIuranTagihan";
+import useAuth from '@/store/useAuth';
+import FeeAndBillsAdmin from './components/fee-and-bills-admin';
+import FeeAndBillsFinanceAdmin from './components/fee-and-bills-finance-admin';
 
 const IuranDanTagihan = () => {
+  const { auth } = useAuth();
   return (
     <>
-      <div className={'flex flex-col gap-5'}>
-        <HeaderIuranTagihan />
-        <TableIuranTagihan />
-      </div>
+      {/* {auth.levelId === 1 && <FeeAndBillsAdmin />} */}
+      {auth.levelId === 1 && <FeeAndBillsFinanceAdmin />}
     </>
   )
 }
