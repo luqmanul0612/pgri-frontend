@@ -66,7 +66,6 @@ const Page: FC<PageProps> = ({ params: {} }) => {
 
   const fetchVaChannels = useDebouncedCallback(async () => {
     const res = await getVaChannels();
-    console.log("object", res);
     setPaymentMethod([
       {
         key: "virtual_account",
@@ -82,7 +81,7 @@ const Page: FC<PageProps> = ({ params: {} }) => {
   const fetchCheckStatusPayment = useDebouncedCallback(async () => {
     const res = await checkStatusPayment();
     const paymentModal = document.getElementById("jokul_checkout_modal");
-    if (res.status === 200) {
+    if (res.status === 200 && res.data) {
       setPaymentStatus(res.data);
       if (res.data.status === "pending" && !paymentModal) {
         window.loadJokulCheckout(res.data?.payment_page);
@@ -90,6 +89,9 @@ const Page: FC<PageProps> = ({ params: {} }) => {
         resetForm();
         if (paymentModal) paymentModal.remove();
       }
+    } else if(res.status === 401) {
+      resetForm();
+      router.push("/register");
     }
   }, 500);
 

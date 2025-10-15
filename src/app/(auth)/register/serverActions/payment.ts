@@ -69,7 +69,11 @@ export const checkStatusPayment = async () => {
   const userId = tokenValue?.sub;
 
   if (!userId) {
-    throw new Error("User ID not found. Please login again.");
+    return {
+      status: 401,
+      message: "User ID not found. Please login again.",
+      data: null,
+    };
   }
 
   const url = process.env.HOST + `/api/v1/payments/${userId}/register`;
@@ -84,7 +88,6 @@ export const checkStatusPayment = async () => {
     const res = await response.json();
     return res as IPaymentStatusResponse;
   } catch (error) {
-    console.error("Error", error);
     throw error;
   }
 };
