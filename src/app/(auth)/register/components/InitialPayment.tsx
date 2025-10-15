@@ -1,5 +1,5 @@
 import React from "react";
-import Danger from "../../../../../public/assets/danger";
+import Danger from "../assets/danger.svg";
 import { useRouter } from "next/navigation";
 import Button from "@/components/customs/button";
 import { useRegistrationFormStore } from "@/store/use-registration-form";
@@ -14,7 +14,7 @@ const InitialPayment = () => {
   const { resetForm } = useRegistrationFormStore();
 
   return (
-    <div className="w-full max-w-[600px] rounded-2xl border border-[#17a3b8]/20 p-4">
+    <div className="w-full max-w-[600px] rounded-2xl border border-[#17a3b8]/20 bg-white p-4">
       <h3 className="mb-2 text-lg font-bold text-black">Uang Pangkal</h3>
       <p className="mb-4 text-xs font-normal text-black">
         Merupakan uang komitmen untuk seluruh anggota baru PGRI dan wajib
@@ -26,16 +26,16 @@ const InitialPayment = () => {
         <h1 className="text-[34px] font-bold">Rp45.000</h1>
       </div>
       <div className="mt-5 flex items-center rounded-lg bg-[#ff0000]/10 p-2.5">
-        <Danger />
+        <Danger className="min-w-[18px]"/>
         <p className="ml-2.5 text-xs font-normal text-[#ff0000]">
-          Kamu boleh melewati Pembayaran pada pendaftaran ini, namun pada
-          aplikasi Mobile kamu wajib melakukan verifikasi pembayaran agar
-          aplikasi dapat digunakan dengan semestinya!
+          Pembayaran dapat dilakukan setelah menekan tombol bayar, kamu dapat
+          memilih berbagai opsi layanana bayar Mulai dari Doku Wallet, Virtual
+          Account Bank, Transfer Bank, Alfamart & Indomaret ataupun lainnya.
         </p>
       </div>
 
       <div className="mb-4 mt-6 flex w-full gap-4">
-        <Button
+        {/* <Button
           fullWidth
           variant="secondary"
           onClick={() => {
@@ -44,7 +44,7 @@ const InitialPayment = () => {
           }}
         >
           Lewati
-        </Button>
+        </Button> */}
         <Button fullWidth onClick={() => router.push("/register/payment")}>
           Bayar
         </Button>

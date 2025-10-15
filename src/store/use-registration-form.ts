@@ -103,7 +103,10 @@ const handlerValidateUserForm = (
       "Nomor telepon harus antara 10 hingga 15 digit angka.";
   }
 
-  if (!/^\d{5}$/.test(get().userFormData.postal_code)) {
+  if (
+    get().userFormData.postal_code?.length &&
+    !/^\d{5}$/.test(get().userFormData.postal_code)
+  ) {
     newErrors.postal_code = "Kode pos harus 5 digit angka.";
   }
 
@@ -118,6 +121,12 @@ const handlerCheckUserForm = async (
   set({ isLoading: true });
   try {
     if (handlerValidateUserForm(get, set)) {
+      const body = get().userFormData;
+      Object.keys(body).forEach((key) => {
+        if (body[key as keyof typeof body] === "") {
+          delete body[key as keyof typeof body];
+        }
+      });
       const result = await checkRegistrationData(get().userFormData);
       if (result?.errors) {
         const errors = Array.isArray(result.errors)

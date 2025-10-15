@@ -22,7 +22,12 @@ const UserFormComponent = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex max-w-5xl flex-col items-start justify-center gap-6 rounded-2xl border border-[#17a3b8]/20 p-4">
+      <div className="flex w-[1200px] max-w-5xl flex-col items-start justify-center gap-6 rounded-2xl border border-[#17a3b8]/20 p-4">
+        <div className="flex w-full items-center gap-2 rounded-[8px] bg-red-50 px-2 py-1 text-[10px] text-red-500">
+          <Danger />
+          Form dengan tanda (*) bintang wajib di isi, untuk form tanpa tanda (*)
+          bintang bisa dilewati untuk mempercepat proses registrasi.
+        </div>
         <div className="flex w-full flex-wrap gap-6">
           <div className="flex flex-1 flex-col gap-6">
             {/* Nama & Gelar */}
@@ -49,7 +54,11 @@ const UserFormComponent = () => {
             </FormField>
 
             {/* NIK */}
-            <FormField label="NIK" required error={errors.nik}>
+            <FormField
+              label="NIK (Nomor Induk Kependudukan)"
+              required
+              error={errors.nik}
+            >
               <Input
                 required
                 id="nik"
@@ -140,11 +149,81 @@ const UserFormComponent = () => {
                 )}
               />
             </FormField>
-            {/* Pendidikan/Ijazah Terakhir */}
-            <FormField label="Pendidikan/Ijazah Terakhir" required>
+
+            <FormField
+              label="Nomor Handphone"
+              required
+              error={errors.phone_number}
+            >
+              <Input
+                required
+                id="phone_number"
+                value={userFormData.phone_number}
+                onChange={(e) => {
+                  updateField(
+                    e.target.id as keyof TRegisterFormData,
+                    e.target.value,
+                  );
+                }}
+                type="tel"
+                className={clsx(
+                  "flex w-full items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
+                  userFormData.phone_number
+                    ? "border border-[#17a3b8]/20"
+                    : "border border-gray-300",
+                )}
+                placeholder="085xxxxxxxxx"
+                autoComplete="off"
+              />
+            </FormField>
+          </div>
+          <div className="flex flex-1 flex-col gap-6">
+            {/* Jenis Kelamin */}
+            <FormField label="Jenis Kelamin">
               <div className="relative">
                 <select
-                  required
+                  id="gender"
+                  value={userFormData.gender}
+                  onChange={(e) => {
+                    updateField(
+                      e.target.id as keyof TRegisterFormData,
+                      e.target.value,
+                    );
+                  }}
+                  className={clsx(
+                    "w-full appearance-none rounded-2xl bg-transparent py-[8px] pl-4 pr-8 focus:border-[#17a3b8] focus:outline-none",
+                    userFormData.gender
+                      ? "border border-[#17a3b8]/20 text-[#17a3b8]"
+                      : "border border-gray-300 text-gray-400",
+                  )}
+                >
+                  <option value="" disabled>
+                    Pilih...
+                  </option>
+                  <option value="laki-laki">Laki-Laki</option>
+                  <option value="perempuan">Perempuan</option>
+                </select>
+                <svg
+                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${userFormData.gender ? "text-[#17a3b8]" : "text-gray-400"}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
+              </div>
+            </FormField>
+
+            {/* Pendidikan/Ijazah Terakhir */}
+            <FormField label="Pendidikan/Ijazah Terakhir">
+              <div className="relative">
+                <select
                   id="latest_education"
                   value={userFormData.latest_education}
                   onChange={(e) => {
@@ -185,57 +264,11 @@ const UserFormComponent = () => {
                 </svg>
               </div>
             </FormField>
-          </div>
-
-          <div className="flex flex-1 flex-col gap-6">
-            {/* Jenis Kelamin */}
-            <FormField label="Jenis Kelamin" required>
-              <div className="relative">
-                <select
-                  required
-                  id="gender"
-                  value={userFormData.gender}
-                  onChange={(e) => {
-                    updateField(
-                      e.target.id as keyof TRegisterFormData,
-                      e.target.value,
-                    );
-                  }}
-                  className={clsx(
-                    "w-full appearance-none rounded-2xl bg-transparent py-[8px] pl-4 pr-8 focus:border-[#17a3b8] focus:outline-none",
-                    userFormData.gender
-                      ? "border border-[#17a3b8]/20 text-[#17a3b8]"
-                      : "border border-gray-300 text-gray-400",
-                  )}
-                >
-                  <option value="" disabled>
-                    Pilih...
-                  </option>
-                  <option value="laki-laki">Laki-Laki</option>
-                  <option value="perempuan">Perempuan</option>
-                </select>
-                <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${userFormData.gender ? "text-[#17a3b8]" : "text-gray-400"}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
-              </div>
-            </FormField>
 
             {/* Agama */}
-            <FormField label="Agama" required>
+            <FormField label="Agama">
               <div className="relative">
                 <select
-                  required
                   id="religion"
                   value={userFormData.religion}
                   onChange={(e) => {
@@ -279,10 +312,9 @@ const UserFormComponent = () => {
             </FormField>
 
             {/* Golongan Darah */}
-            <FormField label="Golongan Darah" required>
+            <FormField label="Golongan Darah">
               <div className="relative">
                 <select
-                  required
                   id="blood_type"
                   value={userFormData.blood_type}
                   onChange={(e) => {
@@ -324,9 +356,8 @@ const UserFormComponent = () => {
             </FormField>
 
             {/* Alamat KTP */}
-            <FormField label="Alamat KTP" required>
+            <FormField label="Alamat KTP">
               <Input
-                required
                 id="address"
                 value={userFormData.address}
                 onChange={(e) => {
@@ -345,12 +376,10 @@ const UserFormComponent = () => {
                 autoComplete="off"
               />
             </FormField>
-
             {/* Kode POS & Nomor Handphone */}
             <div className="flex flex-col gap-6">
-              <FormField label="Kode POS" required error={errors.postal_code}>
+              <FormField label="Kode POS" error={errors.postal_code}>
                 <Input
-                  required
                   id="postal_code"
                   value={userFormData.postal_code}
                   onChange={(e) => {
@@ -370,50 +399,10 @@ const UserFormComponent = () => {
                   autoComplete="off"
                 />
               </FormField>
-
-              <FormField
-                label="Nomor Handphone"
-                required
-                error={errors.phone_number}
-              >
-                <Input
-                  required
-                  id="phone_number"
-                  value={userFormData.phone_number}
-                  onChange={(e) => {
-                    updateField(
-                      e.target.id as keyof TRegisterFormData,
-                      e.target.value,
-                    );
-                  }}
-                  type="tel"
-                  className={clsx(
-                    "flex w-full items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3 text-[#17a3b8]",
-                    userFormData.phone_number
-                      ? "border border-[#17a3b8]/20"
-                      : "border border-gray-300",
-                  )}
-                  placeholder="085xxxxxxxxx"
-                  autoComplete="off"
-                />
-              </FormField>
             </div>
           </div>
         </div>
-
-        {/* Error & Navigation */}
-        <div className="flex w-full items-center justify-between">
-          <div className="flex flex-1 flex-col gap-2.5">
-            <div className="flex max-w-[80%] items-center rounded-lg bg-[#ff0000]/10 p-2.5">
-              <Danger />
-              <p className="ml-2.5 text-xs font-normal text-[#ff0000]">
-                Pastikan Anda mengisi semua form, jika terdapat form isian
-                pendaftaran yang terlewatkan maka Anda tidak dapat menekan
-                tombol Selanjutnya!
-              </p>
-            </div>
-          </div>
-
+        <div className="flex w-full items-center justify-end">
           <div className="flex gap-4">
             <Button
               variant="secondary"

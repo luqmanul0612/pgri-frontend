@@ -60,13 +60,18 @@ const PasswordForm = () => {
             Buat Kata Sandi
           </h2>
           <p className="self-stretch text-xs font-normal text-[#17191c]">
-            Kata Sandi yang Anda buat harus berbeda dengan kata sandi yang
-            sebelumnya Anda gunakan
+            Kata Sandi yang dibuat akan digunakan untuk mengkases aplikasi
+            Mobile PGRIKU, diharapkan untuk membuat kata sandi yang mudah di
+            ingat! Pastikan kata sandi terdiri dari Huruf Besar, Kecil, Simbol
+            dan Angka. Contoh:{" "}
+            <span className="text-primary-500">Sandiku@123</span>
           </p>
         </div>
         <div className="flex flex-col items-start justify-start gap-4 self-stretch">
           <div className="relative flex flex-col items-start justify-start gap-2.5 self-stretch">
-            <Label htmlFor="password1">Password Baru</Label>
+            <Label htmlFor="password1">
+              Kata Sandi<span className="text-red-500"> *</span>
+            </Label>
             <input
               value={passwordFormData.password}
               onChange={(e) => {
@@ -75,7 +80,7 @@ const PasswordForm = () => {
               type={showPassword ? "text" : "password"}
               id="password1"
               className="flex w-full items-center gap-2.5 rounded-2xl border border-[#17a3b8]/20 py-3 pl-4 pr-10"
-              placeholder="Masukkan Password"
+              placeholder="Masukkan Kata Sandi"
             />
             <div
               className="absolute right-3 top-[65%] translate-y-[-50%] cursor-pointer"
@@ -90,14 +95,14 @@ const PasswordForm = () => {
           </div>
 
           <div className="relative flex flex-col items-start justify-start gap-2.5 self-stretch">
-            <Label htmlFor="password2">Konfirmasi Password Baru</Label>
+            <Label htmlFor="password2">Ulangi Kata Sandi<span className="text-red-500"> *</span></Label>
             <input
               value={passwordFormData.confirmPassword}
               onChange={(e) => updateField("confirmPassword", e.target.value)}
               type={showConfirmPassword ? "text" : "password"}
               id="password2"
               className="flex w-full items-center gap-2.5 rounded-2xl border border-[#17a3b8]/20 py-3 pl-4 pr-10"
-              placeholder="Konfirmasi Password"
+              placeholder="Masukkan Kata Sandi Lagi"
             />
             <div
               className="absolute right-3 top-[65%] translate-y-[-50%] cursor-pointer"

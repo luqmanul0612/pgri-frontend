@@ -82,7 +82,13 @@ const UserJobFormComponent = ({}) => {
 
   return (
     <div className="w-full max-w-5xl rounded-2xl border border-[#17a3b8]/20 p-4">
-      <form onSubmit={handleSubmit}>
+      {" "}
+      <div className="flex w-full items-center gap-2 rounded-[8px] bg-red-50 px-2 py-1 text-[10px] text-red-500">
+        <Danger />
+        Form dengan tanda (*) bintang wajib di isi, untuk form tanpa tanda (*)
+        bintang bisa dilewati untuk mempercepat proses registrasi.
+      </div>
+      <form onSubmit={handleSubmit} className="mt-4">
         <div className="flex flex-wrap gap-6">
           <div className="flex flex-1 flex-col gap-6">
             {/* Nama Instansi Tempat Tugas */}
