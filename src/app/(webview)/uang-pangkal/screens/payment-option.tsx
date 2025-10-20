@@ -108,7 +108,7 @@ export const PaymentOption: FC<PaymentOptionComponentProps> = ({
       const paymentModal = document.getElementById("jokul_checkout_modal");
       console.log("Payment status check:", res);
 
-      if (res.status === 200) {
+      if (res.status === 200 && res.data) {
         setPaymentStatus(res.data);
         if (res.data.status === "pending" && !paymentModal) {
           window.loadJokulCheckout(res.data?.payment_page);
