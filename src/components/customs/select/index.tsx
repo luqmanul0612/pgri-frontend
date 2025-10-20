@@ -1,6 +1,7 @@
 import React, { type FC } from "react";
 import "./select.scss";
 import * as Lib from "@radix-ui/react-select";
+import * as ScrollArea from "@radix-ui/react-scroll-area";
 import clsx from "clsx";
 import Checkmark from "./assets/checkmark-outline.svg";
 import ArrowDown from "./assets/arrow-down.svg";
@@ -62,22 +63,26 @@ const Select: FC<Props> = (props) => {
         </Lib.Trigger>
         <Lib.Portal>
           <Lib.Content className="select-content" position="popper">
-            <Lib.ScrollUpButton className="select-scroll-button">
-              <ArrowUp className="select-scroll-icon" />
-            </Lib.ScrollUpButton>
-            <Lib.Viewport className="select-viewport">
-              {!options?.length && (
-                <div className="select-empty">Tidak ada data</div>
-              )}
-              {options?.map((option) => (
-                <SelectItem key={option.key} value={option.key}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </Lib.Viewport>
-            <Lib.ScrollDownButton className="select-scroll-button">
-              <ArrowDown className="select-scroll-icon" />
-            </Lib.ScrollDownButton>
+            <ScrollArea.Root className="select-scroll-area-root" type="auto">
+              <Lib.Viewport asChild className="select-viewport">
+                <ScrollArea.Viewport className="select-scroll-area-viewport">
+                  {!options?.length && (
+                    <div className="select-empty">Tidak ada data</div>
+                  )}
+                  {options?.map((option) => (
+                    <SelectItem key={option.key} value={option.key}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </ScrollArea.Viewport>
+              </Lib.Viewport>
+              <ScrollArea.Scrollbar
+                className="select-scroll-area-scrollbar"
+                orientation="vertical"
+              >
+                <ScrollArea.Thumb className="select-scroll-area-thumb" />
+              </ScrollArea.Scrollbar>
+            </ScrollArea.Root>
           </Lib.Content>
         </Lib.Portal>
       </Lib.Root>
