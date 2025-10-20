@@ -1,0 +1,79 @@
+/* Slide to right */
+.calendar-slide-right-enter {
+  transform: translateX(100%);
+  opacity: 0;
+}
+.calendar-slide-right-enter-active {
+  transform: translateX(0%);
+  opacity: 1;
+  transition: all 300ms ease;
+}
+.calendar-slide-right-exit {
+  transform: translateX(0%);
+  opacity: 1;
+}
+.calendar-slide-right-exit-active {
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: all 300ms ease;
+}
+
+/* Slide to left */
+.calendar-slide-left-enter {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+.calendar-slide-left-enter-active {
+  transform: translateX(0%);
+  opacity: 1;
+  transition: all 300ms ease;
+}
+.calendar-slide-left-exit {
+  transform: translateX(0%);
+  opacity: 1;
+}
+.calendar-slide-left-exit-active {
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 300ms ease;
+}
+
+/* Slide to top */
+.calendar-slide-top-enter {
+  transform: translateY(100%);
+  opacity: 0;
+}
+.calendar-slide-top-enter-active {
+  transform: translateY(0%);
+  opacity: 1;
+  transition: all 300ms ease;
+}
+.calendar-slide-top-exit {
+  transform: translateY(0%);
+  opacity: 1;
+}
+.calendar-slide-top-exit-active {
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: all 300ms ease;
+}
+
+/* Slide to bottom */
+.calendar-slide-bottom-enter {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+.calendar-slide-bottom-enter-active {
+  transform: translateY(0%);
+  opacity: 1;
+  transition: all 300ms ease;
+}
+.calendar-slide-bottom-exit {
+  transform: translateY(0%);
+  opacity: 1;
+}
+.calendar-slide-bottom-exit-active {
+  transform: translateY(100%);
+  opacity: 0;
+  transition: all 300ms ease;
+}

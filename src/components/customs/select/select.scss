@@ -44,7 +44,6 @@
 }
 .select-trigger:focus {
   border: 1px solid #17a3b8;
-  box-shadow: 0 0 0 3px #f1f5f9;
 }
 .select-trigger[data-placeholder] {
   color: #94a3b8;
@@ -83,6 +82,10 @@
   color: #64748b;
   width: 20px;
   height: 20px;
+  transition: transform 200ms ease-in-out;
+}
+.arrow-icon.open {
+  transform: rotate(-180deg);
 }
 .arrow-icon.disabled {
   color: #94a3b8;
@@ -140,7 +143,7 @@
   background-color: #f1f5f9;
 }
 .select-item[data-state="checked"] {
-  background-color: #e0f7fa;
+  background-color: #eefdff;
   color: #17a3b8;
 }
 

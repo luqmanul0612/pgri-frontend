@@ -28,6 +28,8 @@ const Select: FC<Props> = (props) => {
     disabled,
     isLoading,
   } = props;
+  const [open, setOpen] = React.useState(false);
+
   return (
     <div className="select-root">
       {!!label && <p className={clsx("select-label", { disabled })}>{label}</p>}
@@ -35,6 +37,8 @@ const Select: FC<Props> = (props) => {
         value={props.value}
         onValueChange={props.onChange}
         disabled={disabled}
+        open={open}
+        onOpenChange={setOpen}
       >
         <Lib.Trigger
           className={clsx("select-trigger", { error })}
@@ -47,7 +51,7 @@ const Select: FC<Props> = (props) => {
           />
           <Lib.Icon className="select-icon">
             {!isLoading && (
-              <ArrowDown className={clsx("arrow-icon", { disabled })} />
+              <ArrowDown className={clsx("arrow-icon", { disabled, open })} />
             )}
             {isLoading && (
               <div className="select-spinner">
