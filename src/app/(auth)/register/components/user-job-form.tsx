@@ -19,8 +19,8 @@ import {
 } from "../serverActions/get-register-form-data";
 
 const certificateOptions = [
-  { key: 0, label: "Belum" },
-  { key: 1, label: "Sudah" },
+  { key: "0", label: "Belum" },
+  { key: "1", label: "Sudah" },
 ];
 
 const UserJobForm = () => {
