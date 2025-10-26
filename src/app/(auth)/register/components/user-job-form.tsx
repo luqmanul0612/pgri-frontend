@@ -107,7 +107,7 @@ const UserJobForm = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex w-full max-w-[1048px] flex-col items-start justify-center gap-6 rounded-2xl border border-[#17a3b8]/20 bg-white p-4"
+      className="flex w-full max-w-[1048px] flex-col items-start justify-center gap-6 rounded-[16px] border border-primary-100 bg-white p-4"
     >
       <div className="flex w-full items-center gap-2 rounded-[8px] bg-red-50 px-2 py-1 text-[10px] text-red-500">
         <Danger />

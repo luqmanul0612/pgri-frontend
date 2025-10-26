@@ -27,12 +27,14 @@ const Page: FC<PageProps> = ({ params: {} }) => {
   return (
     <div>
       <Header />
-      <div className="box-border flex min-h-dvh flex-col items-center gap-5 bg-slate-100 px-2 py-28">
+      <div className="box-border flex min-h-dvh flex-col items-center gap-6 bg-slate-100 px-2 py-28">
         <Stepper />
-        {step === 1 && <UserFormComponent />}
-        {step === 2 && <UserJobFormComponent />}
-        {step === 3 && <PasswordForm />}
-        {step === 4 && <InitialPayment />}
+        <div className="fle-col w-full flex h-full justify-center items-center flex-grow">
+          {step === 1 && <UserFormComponent />}
+          {step === 2 && <UserJobFormComponent />}
+          {step === 3 && <PasswordForm />}
+          {step === 4 && <InitialPayment />}
+        </div>
       </div>
       <div className="fixed bottom-0 left-0 right-0">
         <Footer />

@@ -76,7 +76,7 @@ export const RightSection: FC<RightSectionProps> = () => {
           render={({ field, fieldState }) => (
             <TextField
               label="NPA"
-              placeholder="Masukan NPA"
+              placeholder="Masukkan NPA"
               onChange={field.onChange}
               value={field.value}
               error={!!fieldState.error}
@@ -92,7 +92,7 @@ export const RightSection: FC<RightSectionProps> = () => {
               label="Password"
               type="password"
               onChange={field.onChange}
-              placeholder="Masukan Kata Sandi"
+              placeholder="Masukkan Kata Sandi"
               value={field.value}
               error={!!fieldState.error}
               helperText={fieldState.error?.message}
