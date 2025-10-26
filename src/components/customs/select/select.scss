@@ -61,6 +61,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.5;
+  &.loading {
+    color: #94a3b8;
+  }
 }
 .select-empty {
   font-size: 14px;
@@ -105,6 +108,7 @@
   animation-duration: 200ms;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
+  z-index: 100;
 }
 
 .select-content[data-state="open"] {
@@ -135,7 +139,7 @@
   transition: background-color 0.2s ease-in-out;
 }
 .select-item[data-disabled] {
-  color: var(--mauve-8);
+  color: #94a3b8;
   pointer-events: none;
 }
 .select-item[data-highlighted] {
@@ -181,7 +185,7 @@
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  border: 5px solid;
+  border: 4px solid;
   border-color: #e2e8f0;
   border-right-color: #17a3b8;
   animation: select-spinner 1s infinite linear;
@@ -192,26 +196,26 @@
 }
 
 .select-scroll-area-root {
-	width: 100%;
-	height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .select-scroll-area-viewport {
-	width: 100%;
-	height: 100%;
+  width: 100%;
+  height: 100%;
   overflow: auto;
 }
 
 .select-scroll-area-scrollbar {
-	width: 4px;
-	padding: 10px 0;
+  width: 4px;
+  padding: 10px 0;
 }
 
 .select-scroll-area-thumb {
   background-color: #17a3b8;
   height: 100%;
   width: 100px;
-	border-radius: 3px;
+  border-radius: 3px;
 }
 
 @keyframes select-spinner {

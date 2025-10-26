@@ -11,17 +11,19 @@ import ArrowDownIcon from "../assets/arrow-down.svg";
 import * as Accordion from "@radix-ui/react-accordion";
 import Checkbox from "@/components/customs/checkbox";
 import CloseCircle from "../assets/close-circle.svg";
-import {
-  checkStatusPayment,
-  getVaChannels,
-  IPaymentStatusResponse,
-  submitPayment,
-} from "../serverActions/payment";
 import Button from "@/components/customs/button";
-import { useDebouncedCallback } from "@/utils/use-debounce-callback";
 import PaymentSuccessImage from "../assets/payment-success-image.svg";
 import { useRouter } from "next/navigation";
-import { useRegistrationFormStore } from "@/store/use-registration-form";
+import useRegistrationState from "../utils/use-registration-state";
+import {
+  getPaymentRegister,
+  getVaChannels,
+  PaymentStatusResponse,
+  postPaymentRegister,
+} from "../serverActions/payment-v2";
+import { toast } from "sonner";
+import useQuery from "@/utils/hooks/use-query";
+import useMutation from "@/utils/hooks/use-mutation";
 
 interface PageProps {
   params: {};
@@ -36,7 +38,7 @@ interface IPaymentMethods {
   }[];
 }
 
-const initialPaymentStatus: IPaymentStatusResponse["data"] = {
+const initialPaymentStatus: PaymentStatusResponse["data"] = {
   expiry_date: "",
   payment_page: "",
   status: "pending",
@@ -49,51 +51,71 @@ const initialPaymentStatus: IPaymentStatusResponse["data"] = {
 const Page: FC<PageProps> = ({ params: {} }) => {
   const { auth } = useAuth();
   const router = useRouter();
-  const { resetForm } = useRegistrationFormStore();
+  const { resetRegisterState } = useRegistrationState();
   const [paymentMethod, setPaymentMethod] = useState<IPaymentMethods[]>([]);
   const [paymentStatus, setPaymentStatus] =
-    useState<IPaymentStatusResponse["data"]>(initialPaymentStatus);
+    useState<PaymentStatusResponse["data"]>(initialPaymentStatus);
   const [method, setMethod] = useState("virtual_account");
   const [channel, setChannel] = useState("");
 
+  useQuery({
+    queryFn: getVaChannels,
+    onSuccess: (res) => {
+      setPaymentMethod([
+        {
+          key: "virtual_account",
+          label: "Virtual Account",
+          channels: Object.entries(res.data).map(([key, value]) => ({
+            key,
+            label: value.name,
+          })),
+        },
+      ]);
+    },
+    onError: (err: { message: string; status: number }) => {
+      toast.error(err.message);
+    },
+  });
+
+  const getPayment = useQuery({
+    queryFn: getPaymentRegister,
+    onSuccess: (res) => {
+      if (res.data) {
+        const paymentModal = document.getElementById("jokul_checkout_modal");
+        setPaymentStatus(res.data);
+        if (res.data.status === "pending" && !paymentModal) {
+          window.loadJokulCheckout(res.data?.payment_page);
+        } else if (res.data.status === "succeeded") {
+          resetRegisterState();
+          if (paymentModal) paymentModal.remove();
+        }
+      }
+    },
+    onError: (err: { message: string; status: number }) => {
+      if (err.status === 401) {
+        resetRegisterState();
+        router.push("/register");
+        toast.error(err.message);
+      }
+    },
+  });
+
+  const postPayment = useMutation({
+    mutationFn: postPaymentRegister,
+    onSuccess: (res) => {
+      window.loadJokulCheckout(res.data?.payment_page);
+    },
+    onError: (err: { message: string }) => {
+      toast.error(err.message);
+    },
+  });
+
   const handlerPayment = async () => {
-    const res = await submitPayment({
+    postPayment.mutate({
       channel,
       payment_method: method,
     });
-    window.loadJokulCheckout(res.data?.payment_page);
   };
-
-  const fetchVaChannels = useDebouncedCallback(async () => {
-    const res = await getVaChannels();
-    setPaymentMethod([
-      {
-        key: "virtual_account",
-        label: "Virtual Account",
-        channels: Object.entries(res.data).map(([key, value]) => ({
-          key,
-          label: value.name,
-        })),
-      },
-    ]);
-  }, 500);
-
-  const fetchCheckStatusPayment = useDebouncedCallback(async () => {
-    const res = await checkStatusPayment();
-    const paymentModal = document.getElementById("jokul_checkout_modal");
-    if (res.status === 200 && res.data) {
-      setPaymentStatus(res.data);
-      if (res.data.status === "pending" && !paymentModal) {
-        window.loadJokulCheckout(res.data?.payment_page);
-      } else if (res.data.status === "succeeded") {
-        resetForm();
-        if (paymentModal) paymentModal.remove();
-      }
-    } else if(res.status === 401) {
-      resetForm();
-      router.push("/register");
-    }
-  }, 500);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -111,10 +133,8 @@ const Page: FC<PageProps> = ({ params: {} }) => {
   }, []);
 
   useEffect(() => {
-    fetchCheckStatusPayment();
-    fetchVaChannels();
     setInterval(async () => {
-      fetchCheckStatusPayment();
+      getPayment.refetch();
     }, 10000);
   }, []);
 
@@ -258,6 +278,7 @@ const Page: FC<PageProps> = ({ params: {} }) => {
               onClick={handlerPayment}
               className="mt-5"
               disabled={!channel || !method}
+              isLoading={postPayment.isPending}
             >
               Lanjutkan ke Pembayaran
             </Button>

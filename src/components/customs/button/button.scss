@@ -45,6 +45,12 @@
     &:hover {
       background-color: #e0f7fa;
     }
+    &:disabled {
+      background-color: #cbd5e1;
+      border: 1px solid #cbd5e1;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
   }
 
   &.secondary-white {
@@ -54,6 +60,11 @@
     &:hover {
       background-color: #ffffff40;
       color: #fff;
+    }
+    &:disabled {
+      background-color: #cbd5e1;
+      color: #94a3b8;
+      cursor: not-allowed;
     }
   }
 

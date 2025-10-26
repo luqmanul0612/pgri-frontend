@@ -24,7 +24,7 @@ export interface AuthProps {
 }
 
 interface AuthState extends AuthProps {
-  setAuth: (auth: Partial<AuthProps>) => void;
+  setAuth: (auth: Partial<AuthProps["auth"]>) => void;
 }
 
 const initialData: AuthProps = {
@@ -54,7 +54,7 @@ const useAuth = create<AuthState>()(
     (set, get) => ({
       ...initialData,
       setAuth: (values) =>
-        set({ ...values, auth: { ...get().auth, ...values.auth } }),
+        set({ ...values, auth: { ...get().auth, ...values } }),
     }),
     {
       name: "auth-state",

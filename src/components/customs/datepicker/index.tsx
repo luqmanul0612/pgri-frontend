@@ -107,7 +107,7 @@ const Datepicker: FC<DatePickerProps> = (props) => {
         error={!!internalError || props.error}
         value={getInputValue()}
         onValueChange={handleValueChange}
-        helperText={internalError ?? props.helperText}
+        helperText={internalError || props.helperText}
         placeholder={
           (props.placeholder ?? type === "single")
             ? "DD/MM/YYYY"

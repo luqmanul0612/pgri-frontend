@@ -5,29 +5,37 @@ import * as ScrollArea from "@radix-ui/react-scroll-area";
 import clsx from "clsx";
 import Checkmark from "./assets/checkmark-outline.svg";
 import ArrowDown from "./assets/arrow-down.svg";
-import ArrowUp from "./assets/arrow-up.svg";
 
-interface Props {
+interface SelectProps<T> {
   value?: string;
   onChange?: (value: string) => void;
-  options?: { key: string; label: string }[];
+  options?: T[];
   label?: string | React.ReactNode;
   placeholder?: string;
   error?: boolean;
   helperText?: string;
   disabled?: boolean;
   isLoading?: boolean;
+  getKey?: (item: T) => string;
+  getLabel?: (item: T) => React.ReactNode;
 }
 
-const Select: FC<Props> = (props) => {
+const getKeyFunc = (item: any) => item.key;
+const getLabelFunc = (item: any) => item.label;
+
+const Select = <T,>(props: SelectProps<T>) => {
   const {
     label,
     placeholder,
     options,
     helperText,
     error,
+    value,
     disabled,
     isLoading,
+    onChange,
+    getKey = getKeyFunc,
+    getLabel = getLabelFunc,
   } = props;
   const [open, setOpen] = React.useState(false);
 
@@ -35,8 +43,8 @@ const Select: FC<Props> = (props) => {
     <div className="select-root">
       {!!label && <p className={clsx("select-label", { disabled })}>{label}</p>}
       <Lib.Root
-        value={props.value}
-        onValueChange={props.onChange}
+        value={value}
+        onValueChange={onChange}
         disabled={disabled}
         open={open}
         onOpenChange={setOpen}
@@ -45,11 +53,20 @@ const Select: FC<Props> = (props) => {
           className={clsx("select-trigger", { error })}
           aria-label="select-trigger"
         >
-          <Lib.Value
-            placeholder={
-              <span className="select-placeholder">{placeholder}</span>
-            }
-          />
+          {!!options?.length && (
+            <Lib.Value
+              placeholder={
+                <span className="select-placeholder">{placeholder}</span>
+              }
+            />
+          )}
+          {!options?.length && (
+            <span
+              className={clsx("select-placeholder", { loading: isLoading })}
+            >
+              {placeholder}
+            </span>
+          )}
           <Lib.Icon className="select-icon">
             {!isLoading && (
               <ArrowDown className={clsx("arrow-icon", { disabled, open })} />
@@ -64,14 +81,18 @@ const Select: FC<Props> = (props) => {
         <Lib.Portal>
           <Lib.Content className="select-content" position="popper">
             <ScrollArea.Root className="select-scroll-area-root" type="auto">
-              <Lib.Viewport asChild className="select-viewport">
+              <Lib.Viewport
+                asChild
+                className="select-viewport"
+                style={{ overflowY: undefined }}
+              >
                 <ScrollArea.Viewport className="select-scroll-area-viewport">
                   {!options?.length && (
                     <div className="select-empty">Tidak ada data</div>
                   )}
                   {options?.map((option) => (
-                    <SelectItem key={option.key} value={option.key}>
-                      {option.label}
+                    <SelectItem key={getKey(option)} value={getKey(option)}>
+                      {getLabel(option)}
                     </SelectItem>
                   ))}
                 </ScrollArea.Viewport>

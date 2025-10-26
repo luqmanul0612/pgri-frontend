@@ -1,14 +1,13 @@
 import DashboardLayoutComponent from "./components/DashboardLayoutComponent";
 import { redirect } from "next/navigation";
-import { getIdentity } from "../(auth)/login/serverAction/getIdentity";
-import { getAuthCookies } from "@/serverActions/getAuthCookies";
+import { getAuthMe } from "../(auth)/login/serverAction/getAuthMe";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const identity = await getIdentity();
+  const identity = await getAuthMe();
   if (identity?.status !== 200) {
     redirect("/login");
   }

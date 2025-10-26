@@ -15,7 +15,7 @@ const Checkbox = forwardRef<HTMLButtonElement, Props>((props, ref) => {
       ref={ref}
       className={clsx("checkbox-root", className, { error })}
     >
-      <Lib.Indicator asChild className="checkbox-indicator">
+      <Lib.Indicator className="checkbox-indicator">
         <Checkmark className="checkbox-icon" />
       </Lib.Indicator>
     </Lib.Root>
