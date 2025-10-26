@@ -14,7 +14,7 @@ const InitialPayment = () => {
   const { resetForm } = useRegistrationFormStore();
 
   return (
-    <div className="w-full max-w-[600px] rounded-2xl border border-[#17a3b8]/20 bg-white p-4">
+    <div className="w-full max-w-[600px] rounded-2xl border border-primary-100 bg-white p-4">
       <h3 className="mb-2 text-lg font-bold text-black">Uang Pangkal</h3>
       <p className="mb-4 text-xs font-normal text-black">
         Merupakan uang komitmen untuk seluruh anggota baru PGRI dan wajib

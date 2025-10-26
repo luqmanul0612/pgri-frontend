@@ -45,7 +45,6 @@ const PasswordForm = () => {
     mutationFn: postAuthRegister,
     onSuccess: (res) => {
       setIsSubmited();
-      setStep(4);
       const token = res.data.token;
       setCookies("token", token);
       setCookies("auth", res.data);
@@ -76,7 +75,6 @@ const PasswordForm = () => {
   });
 
   const handleSubmit = form.handleSubmit(async (values) => {
-    setStep(3);
     mutate({
       password: values.password,
       name: userData.name,
@@ -119,24 +117,20 @@ const PasswordForm = () => {
 
   if (isSubmited)
     return (
-      <div className="flex flex-col items-center justify-start gap-10 rounded-2xl border border-[#17a3b8]/20 p-4">
+      <div className="flex w-full max-w-[500px] flex-col items-center justify-center gap-6 rounded-[16px] border border-primary-100 bg-white p-4">
         <PasswordSuccess />
         <div className="flex w-full flex-col items-center justify-start gap-4">
-          <div className="text-center text-2xl font-bold text-[#17191c]">
+          <p className="text-center text-[18px] font-bold text-[#17191c]">
             Kata Sandi Berhasil Dibuat
-          </div>
-          <div className="text-center text-xs text-[#ff0000]">
+          </p>
+          <div className="flex w-full items-center gap-2 rounded-[8px] bg-red-50 px-2 py-1 text-[10px] text-red-500">
+            <Danger />
             Pastikan kamu mengingat atau menyimpan Kata Sandi yang telah dibuat!
           </div>
         </div>
-        <button
-          onClick={() => {
-            setStep(4);
-          }}
-          className="flex w-full items-center justify-center rounded-2xl bg-[#17a3b8] p-4"
-        >
-          <span className="text-sm text-white">OK</span>
-        </button>
+        <Button onClick={() => setStep(4)} fullWidth>
+          OK
+        </Button>
       </div>
     );
 
@@ -223,6 +217,7 @@ const PasswordForm = () => {
           fullWidth
           variant="secondary"
           onClick={() => setStep(2)}
+          disabled={isPending}
         >
           Kembali
         </Button>

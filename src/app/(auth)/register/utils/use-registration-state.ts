@@ -143,6 +143,7 @@ const useRegistrationState = create<RegistrationStateProps>()(
       partialize: (state) => ({
         step: state.step,
         auth: state.auth,
+        isSubmited: state.isSubmited,
         userData: state.userData,
         jobData: state.jobData,
       }),

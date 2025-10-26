@@ -38,7 +38,7 @@ export const AddAndFilterWilayah = ({ wilayah }: { wilayah: string }) => {
         <div className="flex items-end gap-4 rounded-2xl bg-white p-4 outline outline-1 outline-offset-[-1px] outline-[#17a3b8]/20">
           <ReusableInput
             label={"Kode " + wilayah}
-            placeholder={`Masukan Kode ${wilayah} (Contoh: 11)`}
+            placeholder={`Masukkan Kode ${wilayah} (Contoh: 11)`}
             value={kodeWilayah}
             onChange={setKodeWilayah}
             required
