@@ -66,9 +66,7 @@ export async function postAuthRegister(body: PostAuthRegisterBody) {
   const url = process.env.HOST + pathname;
   const response = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   const res = { ...(await response.json()), pathname, ok: response.ok };

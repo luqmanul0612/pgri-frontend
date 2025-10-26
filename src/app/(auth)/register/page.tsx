@@ -1,13 +1,21 @@
 "use client";
 import { FC } from "react";
 import Stepper from "./components/stepper";
-import UserJobFormComponent from "./components/user-job-form";
 import { Footer } from "@/app/components/Footer";
 import Header from "./components/header";
 import PasswordForm from "./components/password-form";
 import InitialPayment from "./components/InitialPayment";
 import useRegistrationState from "./utils/use-registration-state";
-import UserFormComponent from "./components/user-form";
+import dynamic from "next/dynamic";
+
+const UserFormComponent = dynamic(() => import("./components/user-form"), {
+  ssr: false,
+});
+
+const UserJobFormComponent = dynamic(
+  () => import("./components/user-job-form"),
+  { ssr: false },
+);
 
 interface PageProps {
   params: {};
@@ -19,7 +27,7 @@ const Page: FC<PageProps> = ({ params: {} }) => {
   return (
     <div>
       <Header />
-      <div className="box-border flex flex-col items-center gap-5 min-h-dvh bg-slate-100 px-2 py-28">
+      <div className="box-border flex min-h-dvh flex-col items-center gap-5 bg-slate-100 px-2 py-28">
         <Stepper />
         {step === 1 && <UserFormComponent />}
         {step === 2 && <UserJobFormComponent />}
