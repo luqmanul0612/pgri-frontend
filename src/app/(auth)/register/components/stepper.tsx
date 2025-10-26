@@ -1,41 +1,18 @@
 import { useRegistrationFormStore } from "@/store/use-registration-form";
 import React, { Dispatch, SetStateAction } from "react";
+import useRegistrationState from "../utils/use-registration-state";
 
 const Stepper = () => {
-  const { step, setStep } = useRegistrationFormStore();
+  const { step } = useRegistrationState();
   return (
     <div className="inline-flex h-[34px] w-[900px] items-center justify-between">
-      <Step
-        number={1}
-        label="Data Pribadi"
-        active={step >= 1}
-        setStep={setStep}
-        step={step}
-      />
+      <Step number={1} label="Data Pribadi" active={step >= 1} step={step} />
       <Separator />
-      <Step
-        number={2}
-        label="Data Pekerjaan"
-        active={step >= 2}
-        setStep={setStep}
-        step={step}
-      />
+      <Step number={2} label="Data Pekerjaan" active={step >= 2} step={step} />
       <Separator />
-      <Step
-        number={3}
-        label="Buat Kata Sandi"
-        active={step >= 3}
-        setStep={setStep}
-        step={step}
-      />
+      <Step number={3} label="Buat Kata Sandi" active={step >= 3} step={step} />
       <Separator />
-      <Step
-        number={4}
-        label="Uang Pangkal"
-        active={step == 4}
-        setStep={setStep}
-        step={step}
-      />
+      <Step number={4} label="Uang Pangkal" active={step == 4} step={step} />
     </div>
   );
 };
@@ -44,27 +21,14 @@ interface StepProps {
   number: number;
   label: string;
   active?: boolean;
-  setStep: (step: number) => void;
   step: number;
 }
 
-const Step: React.FC<StepProps> = ({
-  number,
-  label,
-  active = false,
-  setStep,
-  step,
-}) => (
-  <div
-    className="flex items-center gap-2.5"
-    onClick={() => {
-      if (step == 1 || step == 3) return;
-      setStep(number);
-    }}
-  >
+const Step: React.FC<StepProps> = ({ number, label, active = false, step }) => (
+  <div className="flex items-center gap-2.5">
     <div
       className={`flex h-[34px] w-[34px] items-center justify-center rounded-[30px] p-2.5 ${
-        active ? "bg-[#17a3b8]" : "bg-[#919191]"
+        active ? "bg-primary-500" : "bg-slate-400"
       } transition-colors duration-300`}
     >
       <div
@@ -77,7 +41,7 @@ const Step: React.FC<StepProps> = ({
     </div>
     <div
       className={`text-sm ${
-        active ? "font-bold text-[#17a3b8]" : "font-normal text-[#919191]"
+        active ? "font-bold text-primary-500" : "font-normal text-slate-400"
       } transition-colors duration-300`}
     >
       {label}

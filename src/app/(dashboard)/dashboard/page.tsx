@@ -14,8 +14,8 @@ const Page: FC<pageProps> = ({ params: {} }) => {
   return (
     <div>
       {auth.levelId === 1 && <UserAdminSection />}
-      {auth.levelId === 2 && <UserSection />}
-      {auth.levelId === 3 && <FinanceAdminSection />}
+      {auth.levelId === 2 && <FinanceAdminSection />}
+      {auth.levelId === 3 && <UserSection />}
     </div>
   );
 };

@@ -1,25 +1,25 @@
 "use client";
 import { FC } from "react";
 import Stepper from "./components/stepper";
-import UserFormComponent from "./components/user-form";
 import UserJobFormComponent from "./components/user-job-form";
 import { Footer } from "@/app/components/Footer";
 import Header from "./components/header";
 import PasswordForm from "./components/password-form";
 import InitialPayment from "./components/InitialPayment";
-import { useRegistrationFormStore } from "@/store/use-registration-form";
+import useRegistrationState from "./utils/use-registration-state";
+import UserFormComponent from "./components/user-form";
 
 interface PageProps {
   params: {};
 }
 
 const Page: FC<PageProps> = ({ params: {} }) => {
-  const { step } = useRegistrationFormStore();
+  const { step } = useRegistrationState();
 
   return (
     <div>
       <Header />
-      <div className="flex flex-col items-center gap-5 py-28">
+      <div className="box-border flex flex-col items-center gap-5 min-h-dvh bg-slate-100 px-2 py-28">
         <Stepper />
         {step === 1 && <UserFormComponent />}
         {step === 2 && <UserJobFormComponent />}

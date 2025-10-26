@@ -1,577 +1,364 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-"use client";
-import { ChangeEvent, useEffect } from "react";
 import Danger from "../../../../../public/assets/danger";
-import { Input } from "@/components/ui/input";
-import { FormField } from "@/app/components/FormField";
-import clsx from "clsx";
-import { useGetRegionStore } from "@/store/use-get-region-store";
 import Button from "@/components/customs/button";
+import { Controller, set, useForm, useWatch } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import useRegistrationState, {
+  UserJobData,
+} from "../utils/use-registration-state";
+import { userJobSchema } from "../utils/validation-schema";
+import TextField from "@/components/customs/textfield";
+import Required from "@/components/customs/required";
+import Select from "@/components/customs/select";
+import { useDebouncedCallback } from "@/utils/use-debounce-callback";
+import { useEffect } from "react";
+import useQuery from "@/utils/hooks/use-query";
 import {
-  TRegisterFormData,
-  useRegistrationFormStore,
-} from "@/store/use-registration-form";
+  getLocation,
+  getServiceOptions,
+} from "../serverActions/get-register-form-data";
 
-const UserJobFormComponent = ({}) => {
-  const {
-    provinces,
-    kabupatenKota,
-    kecamatan,
-    kelurahan,
-    selectedProvince,
-    selectedKabupatenKota,
-    selectedKecamatan,
-    selectedKelurahan,
-    setSelectedProvince,
-    setSelectedKabupatenKota,
-    setSelectedKecamatan,
-    setSelectedKelurahan,
-    fetchProvinces,
-    fetchKabupatenKota,
-    fetchKecamatan,
-    fetchKelurahan,
-  } = useGetRegionStore();
-  const { userJobFormData, setStep, updateField, handlerSubmitForm } =
-    useRegistrationFormStore();
+const certificateOptions = [
+  { key: 0, label: "Belum" },
+  { key: 1, label: "Sudah" },
+];
 
-  // get data provinsi
+const UserJobForm = () => {
+  const { saveDataForm, setStep } = useRegistrationState();
+
+  const form = useForm<UserJobData>({
+    mode: "all",
+    defaultValues: useRegistrationState.getState().jobData,
+    resolver: yupResolver(userJobSchema),
+  });
+
+  const values = useWatch({ control: form.control });
+
+  const provinces = useQuery({
+    queryFn: () => getLocation({ type: "provinces" }),
+  });
+
+  const cities = useQuery({
+    queryKey: [values.provinceId],
+    queryFn: () =>
+      getLocation({ type: "cities", id: form.getValues("provinceId") }),
+    enabled: !!values.provinceId,
+  });
+
+  const districts = useQuery({
+    queryKey: [values.cityId],
+    queryFn: () =>
+      getLocation({ type: "districts", id: form.getValues("cityId") }),
+    enabled: !!values.cityId,
+  });
+
+  const subDistricts = useQuery({
+    queryKey: [values.districtId],
+    queryFn: () =>
+      getLocation({ type: "subdistricts", id: form.getValues("districtId") }),
+    enabled: !!values.districtId,
+  });
+
+  const jobs = useQuery({
+    queryFn: () => getServiceOptions("jobs"),
+  });
+
+  const employmentStatuses = useQuery({
+    queryFn: () => getServiceOptions("employment-statuses"),
+  });
+
+  const stages = useQuery({
+    queryFn: () => getServiceOptions("stages"),
+  });
+
+  const subjects = useQuery({
+    queryFn: () => getServiceOptions("subjects"),
+  });
+
+  const handleSubmit = form.handleSubmit(async (values) => {
+    setStep(3);
+    // mutate({
+    //   name: values.name,
+    //   subdistrict_id: Number(values.subDistrictId),
+    //   address: values.address,
+    //   job_id: Number(values.jobId),
+    //   stage_id: values.stageId ? Number(values.stageId) : undefined,
+    //   employment_status_id: values.employmentStatusId
+    //     ? Number(values.employmentStatusId)
+    //     : undefined,
+    //   has_certification: values.hasCertification
+    //     ? values.hasCertification === "1"
+    //       ? true
+    //       : false
+    //     : undefined,
+    //   grade: values.grade ? values.grade : undefined,
+    //   subject_id: values.subjectId ? Number(values.subjectId) : undefined,
+    // });
+  });
+
+  const saveDataFormCb = useDebouncedCallback((values: UserJobData) => {
+    saveDataForm({ type: "jobData", data: values });
+  }, 500);
+
   useEffect(() => {
-    fetchProvinces();
-  }, []);
-
-  // get data kota / kabupaten
-  useEffect(() => {
-    if (selectedProvince) {
-      fetchKabupatenKota();
-    }
-  }, [selectedProvince]);
-
-  //  get data kecamatan / district
-
-  useEffect(() => {
-    if (selectedKabupatenKota) {
-      fetchKecamatan();
-    }
-  }, [selectedKabupatenKota]);
-
-  // get data desa / kelurahan
-  useEffect(() => {
-    if (selectedKecamatan) {
-      fetchKelurahan();
-    }
-  }, [selectedKecamatan]);
-
-  useEffect(() => {
-    updateField("subdistrict_id", selectedKelurahan);
-  }, [selectedKelurahan]);
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    updateField(id as keyof TRegisterFormData, value);
-  };
-
-  const handleTextAreaInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    updateField(id as keyof TRegisterFormData, value);
-  };
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    await handlerSubmitForm();
-  }
+    if (form.formState.isDirty) saveDataFormCb(values as UserJobData);
+  }, [values, form.formState.isDirty]);
 
   return (
-    <div className="w-full max-w-5xl rounded-2xl border border-[#17a3b8]/20 p-4">
-      {" "}
+    <form
+      onSubmit={handleSubmit}
+      className="flex w-full max-w-[1048px] flex-col items-start justify-center gap-6 rounded-2xl border border-[#17a3b8]/20 bg-white p-4"
+    >
       <div className="flex w-full items-center gap-2 rounded-[8px] bg-red-50 px-2 py-1 text-[10px] text-red-500">
         <Danger />
         Form dengan tanda (*) bintang wajib di isi, untuk form tanpa tanda (*)
         bintang bisa dilewati untuk mempercepat proses registrasi.
       </div>
-      <form onSubmit={handleSubmit} className="mt-4">
-        <div className="flex flex-wrap gap-6">
-          <div className="flex flex-1 flex-col gap-6">
-            {/* Nama Instansi Tempat Tugas */}
-            <FormField label="Nama Instansi Tempat Tugas" required>
-              <Input
-                required
-                type="text"
-                id="name"
-                value={userJobFormData.name}
-                onChange={handleInputChange}
-                className={clsx(
-                  "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3",
-                  userJobFormData.name
-                    ? "border-[#17a3b8]/20 text-[#17a3b8]"
-                    : "border-gray-300 text-gray-400",
-                )}
-                placeholder="Nama Instansi Tempat Tugas"
-                autoComplete="off"
+      <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
+        <div className="flex flex-col gap-4">
+          <Controller
+            control={form.control}
+            name="name"
+            render={({ field, fieldState }) => (
+              <TextField
+                label={<Required>Nama Instansi Tempat Tugas</Required>}
+                placeholder="Masukkan Nama dan Gelar"
+                onChange={field.onChange}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
               />
-            </FormField>
-            {/* Provinsi Tempat Tugas */}
-            <FormField label="Provinsi Tempat Tugas" required>
-              <div className="relative">
-                <select
-                  required
-                  id="provinsi"
-                  value={selectedProvince}
-                  onChange={(event: ChangeEvent<HTMLSelectElement>) => {
-                    setSelectedProvince(event.target.value);
-                    setSelectedKabupatenKota("");
-                    setSelectedKecamatan("");
-                    setSelectedKelurahan("");
-                  }}
-                  className={clsx(
-                    "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
-                    selectedProvince
-                      ? "border border-[#17a3b8]/20 text-[#17a3b8]"
-                      : "border border-gray-300 text-gray-400",
-                  )}
-                >
-                  <option value="" disabled>
-                    Pilih Provinsi
-                  </option>
-                  {provinces.map((data) => (
-                    <option key={data.code} value={data.code}>
-                      {data.name}
-                    </option>
-                  ))}
-                </select>
-                <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${
-                    selectedProvince ? "text-[#17a3b8]" : "text-gray-400"
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
-              </div>
-            </FormField>
-
-            {/* Kabupaten/Kota Tempat Tugas */}
-            <FormField
-              label="Kabupaten/Kota/Kota Administrasi Tempat Tugas"
-              required
-            >
-              <div className="relative">
-                <select
-                  required
-                  id="kabupaten"
-                  value={selectedKabupatenKota}
-                  onChange={(event: ChangeEvent<HTMLSelectElement>) => {
-                    setSelectedKabupatenKota(event.target.value);
-                    setSelectedKecamatan("");
-                    setSelectedKelurahan("");
-                  }}
-                  className={clsx(
-                    "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
-                    selectedKabupatenKota
-                      ? "border border-[#17a3b8]/20 text-[#17a3b8]"
-                      : "border border-gray-300 text-gray-400",
-                  )}
-                  disabled={!selectedProvince}
-                >
-                  <option value="" disabled>
-                    Pilih Kabupaten/Kota
-                  </option>
-                  {kabupatenKota.map((data) => (
-                    <option key={data.code} value={data.code}>
-                      {data.name}
-                    </option>
-                  ))}
-                </select>
-                <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${
-                    selectedKabupatenKota ? "text-[#17a3b8]" : "text-gray-400"
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
-              </div>
-            </FormField>
-
-            {/* Kecamatan Tempat Tugas */}
-            <FormField label="Kecamatan/Cabang/Distrik Tempat Tugas" required>
-              <div className="relative">
-                <select
-                  required
-                  id="kecamatan"
-                  value={selectedKecamatan}
-                  onChange={(event: ChangeEvent<HTMLSelectElement>) => {
-                    setSelectedKecamatan(event.target.value);
-                    setSelectedKelurahan("");
-                  }}
-                  className={clsx(
-                    "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
-                    selectedKecamatan
-                      ? "border border-[#17a3b8]/20 text-[#17a3b8]"
-                      : "border border-gray-300 text-gray-400",
-                  )}
-                  disabled={!selectedKabupatenKota}
-                >
-                  <option value="" disabled>
-                    Pilih Kecamatan
-                  </option>
-                  {kecamatan.map((data) => (
-                    <option key={data.code} value={data.code}>
-                      {data.name}
-                    </option>
-                  ))}
-                </select>
-                <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${
-                    selectedKecamatan ? "text-[#17a3b8]" : "text-gray-400"
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
-              </div>
-            </FormField>
-
-            {/* Kelurahan/Desa Tempat Tugas */}
-            <FormField label="Desa/Kelurahan Tempat Tugas" required>
-              <div className="relative">
-                <select
-                  required
-                  id="kelurahan"
-                  value={selectedKelurahan}
-                  onChange={(event: ChangeEvent<HTMLSelectElement>) => {
-                    setSelectedKelurahan(event.target.value);
-                  }}
-                  className={clsx(
-                    "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
-                    selectedKelurahan
-                      ? "border border-[#17a3b8]/20 text-[#17a3b8]"
-                      : "border border-gray-300 text-gray-400",
-                  )}
-                  disabled={!selectedKecamatan}
-                >
-                  <option value="" disabled>
-                    Pilih Desa/Kelurahan
-                  </option>
-                  {kelurahan.map((data) => (
-                    <option key={data.code} value={data.code}>
-                      {data.name}
-                    </option>
-                  ))}
-                </select>
-                <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${
-                    selectedKelurahan ? "text-[#17a3b8]" : "text-gray-400"
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
-              </div>
-            </FormField>
-
-            {/* Alamat Tempat Tugas */}
-            <FormField label="Alamat Tempat Tugas" required>
-              <textarea
-                required
-                id="address"
-                value={userJobFormData.address}
-                onChange={handleTextAreaInputChange}
-                className={clsx(
-                  "h-24 w-full rounded-2xl py-3 pl-4 pr-3",
-                  userJobFormData.address
-                    ? "border border-[#17a3b8]/20 text-[#17a3b8]"
-                    : "border border-gray-300 text-gray-400",
-                )}
-                placeholder="Alamat tempat tugas"
-                autoComplete="off"
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="provinceId"
+            render={({ field, fieldState }) => (
+              <Select
+                getKey={(v) => v.id.toString()}
+                getLabel={(v) => v.name}
+                label={<Required>Provinsi Tempat Tugas</Required>}
+                placeholder="Pilih Provinsi"
+                options={provinces.data?.data || []}
+                isLoading={provinces.isLoading}
+                onChange={(v) => {
+                  field.onChange(v);
+                  form.setValue("cityId", "");
+                  form.setValue("districtId", "");
+                  form.setValue("subDistrictId", "");
+                }}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
               />
-            </FormField>
-          </div>
-
-          <div className="flex flex-1 flex-col gap-6">
-            {/* Pekerjaan */}
-            <FormField label="Pekerjaan">
-              <div className="relative">
-                <select
-                  id="job_title"
-                  value={userJobFormData.job_title}
-                  onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                    const { value, id } = e.target;
-                    updateField(id as keyof TRegisterFormData, value);
-                  }}
-                  className={clsx(
-                    "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
-                    userJobFormData.job_title
-                      ? "border border-[#17a3b8]/20 text-[#17a3b8]"
-                      : "border border-gray-300 text-gray-400",
-                  )}
-                >
-                  <option value="" disabled>
-                    Pilih Pekerjaan
-                  </option>
-                  <option value="Guru">Guru</option>
-                  <option value="Tenaga Administrasi">
-                    Tenaga Administrasi
-                  </option>
-                  <option value="Dosen">Dosen</option>
-                  <option value="Kepala Sekolah">Kepala Sekolah</option>
-                  <option value="Pengawas">Pengawas</option>
-                  <option value="Lainnya">Lainnya..</option>
-                </select>
-                <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${
-                    userJobFormData.job_title
-                      ? "text-[#17a3b8]"
-                      : "text-gray-400"
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
-              </div>
-            </FormField>
-
-            {/* Status Kepegawaian */}
-            <FormField label="Status Kepegawaian">
-              <div className="relative">
-                <select
-                  id="employee_status"
-                  value={userJobFormData.employee_status}
-                  onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                    const { value, id } = e.target;
-                    updateField(id as keyof TRegisterFormData, value);
-                  }}
-                  className={clsx(
-                    "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
-                    userJobFormData.employee_status
-                      ? "border border-[#17a3b8]/20 text-[#17a3b8]"
-                      : "border border-gray-300 text-gray-400",
-                  )}
-                >
-                  <option value="" disabled>
-                    Pilih Status Kepegawaian
-                  </option>
-                  <option value="ASN PNS">ASN PNS</option>
-                  <option value="ASN PPPK">ASN PPPK</option>
-                  <option value="Honorer">Honorer</option>
-                  <option value="GTY">GTY</option>
-                  <option value="GTTY">GTTY</option>
-                  <option value="Dosen ASN">Dosen ASN</option>
-                  <option value="Dosen Tetap Yayasan">
-                    Dosen Tetap Yayasan
-                  </option>
-                  <option value="Dosen Tidak Tetap Yayasan">
-                    Dosen Tidak Tetap Yayasan
-                  </option>
-                </select>
-                <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${
-                    userJobFormData.employee_status
-                      ? "text-[#17a3b8]"
-                      : "text-gray-400"
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
-              </div>
-            </FormField>
-
-            {/* Pangkat/Golongan */}
-            <FormField label="Pangkat/Golongan">
-              <Input
-                className={clsx(
-                  "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3",
-                  userJobFormData.grade
-                    ? "border-[#17a3b8]/20 text-[#17a3b8]"
-                    : "border-gray-300 text-gray-400",
-                )}
-                placeholder="Pangkat/Golongan"
-                id="grade"
-                value={userJobFormData.grade}
-                onChange={handleInputChange}
-                autoComplete="off"
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="cityId"
+            render={({ field, fieldState }) => (
+              <Select
+                getKey={(v) => v.id.toString()}
+                getLabel={(v) => v.name}
+                label={
+                  <Required>
+                    Provinsi Kabupatan/Kota/Kota Administrasi Tempat Tugas
+                  </Required>
+                }
+                placeholder="Pilih Kabupaten/Kota/Kota Administrasi Tempat Tugas"
+                options={cities.data?.data || []}
+                isLoading={cities.isFetching}
+                onChange={(v) => {
+                  field.onChange(v);
+                  form.setValue("districtId", "");
+                  form.setValue("subDistrictId", "");
+                }}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                disabled={!form.watch("provinceId")}
               />
-            </FormField>
-
-            {/* Sertifikat Pendidik */}
-            <FormField label="Sertifikat Pendidik">
-              <div className="relative">
-                <select
-                  id="educator_certificate"
-                  value={
-                    userJobFormData.educator_certificate ? "true" : "false"
-                  }
-                  onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                    const value = e.target.value === "true";
-                    const id = e.target.id;
-                    updateField(id as keyof TRegisterFormData, value);
-                  }}
-                  className={clsx(
-                    "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
-                    userJobFormData.educator_certificate
-                      ? "border border-[#17a3b8]/20 text-[#17a3b8]"
-                      : "border border-gray-300 text-gray-400",
-                  )}
-                >
-                  <option value="true">SUDAH</option>
-                  <option value="false">BELUM</option>
-                </select>
-                <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${
-                    userJobFormData.educator_certificate
-                      ? "text-[#17a3b8]"
-                      : "text-gray-400"
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
-              </div>
-            </FormField>
-
-            {/* Jenjang Mengajar */}
-            <FormField label="Jenjang Mengajar">
-              <div className="relative">
-                <select
-                  id="stage"
-                  value={userJobFormData.stage}
-                  onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                    const { value, id } = e.target;
-                    updateField(id as keyof TRegisterFormData, value);
-                  }}
-                  className={clsx(
-                    "w-full appearance-none rounded-2xl py-3 pl-4 pr-8",
-                    userJobFormData.stage
-                      ? "border border-[#17a3b8]/20 text-[#17a3b8]"
-                      : "border border-gray-300 text-gray-400",
-                  )}
-                >
-                  <option value="" disabled>
-                    Pilih Jenjang Mengajar
-                  </option>
-                  <option value="PAUD">PAUD</option>
-                  <option value="TK">TK</option>
-                  <option value="SD/MI">SD/MI</option>
-                  <option value="SMP/MTS">SMP/MTS</option>
-                  <option value="SMA/MA">SMA/MA</option>
-                  <option value="SMK">SMK</option>
-                  <option value="PT">PT</option>
-                  <option value="Sekolah Luar Biasa (SLB)">
-                    Sekolah Luar Biasa (SLB)
-                  </option>
-                  <option value="Lainnya">Lainnya</option>
-                </select>
-                <svg
-                  className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform ${
-                    userJobFormData.stage ? "text-[#17a3b8]" : "text-gray-400"
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
-              </div>
-            </FormField>
-
-            {/* Mata Pelajaran */}
-            <FormField label="Mata Pelajaran">
-              <Input
-                className={clsx(
-                  "flex items-center gap-2.5 rounded-2xl py-3 pl-4 pr-3",
-                  userJobFormData.study_subjects
-                    ? "border-[#17a3b8]/20 text-[#17a3b8]"
-                    : "border-gray-300 text-gray-400",
-                )}
-                placeholder="Mata Pelajaran"
-                id="study_subjects"
-                value={userJobFormData.study_subjects}
-                onChange={handleInputChange}
-                autoComplete="off"
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="districtId"
+            render={({ field, fieldState }) => (
+              <Select
+                getKey={(v) => v.id.toString()}
+                getLabel={(v) => v.name}
+                label={
+                  <Required>Kecamatan/Cabang/Distrik Tempat Tugas</Required>
+                }
+                placeholder="Pilih Kecamatan/Cabang/Distrik Tempat Tugas"
+                options={districts.data?.data || []}
+                isLoading={districts.isFetching}
+                onChange={(v) => {
+                  field.onChange(v);
+                  form.setValue("subDistrictId", "");
+                }}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                disabled={!form.watch("cityId")}
               />
-            </FormField>
-          </div>
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="subDistrictId"
+            render={({ field, fieldState }) => (
+              <Select
+                getKey={(v) => v.id.toString()}
+                getLabel={(v) => v.name}
+                label={<Required>Desa/Kelurahan Tempat Tugas</Required>}
+                placeholder="Pilih Desa/Kelurahan Tempat Tugas"
+                options={subDistricts.data?.data || []}
+                isLoading={subDistricts.isFetching}
+                onChange={field.onChange}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                disabled={!form.watch("districtId")}
+              />
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="address"
+            render={({ field, fieldState }) => (
+              <TextField
+                label={<Required>Alamat Tempat Tugas</Required>}
+                placeholder="Masukkan Alamat Tempat Tugas"
+                onChange={field.onChange}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
         </div>
-
-        {/* Error & Navigation */}
-        <div className="mt-4 flex items-center justify-end">
-          <div className="flex gap-4">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setStep(1)}
-            >
-              Kembali
-            </Button>
-            <Button type="submit">Selanjutnya</Button>
-          </div>
+        <div className="flex flex-col gap-4">
+          <Controller
+            control={form.control}
+            name="jobId"
+            render={({ field, fieldState }) => (
+              <Select
+                getKey={(v) => v.id.toString()}
+                getLabel={(v) => v.name}
+                label="Pekerjaan"
+                placeholder="Pilih Pekerjaan"
+                options={jobs.data?.data || []}
+                isLoading={jobs.isLoading}
+                onChange={field.onChange}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="employmentStatusId"
+            render={({ field, fieldState }) => (
+              <Select
+                getKey={(v) => v.id.toString()}
+                getLabel={(v) => v.name}
+                label="Status Kepegawaian"
+                placeholder="Pilih Status Kepegawaian"
+                options={employmentStatuses?.data?.data || []}
+                isLoading={employmentStatuses.isLoading}
+                onChange={field.onChange}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="grade"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Pangkat/Golongan"
+                placeholder="Pilih Pangkat/Golongan"
+                onChange={field.onChange}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="hasCertification"
+            render={({ field, fieldState }) => (
+              <Select
+                label="Sertifikat Pendidik"
+                placeholder="Pilih Sertifikat Pendidik"
+                options={certificateOptions}
+                onChange={field.onChange}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="stageId"
+            render={({ field, fieldState }) => (
+              <Select
+                getKey={(v) => v.id.toString()}
+                getLabel={(v) => v.name}
+                label="Jenjang Mengajar"
+                placeholder="Pilih Jenjang Mengajar"
+                options={stages.data?.data || []}
+                isLoading={stages.isLoading}
+                onChange={field.onChange}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="subjectId"
+            render={({ field, fieldState }) => (
+              <Select
+                getKey={(v) => v.id.toString()}
+                getLabel={(v) => v.name}
+                label="Mata Pelajaran"
+                placeholder="Pilih Mata Pelajaran"
+                options={subjects.data?.data || []}
+                isLoading={subjects.isLoading}
+                onChange={field.onChange}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
         </div>
-      </form>
-    </div>
+      </div>
+      <div className="flex w-full items-center justify-end">
+        <div className="flex gap-4">
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => {
+              setStep(1);
+            }}
+          >
+            Kembali
+          </Button>
+
+          <Button type="submit">Selanjutnya</Button>
+        </div>
+      </div>
+    </form>
   );
 };
 
-export default UserJobFormComponent;
+export default UserJobForm;

@@ -1,0 +1,60 @@
+.datepicker-popover-content {
+  z-index: 20;
+  transform: height 1000ms ease-in-out;
+  transform-origin: top center;
+  animation-duration: 200ms;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+
+.datepicker-popover-content[data-state="open"] {
+  animation-name: datepicker-fade-in-down;
+}
+
+.datepicker-popover-content[data-state="closed"] {
+  animation-name: datepicker-fade-out-up;
+}
+
+.datepicker-button {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  color: #475569; /* slate-600 */
+  border-radius: 8px;
+  padding: 2px;
+  background-color: transparent;
+  transition:
+    0.2s color ease-in-out,
+    0.2s background-color ease-in-out;
+
+  &:hover {
+    background-color: #e2e8f0; /* slate-200 */
+  }
+
+  &:active {
+    background-color: #f8fafc; /* slate-50 */
+  }
+}
+
+@keyframes datepicker-fade-in-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes datepicker-fade-out-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}

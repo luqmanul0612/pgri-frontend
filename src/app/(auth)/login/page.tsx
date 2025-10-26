@@ -1,7 +1,7 @@
 import { WAButton } from "@/app/components/WAButton";
 import { Footer } from "../../components/Footer";
 import { LeftSection } from "./component/leftSection";
-import { RightSection } from "./component/rightSection";
+import { RightSection } from "./component/right-section";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -15,9 +15,7 @@ export default function Home() {
         <LeftSection />
         <RightSection />
       </main>
-
       <Footer />
-
       <WAButton />
     </div>
   );

@@ -1,32 +1,123 @@
 "use client";
-import React, { useState } from "react";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import Danger from "../../../../../public/assets/danger";
-import { Label } from "@/components/ui/label";
-import { ScaleLoader } from "react-spinners";
+import React from "react";
 import PasswordSuccess from "../../../../../public/assets/passwordSuccess";
-import { useRegistrationFormStore } from "@/store/use-registration-form";
 import Button from "@/components/customs/button";
 import Checkbox from "@/components/customs/checkbox";
+import useRegistrationState, {
+  UserPasswordData,
+} from "../utils/use-registration-state";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { userPasswordSchema } from "../utils/validation-schema";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { postAuthRegister } from "../serverActions/post-auth-register";
+import useMutation from "@/utils/hooks/use-mutation";
+import { toast } from "sonner";
+import dayjs from "dayjs";
+import TextField from "@/components/customs/textfield";
+import Required from "@/components/customs/required";
+import Danger from "../../../../../public/assets/danger";
+import { setCookies } from "@/serverActions/setCookies";
+import { decodeJwt } from "@/lib/utils";
+import { TokenValue } from "../serverActions/payment";
+import useAuth from "@/store/useAuth";
+
+const defaultValues: UserPasswordData = {
+  password: "",
+  confirmPassword: "",
+  isAgreed: false,
+};
 
 const PasswordForm = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const {
-    passwordFormData,
-    isLoading,
-    updateField,
-    setStep,
-    errors,
-    handlerSubmitForm,
-  } = useRegistrationFormStore();
+  const { setStep, setIsSubmited, isSubmited, jobData, userData } =
+    useRegistrationState();
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    await handlerSubmitForm();
-  }
+  const { setAuth } = useAuth();
 
-  if (passwordFormData.isSubmited)
+  const form = useForm<UserPasswordData>({
+    mode: "all",
+    defaultValues,
+    resolver: yupResolver(userPasswordSchema),
+  });
+
+  const values = useWatch({ control: form.control });
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: postAuthRegister,
+    onSuccess: (res) => {
+      setIsSubmited();
+      setStep(4);
+      const token = res.data.token;
+      setCookies("token", token);
+      setCookies("auth", res.data);
+      const tokenValue = decodeJwt<TokenValue>(token as string);
+      setAuth({
+        id: res?.data?.id,
+        name: res?.data?.name,
+        email: res?.data?.email,
+        phoneNumber: res?.data?.phone_number,
+        isVerified: !!tokenValue?.is_verified,
+        levelId: tokenValue?.level_id ?? 3,
+        createdAt: res?.data?.created_at,
+        address: res?.data?.address,
+        birthPlace: res?.data?.birth_place,
+        bloodType: res?.data?.blood_type,
+        dob: res?.data?.dob,
+        gender: res?.data?.gender,
+        latestEducation: res?.data?.latest_education,
+        nik: res?.data?.nik,
+        npaNumber: res?.data?.npa_number,
+        postalCode: res?.data?.postal_code,
+        religion: res?.data?.religion,
+      });
+    },
+    onError: (err: { message: string }) => {
+      toast.error(err.message);
+    },
+  });
+
+  const handleSubmit = form.handleSubmit(async (values) => {
+    setStep(3);
+    mutate({
+      password: values.password,
+      name: userData.name,
+      nik: userData.nik,
+      email: userData.email,
+      birth_place: userData.birthPlace,
+      birth_date: dayjs(userData.birthDate).format("YYYY-MM-DD"),
+      phone_number: userData.phoneNumber,
+      gender: userData.gender ? userData.gender : undefined,
+      religion_id: userData.religionId
+        ? Number(userData.religionId)
+        : undefined,
+      blood_type_id: userData.bloodTypeId
+        ? Number(userData.bloodTypeId)
+        : undefined,
+      address: userData.address ? userData.address : undefined,
+      postal_code: userData.postalCode ? userData.postalCode : undefined,
+      latest_education_id: userData.latestEducationId
+        ? Number(userData.latestEducationId)
+        : undefined,
+      user_institution: {
+        name: jobData.name,
+        subdistrict_id: Number(jobData.subDistrictId),
+        address: jobData.address,
+        job_id: Number(jobData.jobId),
+        stage_id: jobData.stageId ? Number(jobData.stageId) : undefined,
+        employment_status_id: jobData.employmentStatusId
+          ? Number(jobData.employmentStatusId)
+          : undefined,
+        has_certification: jobData.hasCertification
+          ? jobData.hasCertification === "1"
+            ? true
+            : false
+          : undefined,
+        grade: jobData.grade ? jobData.grade : undefined,
+        subject_id: jobData.subjectId ? Number(jobData.subjectId) : undefined,
+      },
+    });
+  });
+
+  if (isSubmited)
     return (
       <div className="flex flex-col items-center justify-start gap-10 rounded-2xl border border-[#17a3b8]/20 p-4">
         <PasswordSuccess />
@@ -52,14 +143,14 @@ const PasswordForm = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex max-w-[600px] flex-col items-start justify-start gap-5 rounded-2xl border border-[#17a3b8]/20 p-4"
+      className="flex w-full max-w-[500px] flex-col items-start justify-center gap-6 rounded-2xl border border-[#17a3b8]/20 bg-white p-4"
     >
-      <div className="flex flex-col items-start justify-start gap-4 self-stretch">
-        <div className="flex flex-col items-start justify-start gap-4 self-stretch">
-          <h2 className="self-stretch text-2xl font-bold text-[#17191c]">
+      <div className="flex w-full flex-col items-start justify-start gap-4">
+        <div className="flex flex-col items-start justify-start gap-1">
+          <h2 className="text-[18px] font-bold text-slate-900">
             Buat Kata Sandi
           </h2>
-          <p className="self-stretch text-xs font-normal text-[#17191c]">
+          <p className="self-stretch text-xs font-normal text-slate-600">
             Kata Sandi yang dibuat akan digunakan untuk mengkases aplikasi
             Mobile PGRIKU, diharapkan untuk membuat kata sandi yang mudah di
             ingat! Pastikan kata sandi terdiri dari Huruf Besar, Kecil, Simbol
@@ -67,82 +158,63 @@ const PasswordForm = () => {
             <span className="text-primary-500">Sandiku@123</span>
           </p>
         </div>
-        <div className="flex flex-col items-start justify-start gap-4 self-stretch">
-          <div className="relative flex flex-col items-start justify-start gap-2.5 self-stretch">
-            <Label htmlFor="password1">
-              Kata Sandi<span className="text-red-500"> *</span>
-            </Label>
-            <input
-              value={passwordFormData.password}
-              onChange={(e) => {
-                updateField("password", e.target.value);
-              }}
-              type={showPassword ? "text" : "password"}
-              id="password1"
-              className="flex w-full items-center gap-2.5 rounded-2xl border border-[#17a3b8]/20 py-3 pl-4 pr-10"
-              placeholder="Masukkan Kata Sandi"
-            />
-            <div
-              className="absolute right-3 top-[65%] translate-y-[-50%] cursor-pointer"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <AiOutlineEyeInvisible fontSize={20} />
-              ) : (
-                <AiOutlineEye fontSize={20} />
-              )}
-            </div>
-          </div>
-
-          <div className="relative flex flex-col items-start justify-start gap-2.5 self-stretch">
-            <Label htmlFor="password2">Ulangi Kata Sandi<span className="text-red-500"> *</span></Label>
-            <input
-              value={passwordFormData.confirmPassword}
-              onChange={(e) => updateField("confirmPassword", e.target.value)}
-              type={showConfirmPassword ? "text" : "password"}
-              id="password2"
-              className="flex w-full items-center gap-2.5 rounded-2xl border border-[#17a3b8]/20 py-3 pl-4 pr-10"
-              placeholder="Masukkan Kata Sandi Lagi"
-            />
-            <div
-              className="absolute right-3 top-[65%] translate-y-[-50%] cursor-pointer"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              {showConfirmPassword ? (
-                <AiOutlineEyeInvisible fontSize={20} />
-              ) : (
-                <AiOutlineEye fontSize={20} />
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      {(errors.confirmPassword || errors.password) && (
-        <div className="flex max-w-[80%] items-center rounded-lg bg-[#ff0000]/10 p-2.5">
+        <div className="flex w-full items-center gap-2 rounded-[8px] bg-red-50 px-2 py-1 text-[10px] text-red-500">
           <Danger />
-          <p className="ml-2.5 text-xs font-normal text-[#ff0000]">
-            {errors.password || errors.confirmPassword}
-          </p>
+          Pastikan kamu mengingat atau menyimpan Kata Sandi yang telah dibuat!
         </div>
-      )}
-      <div className="flex w-full flex-col items-start justify-start gap-2.5 self-stretch">
-        <div className="flex flex-row gap-2">
-          <div>
-            <Checkbox
-              id="agreement"
-              checked={passwordFormData.isAgreed}
-              onCheckedChange={(checked) => updateField("isAgreed", !!checked)}
-              className=""
-            />
-          </div>
-          <Label htmlFor="" className="text-sm font-normal text-[#17191c]">
+        <div className="flex w-full flex-col items-start justify-start gap-4">
+          <Controller
+            control={form.control}
+            name="password"
+            render={({ field, fieldState }) => (
+              <TextField
+                label={<Required>Kata Sandi</Required>}
+                placeholder="Masukkan Kata Sandi"
+                type="password"
+                className="w-full"
+                onChange={field.onChange}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="confirmPassword"
+            render={({ field, fieldState }) => (
+              <TextField
+                label={<Required>Ulangi Kata Sandi</Required>}
+                placeholder="Masukkan Kata Sandi"
+                type="password"
+                className="w-full"
+                onChange={field.onChange}
+                value={field.value}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
+        </div>
+        <div className="flex w-full items-center justify-center gap-3">
+          <Controller
+            control={form.control}
+            name="isAgreed"
+            render={({ field }) => (
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={(checked) => field.onChange(checked)}
+              />
+            )}
+          />
+          <p className="text-[12px] font-normal text-slate-600">
             Dengan ini saya bersedia menjadi Anggota PGRI, menaati AD/ART PGRI,
             memberikan hak pengelolaan dan perlindungan data sesuai UU
             Perlindungan data pribadi.{" "}
             <span className="cursor-pointer font-bold text-[#17a3b8] underline">
               Hak dan kewajiban anggota
             </span>
-          </Label>
+          </p>
         </div>
       </div>
       <div className="flex w-full gap-4">
@@ -150,28 +222,17 @@ const PasswordForm = () => {
           type="button"
           fullWidth
           variant="secondary"
-          className="w-full rounded-2xl bg-[#ff0000]"
-          onClick={() => {
-            setStep(2);
-          }}
+          onClick={() => setStep(2)}
         >
           Kembali
         </Button>
         <Button
           fullWidth
           type="submit"
-          disabled={
-            !passwordFormData.isAgreed ||
-            !passwordFormData.password ||
-            !passwordFormData.confirmPassword ||
-            isLoading
-          }
+          disabled={!values.isAgreed}
+          isLoading={isPending}
         >
-          {isLoading ? (
-            <ScaleLoader color="white" height={20} />
-          ) : (
-            "Buat Kata Sandi"
-          )}
+          Buat Kata Sandi
         </Button>
       </div>
 
