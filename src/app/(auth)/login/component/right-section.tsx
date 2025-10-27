@@ -89,7 +89,7 @@ export const RightSection: FC<RightSectionProps> = () => {
           name="password"
           render={({ field, fieldState }) => (
             <TextField
-              label="Password"
+              label="Kata Sandi"
               type="password"
               onChange={field.onChange}
               placeholder="Masukkan Kata Sandi"
