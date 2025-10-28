@@ -44,7 +44,7 @@ const menus: {
     title: "Anggota",
     href: "/anggota",
     Icon: Anggota,
-    verify: true,
+    // verify: true,
   },
   {
     title: "Permohonan",
