@@ -31,13 +31,13 @@ export default function DashboardLayoutComponent({
         <div className="flex flex-row bg-[#F5F7fb]">
           {/* Sidebar */}
           <Sidebar
-            isSidebarOpen={isSidebarOpen}
+            isOpen={isSidebarOpen}
             handleSidebarToggle={handleSidebarToggle}
           />
 
           {/* Main Content */}
           <div
-            className={`min-h-screen bg-[#F5F7FB] pb-10 pt-[100px] transition-all duration-500 ${isSidebarOpen ? "ml-[20%] pl-2 pr-6" : "ml-[5%] px-5"} ${isSidebarOpen ? "w-[80%]" : "w-[95%]"}`}
+            className={`min-h-screen bg-[#F5F7FB] pb-10 pt-[100px] transition-all duration-500 ${isSidebarOpen ? "ml-[260px] pl-2 pr-6" : "ml-[60px] px-5"} ${isSidebarOpen ? "w-[calc(100%-260px)]" : "w-[calc(100%-60px)]"}`}
           >
             <div>{children}</div>
           </div>

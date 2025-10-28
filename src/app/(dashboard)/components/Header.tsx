@@ -17,7 +17,7 @@ export const Header: React.FC<TopNavbarProps> = ({
 
   return (
     <div
-      className={`fixed flex h-[70px] justify-between bg-[#17A2B8] px-5 transition-all duration-500 ${isSidebarOpen ? "w-[calc(100%-247px)]" : "w-[calc(100%-63px)]"} right-0 z-50`}
+      className={`fixed flex h-[70px] justify-between bg-[#17A2B8] px-5 transition-all duration-500 ${isSidebarOpen ? "w-[calc(100%-247px)]" : "w-[calc(100%-63px)]"} right-0 z-[1000]`}
     >
       <div className="flex items-center text-[16px] font-bold text-white">
         <IoIosArrowBack
