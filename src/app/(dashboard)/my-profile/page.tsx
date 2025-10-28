@@ -14,38 +14,21 @@ import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import Button from "@/components/customs/button";
 import { useRouter } from "next/navigation";
-import { getInstitution } from "./action/getInstitution";
+import { getUserInstitution } from "./action/get-institution";
+import useQuery from "@/utils/hooks/use-query";
 
 interface pageProps {
   params: Promise<{}>;
 }
 
-interface InstitutionData {
-  stage: string;
-  province: string;
-  province_code: string;
-  city: string;
-  city_code: string;
-  district: string;
-  district_code: string;
-  sub_district: string;
-  sub_district_code: string;
-  name: string;
-  job_title: string;
-  address: string;
-  grade: string;
-  employee_status: string;
-  educator_certificate: boolean;
-  study_subjects: string;
-  created_at: string;
-  updated_at: string;
-}
-
 const Page: FC<pageProps> = ({ params: {} }) => {
   const { auth } = useAuth();
-  const [institution, setInstitution] = useState<InstitutionData | null>(null);
   const router = useRouter();
   const joinYear = dayjs(auth.createdAt).year();
+
+  const getInstitution = useQuery({
+    queryFn: () => getUserInstitution(),
+  });
 
   const userData = [
     { label: "Nama & Gelar", value: auth.name || "-" },
@@ -73,25 +56,35 @@ const Page: FC<pageProps> = ({ params: {} }) => {
     { label: "No Handphone", value: auth.phoneNumber || "-" },
   ];
 
+  const institution = getInstitution.data?.data;
   const jobData = [
     { label: "Provinsi Tempat Tugas", value: institution?.province || "-" },
     {
       label: "Kabupaten/Kota/Kota Administrasi Tempat Tugas",
       value: institution?.city || "-",
     },
-    { label: "Kecamatan/Cabang/Distrik Tempat Tugas", value: institution?.district || "-" },
-    { label: "Desa/Kelurahan", value: institution?.sub_district || "-" },
+    {
+      label: "Kecamatan/Cabang/Distrik Tempat Tugas",
+      value: institution?.district || "-",
+    },
+    { label: "Desa/Kelurahan", value: institution?.subdistrict || "-" },
     { label: "Nama Instansi Tempat Tugas", value: institution?.name || "-" },
     {
       label: "Alamat Tempat Tugas",
       value: institution?.address || "-",
     },
     { label: "Pekerjaan", value: institution?.job_title || "-" },
-    { label: "Status Kepegawaian", value: institution?.employee_status || "-" },
+    {
+      label: "Status Kepegawaian",
+      value: institution?.employment_status || "-",
+    },
     { label: "Pangkat Golongan", value: institution?.grade || "-" },
-    { label: "Sertifikasi Pendidik", value: institution?.educator_certificate ? "Sudah" : "Belum" },
+    {
+      label: "Sertifikasi Pendidik",
+      value: institution?.educator_certificate ? "Sudah" : "Belum",
+    },
     { label: "Jenjang Mengajar", value: institution?.stage || "-" },
-    { label: "Mata Pelajaran", value: institution?.study_subjects || "-" },
+    { label: "Mata Pelajaran", value: institution?.subjects || "-" },
   ];
 
   const handlePrint = () => {
@@ -107,13 +100,6 @@ const Page: FC<pageProps> = ({ params: {} }) => {
       return;
     }
   };
-
-  useEffect(() => {
-    (async () => {
-      const data = await getInstitution();
-      setInstitution(data.data);
-    })();
-  }, []);
 
   return (
     <div>
