@@ -43,6 +43,8 @@ export async function postLogin(body: BodyLogin) {
       path: "/",
     });
 
+    console.log("first", result);
+
     return {
       data: {
         id: user.id,
@@ -50,7 +52,7 @@ export async function postLogin(body: BodyLogin) {
         email: user.email,
         phoneNumber: user.phone_number,
         isVerified: !!tokenValue?.is_verified,
-        levelId: (user.level_id ?? 3) as number,
+        levelId: user.level_id,
         createdAt: user.created_at,
         address: user?.address,
         birthPlace: user?.birth_place,

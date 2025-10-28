@@ -196,7 +196,7 @@ const Table: React.FC<TableProps> = ({
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
       columns,
-      data: tableData!,
+      data: tableData || [],
     });
   const handlePageChange = (selectedItem: { selected: number }) => {
     setCurrentPage(selectedItem.selected);

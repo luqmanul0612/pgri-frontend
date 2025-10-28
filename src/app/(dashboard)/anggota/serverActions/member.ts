@@ -12,7 +12,7 @@ export const getMembers = async (page: number, show: number, querySearch?: strin
     Authorization: token,
   };
 
-  const url = new URL(`${process.env.HOST}/api/v1/member/list?page=${page}&show=${show}`);
+  const url = new URL(`${process.env.HOST}/api/v2/members?page=${page}&show=${show}`);
   if (querySearch?.trim()) url.searchParams.append("q", querySearch.trim());
   if (filterRegions?.provinsi?.trim()) url.searchParams.append("province", filterRegions.provinsi.trim());
   if (filterRegions?.kota?.trim()) url.searchParams.append("city", filterRegions.kota.trim());
@@ -37,7 +37,7 @@ export const getMemberById = async (id:string) => {
     Authorization: token,
   };
   const response = await fetch(
-    `${process.env.HOST}/api/v1/member/detail/${id}`,
+    `${process.env.HOST}/api/v2/members/${id}`,
     {
       headers,
       cache: "no-cache",

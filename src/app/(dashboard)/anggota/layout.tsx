@@ -15,6 +15,7 @@ export default async function AnggotaLayout({
 }) {
   const token = cookies().get("token")?.value;
   const decoded = decodeJwt<TokenDecoded>(token as string);
-  if (decoded?.is_verified) return children;
-  redirect("/dashboard");
+  // if (decoded?.is_verified) return children;
+  // redirect("/dashboard");
+  return children;
 }
