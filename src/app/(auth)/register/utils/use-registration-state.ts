@@ -61,7 +61,6 @@ export interface AuthRegisterData {
 export interface RegistrationState {
   step: number;
   isSubmited: boolean;
-  auth: AuthRegisterData;
   userData: UserFormData;
   jobData: UserJobData;
 }
@@ -69,7 +68,6 @@ export interface RegistrationState {
 interface RegistrationStateProps extends RegistrationState {
   saveDataForm: (value: SaveDataType) => void;
   setStep: (step: number) => void;
-  setAuth: (auth: AuthRegisterData) => void;
   setIsSubmited: () => void;
   resetRegisterState: () => void;
 }
@@ -98,7 +96,6 @@ export const defaultValues: RegistrationState = {
     postalCode: "",
     latestEducationId: "",
   },
-  auth: {} as AuthRegisterData,
   jobData: {
     provinceId: "",
     cityId: "",
@@ -121,14 +118,12 @@ const useRegistrationState = create<RegistrationStateProps>()(
       hydrated: true,
       isSubmited: false,
       step: defaultValues.step,
-      auth: defaultValues.auth,
       setStep: (step) => set({ step }),
       setIsSubmited: () => {
         set({ ...get(), isSubmited: true });
       },
       userData: defaultValues.userData,
       jobData: defaultValues.jobData,
-      setAuth: (auth) => set({ auth }),
       saveDataForm: (values) => {
         if (values.type === "userData")
           set({ ...get(), userData: values.data });
@@ -142,7 +137,6 @@ const useRegistrationState = create<RegistrationStateProps>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         step: state.step,
-        auth: state.auth,
         isSubmited: state.isSubmited,
         userData: state.userData,
         jobData: state.jobData,

@@ -34,7 +34,7 @@ const initialData: AuthProps = {
     email: "",
     phoneNumber: "",
     isVerified: false,
-    levelId: 3,
+    levelId: 0,
     createdAt: "",
     address: "",
     nik: "",

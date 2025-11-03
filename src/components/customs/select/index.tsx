@@ -39,12 +39,17 @@ const Select = <T,>(props: SelectProps<T>) => {
   } = props;
   const [open, setOpen] = React.useState(false);
 
+  const onValueChange = (value: string) => {
+    if(!options?.length) return
+    onChange?.(value);
+  };
+
   return (
     <div className="select-root">
       {!!label && <p className={clsx("select-label", { disabled })}>{label}</p>}
       <Lib.Root
         value={value}
-        onValueChange={onChange}
+        onValueChange={onValueChange}
         disabled={disabled}
         open={open}
         onOpenChange={setOpen}
