@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use server";
 
-import { decodeJwt } from "@/lib/utils";
 import { cookies } from "next/headers";
 
 export type TokenValue = {
@@ -19,6 +18,43 @@ export interface BodyLogin {
   phone: string;
 }
 
+export interface PostLoginResponse {
+  status: number;
+  data: {
+    id: string;
+    npa: string;
+    name: string;
+    birth_place: string;
+    birth_date: string;
+    gender: string;
+    blood_type: string;
+    religion: string;
+    phone_number: string;
+    email: string;
+    nik: string;
+    address: string;
+    postal_code: string;
+    province: string;
+    city: string;
+    district: string;
+    subdistrict: string;
+    employee_status: string;
+    membership_status: string;
+    latest_education: string;
+    member_photo: string;
+    has_paid: boolean;
+    is_verified: boolean;
+    is_printed: boolean;
+    is_validated: boolean;
+    created_at: string;
+    level_id: number;
+    profile: string;
+    token: string;
+    token_ppob: string;
+    expired: number;
+  };
+}
+
 export async function postLogin(body: BodyLogin) {
   const pathname = "/api/v2/auth/login";
   const url = process.env.HOST + pathname;
@@ -33,7 +69,6 @@ export async function postLogin(body: BodyLogin) {
     const result = await response.json();
     const user = result.data;
     const token = result.data.token;
-    const tokenValue = decodeJwt<TokenValue>(token as string);
 
     cookies().set("auth", JSON.stringify(user), {
       path: "/",
@@ -43,15 +78,14 @@ export async function postLogin(body: BodyLogin) {
       path: "/",
     });
 
-    console.log("first", result);
-
     return {
       data: {
         id: user.id,
         name: user.name,
         email: user.email,
         phoneNumber: user.phone_number,
-        isVerified: !!tokenValue?.is_verified,
+        isVerified: !!user?.is_verified,
+        isValidated: !!user?.is_validated,
         levelId: user.level_id,
         createdAt: user.created_at,
         address: user?.address,

@@ -138,7 +138,7 @@ const menu: SidebarMenu[] = [
     label: "Uang Iuran & Tagihan",
     pathname: "/iurandantagihan",
     Icon: EmptyWalletTickIcon,
-    verify: true,
+    verify: false,
     access: [2, 3],
   },
   {

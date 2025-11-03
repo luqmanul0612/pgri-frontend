@@ -42,7 +42,13 @@ export const RightSection: FC<RightSectionProps> = () => {
     onSuccess: (res) => {
       toast({ title: "Berhasil Login" });
       setAuth(res.data);
-      router.push("/dashboard");
+      if (!res.data.isValidated) {
+        router.push("/account-validation");
+      } else if (!res.data.isVerified) {
+        router.push("/account-verification");
+      } else {
+        router.push("/dashboard");
+      }
     },
     onError: (err: { message: string }) => {
       setErrorMessage(err.message);

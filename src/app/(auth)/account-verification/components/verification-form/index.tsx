@@ -1,0 +1,724 @@
+import Button from "@/components/customs/button";
+import {
+  UserVerificationForm,
+  useVerificationForm,
+} from "../../utils/use-verification-form";
+import Datepicker from "@/components/customs/datepicker";
+import TextField from "@/components/customs/textfield";
+import Select from "@/components/customs/select";
+import Required from "@/components/customs/required";
+import useQuery from "@/utils/hooks/use-query";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { NumericFormat } from "react-number-format";
+import {
+  getLocation,
+  getServiceOptions,
+} from "@/app/(auth)/register/serverActions/get-register-form-data";
+import { yupResolver } from "@hookform/resolvers/yup";
+import dayjs from "dayjs";
+import { userVerificationSchema } from "../../utils/validation-schema";
+import VerificationHeader from "../verificattion-header";
+import { getUsersFormData } from "../../serverActions/get-form-data";
+import useMutation from "@/utils/hooks/use-mutation";
+import { postVerifyUser } from "../../serverActions/post-verification-user";
+import { toast } from "sonner";
+
+const genderOptions = [
+  { key: "M", label: "Laki-Laki" },
+  { key: "F", label: "Perempuan" },
+];
+
+const certificateOptions = [
+  { key: "0", label: "Belum" },
+  { key: "1", label: "Sudah" },
+];
+
+const defaultValues: UserVerificationForm = {
+  user: {
+    name: "",
+    nik: "",
+    email: "",
+    birthPlace: "",
+    birthDate: "",
+    gender: "",
+    religionId: "",
+    bloodTypeId: "",
+    phoneNumber: "",
+    address: "",
+    postalCode: "",
+    latestEducationId: "",
+  },
+  userJob: {
+    provinceCode: "",
+    cityCode: "",
+    districtCode: "",
+    subDistrictCode: "",
+    stageId: "",
+    jobId: "",
+    name: "",
+    address: "",
+    grade: "",
+    subjectId: "",
+    employmentStatusId: "",
+    hasCertification: "",
+  },
+};
+
+const VerificationForm = () => {
+  const { setStep } = useVerificationForm();
+
+  const form = useForm<UserVerificationForm>({
+    mode: "all",
+    defaultValues,
+    resolver: yupResolver(userVerificationSchema),
+  });
+
+  const values = useWatch({ control: form.control });
+
+  const userFormData = useQuery({
+    queryFn: getUsersFormData,
+    onSuccess: (res) => {
+      const location = res.data.institution.subdistrict_code.split(".");
+      const provinceCode = location[0] ? location[0] : "";
+      const cityCode = location[1] ? location.slice(0, 2).join(".") : "";
+      const districtCode = location[2] ? location.slice(0, 3).join(".") : "";
+      const subDistrictCode = location[3] ? location.slice(0, 4).join(".") : "";
+      form.reset({
+        user: {
+          name: res.data.user.name,
+          email: res.data.user.email,
+          nik: res.data.user.nik,
+          address: res.data.user.address,
+          birthDate: res.data.user.birth_date,
+          birthPlace: res.data.user.birth_place,
+          bloodTypeId: String(res.data.user.blood_type_id),
+          gender: res.data.user.gender,
+          latestEducationId: String(res.data.user.latest_education_id),
+          phoneNumber: res.data.user.phone_number,
+          postalCode: res.data.user.postal_code,
+          religionId: String(res.data.user.religion_id),
+        },
+        userJob: {
+          name: res.data.institution.name,
+          address: res.data.institution.address,
+          provinceCode,
+          cityCode,
+          districtCode,
+          subDistrictCode,
+          stageId: res.data.institution.stage_id
+            ? String(res.data.institution.stage_id)
+            : "",
+          jobId: res.data.institution.job_id
+            ? String(res.data.institution.job_id)
+            : "",
+          grade: res.data.institution.grade || "",
+          subjectId: res.data.institution.subject_id
+            ? String(res.data.institution.subject_id)
+            : "",
+          employmentStatusId: res.data.institution.employment_status_id
+            ? String(res.data.institution.employment_status_id)
+            : "",
+          hasCertification:
+            res.data.institution.educator_certificate !== null
+              ? res.data.institution.educator_certificate
+                ? "1"
+                : "0"
+              : "",
+        },
+      });
+    },
+  });
+
+  const bloodTypes = useQuery({
+    queryFn: () => getServiceOptions("blood-types"),
+  });
+
+  const educations = useQuery({
+    queryFn: () => getServiceOptions("educations"),
+  });
+
+  const religions = useQuery({ queryFn: () => getServiceOptions("religions") });
+
+  const provinces = useQuery({
+    queryFn: () => getLocation({ type: "provinces" }),
+  });
+
+  const cities = useQuery({
+    queryKey: [values.userJob?.provinceCode],
+    queryFn: () => {
+      const province = provinces.data?.data.find(
+        (province) => province.code === form.getValues("userJob.provinceCode"),
+      );
+      return getLocation({
+        type: "cities",
+        id: province ? String(province.id) : "",
+      });
+    },
+    enabled: !!values.userJob?.provinceCode && !!provinces.data?.data?.length,
+  });
+
+  const districts = useQuery({
+    queryKey: [values.userJob?.cityCode],
+    queryFn: () => {
+      const city = cities.data?.data.find(
+        (city) => city.code === form.getValues("userJob.cityCode"),
+      );
+      return getLocation({
+        type: "districts",
+        id: city ? String(city.id) : "",
+      });
+    },
+    enabled: !!values.userJob?.cityCode && !!cities.data?.data?.length,
+  });
+
+  const subDistricts = useQuery({
+    queryKey: [values.userJob?.districtCode],
+    queryFn: () => {
+      const district = districts.data?.data.find(
+        (district) => district.code === form.getValues("userJob.districtCode"),
+      );
+      return getLocation({
+        type: "subdistricts",
+        id: district ? String(district.id) : "",
+      });
+    },
+    enabled: !!values.userJob?.districtCode && !!districts.data?.data?.length,
+  });
+
+  const jobs = useQuery({
+    queryFn: () => getServiceOptions("jobs"),
+  });
+
+  const employmentStatuses = useQuery({
+    queryFn: () => getServiceOptions("employment-statuses"),
+  });
+
+  const stages = useQuery({
+    queryFn: () => getServiceOptions("stages"),
+  });
+
+  const subjects = useQuery({
+    queryFn: () => getServiceOptions("subjects"),
+  });
+
+  const verifyUser = useMutation({
+    mutationFn: postVerifyUser,
+    onSuccess: () => {
+      toast.success("Data berhasil disimpan");
+      setStep("DONE");
+    },
+    onError: (err: { message: string }) => {
+      toast.error(err.message);
+    },
+  });
+
+  const handleSubmit = form.handleSubmit(async (values) => {
+    const subDistrict = subDistricts.data?.data.find(
+      (subDistrict) =>
+        subDistrict.code === form.getValues("userJob.subDistrictCode"),
+    );
+    verifyUser.mutate({
+      name: values.user.name,
+      nik: values.user.nik,
+      email: values.user.email,
+      birth_place: values.user.birthPlace,
+      birth_date: dayjs(values.user.birthDate).format("YYYY-MM-DD"),
+      phone_number: values.user.phoneNumber,
+      gender: values.user.gender ? values.user.gender : undefined,
+      religion_id: values.user.religionId
+        ? Number(values.user.religionId)
+        : undefined,
+      blood_type_id: values.user.bloodTypeId
+        ? Number(values.user.bloodTypeId)
+        : undefined,
+      address: values.user.address ? values.user.address : undefined,
+      postal_code: values.user.postalCode ? values.user.postalCode : undefined,
+      latest_education_id: values.user.latestEducationId
+        ? Number(values.user.latestEducationId)
+        : undefined,
+      user_institution: {
+        name: values.userJob.name,
+        subdistrict_id: subDistrict ? Number(subDistrict.id) : undefined,
+        address: values.userJob.address,
+        job_id: values.userJob.jobId ? Number(values.userJob.jobId) : undefined,
+        stage_id: values.userJob.stageId
+          ? Number(values.userJob.stageId)
+          : undefined,
+        employment_status_id: values.userJob.employmentStatusId
+          ? Number(values.userJob.employmentStatusId)
+          : undefined,
+        has_certification: values.userJob.hasCertification
+          ? values.userJob.hasCertification === "1"
+            ? true
+            : false
+          : undefined,
+        grade: values.userJob.grade ? values.userJob.grade : undefined,
+        subject_id: values.userJob.subjectId
+          ? Number(values.userJob.subjectId)
+          : undefined,
+      },
+    });
+  });
+
+  return (
+    <form
+      className="flex min-h-dvh flex-col items-center bg-slate-200"
+      onSubmit={handleSubmit}
+    >
+      <VerificationHeader />
+      <div className="mt-[20px] flex w-full max-w-[1080px] flex-col items-center gap-4 rounded-[16px] border border-primary-50 bg-white p-4">
+        <div className="flex w-full flex-col gap-4">
+          <div className="rounded-[8px] bg-primary-500 px-4 py-3 text-[16px] font-bold text-white">
+            Validasi Data Diri
+          </div>
+          <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
+            <div className="flex flex-col gap-4">
+              <Controller
+                control={form.control}
+                name="user.name"
+                render={({ field, fieldState }) => (
+                  <TextField
+                    label={<Required>Nama & Gelar</Required>}
+                    placeholder="Masukkan Nama & Gelar"
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="user.nik"
+                render={({ field, fieldState }) => (
+                  <NumericFormat
+                    label={<Required>NIK (Nomor Induk Kependudukan)</Required>}
+                    placeholder="Masukkan NIK"
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    customInput={TextField}
+                    allowLeadingZeros
+                    maxLength={16}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="user.email"
+                render={({ field, fieldState }) => (
+                  <TextField
+                    label={<Required>Email</Required>}
+                    placeholder="Masukkan Email"
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="user.birthPlace"
+                render={({ field, fieldState }) => (
+                  <TextField
+                    label={<Required>Tempat Lahir</Required>}
+                    placeholder="Masukkan Tempat Lahir"
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="user.birthDate"
+                render={({ field, fieldState }) => (
+                  <Datepicker
+                    label={<Required>Tanggal Lahir</Required>}
+                    onChange={(value) => field.onChange(value.toISOString())}
+                    value={field.value ? dayjs(field.value) : undefined}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    maxDate={dayjs(new Date())}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="user.phoneNumber"
+                render={({ field, fieldState }) => (
+                  <NumericFormat
+                    label={<Required>Nomor Handphone</Required>}
+                    placeholder="Masukkan Nomor Handphone"
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    customInput={TextField}
+                    maxLength={15}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-col gap-4">
+              <Controller
+                control={form.control}
+                name="user.gender"
+                render={({ field, fieldState }) => (
+                  <Select
+                    label="Jenis Kelamin"
+                    placeholder="Pilih Jenis Kelamin"
+                    options={genderOptions}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="user.latestEducationId"
+                render={({ field, fieldState }) => (
+                  <Select
+                    getKey={(v) => v.id.toString()}
+                    getLabel={(v) => v.name}
+                    label="Pendidikan/Ijazah Terakhir"
+                    placeholder="Pilih Pendidikan/Ijazah Terakhir"
+                    options={educations.data?.data || []}
+                    isLoading={educations.isLoading}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="user.religionId"
+                render={({ field, fieldState }) => (
+                  <Select
+                    getKey={(v) => v.id.toString()}
+                    getLabel={(v) => v.name}
+                    label="Agama"
+                    placeholder="Pilih Agama"
+                    options={religions?.data?.data || []}
+                    isLoading={religions.isLoading}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="user.bloodTypeId"
+                render={({ field, fieldState }) => (
+                  <Select
+                    getKey={(v) => v.id.toString()}
+                    getLabel={(v) => v.name}
+                    label="Golongan Darah"
+                    placeholder="Pilih Golongan Darah"
+                    options={bloodTypes.data?.data || []}
+                    isLoading={bloodTypes.isLoading}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="user.address"
+                render={({ field, fieldState }) => (
+                  <TextField
+                    label="Alamat KTP"
+                    placeholder="Masukkan Alamat Sesuai KTP"
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="user.postalCode"
+                render={({ field, fieldState }) => (
+                  <NumericFormat
+                    label="Kode Pos"
+                    placeholder="Masukkan Kode Pos"
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    customInput={TextField}
+                    maxLength={5}
+                  />
+                )}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex w-full flex-col gap-4">
+          <div className="rounded-[8px] bg-primary-500 px-4 py-3 text-[16px] font-bold text-white">
+            Validasi Data Pekerjaan
+          </div>
+          <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
+            <div className="flex flex-col gap-4">
+              <Controller
+                control={form.control}
+                name="userJob.name"
+                render={({ field, fieldState }) => (
+                  <TextField
+                    label={<Required>Nama Instansi Tempat Tugas</Required>}
+                    placeholder="Masukkan Nama dan Gelar"
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="userJob.provinceCode"
+                render={({ field, fieldState }) => (
+                  <Select
+                    getKey={(v) => v.code}
+                    getLabel={(v) => v.name}
+                    label={<Required>Provinsi Tempat Tugas</Required>}
+                    placeholder="Pilih Provinsi"
+                    options={provinces.data?.data || []}
+                    isLoading={provinces.isLoading}
+                    onChange={(v) => {
+                      field.onChange(v);
+                      form.setValue("userJob.cityCode", "");
+                      form.setValue("userJob.districtCode", "");
+                      form.setValue("userJob.subDistrictCode", "");
+                    }}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="userJob.cityCode"
+                render={({ field, fieldState }) => (
+                  <Select
+                    getKey={(v) => v.code}
+                    getLabel={(v) => v.name}
+                    label={
+                      <Required>
+                        Provinsi Kabupatan/Kota/Kota Administrasi Tempat Tugas
+                      </Required>
+                    }
+                    placeholder="Pilih Kabupaten/Kota/Kota Administrasi Tempat Tugas"
+                    options={cities.data?.data || []}
+                    isLoading={cities.isFetching}
+                    onChange={(v) => {
+                      field.onChange(v);
+                      form.setValue("userJob.districtCode", "");
+                      form.setValue("userJob.subDistrictCode", "");
+                    }}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    disabled={!form.watch("userJob.provinceCode")}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="userJob.districtCode"
+                render={({ field, fieldState }) => (
+                  <Select
+                    getKey={(v) => v.code}
+                    getLabel={(v) => v.name}
+                    label={
+                      <Required>Kecamatan/Cabang/Distrik Tempat Tugas</Required>
+                    }
+                    placeholder="Pilih Kecamatan/Cabang/Distrik Tempat Tugas"
+                    options={districts.data?.data || []}
+                    isLoading={districts.isFetching}
+                    onChange={(v) => {
+                      field.onChange(v);
+                      form.setValue("userJob.subDistrictCode", "");
+                    }}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    disabled={!form.watch("userJob.cityCode")}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="userJob.subDistrictCode"
+                render={({ field, fieldState }) => (
+                  <Select
+                    getKey={(v) => v.code}
+                    getLabel={(v) => v.name}
+                    label={<Required>Desa/Kelurahan Tempat Tugas</Required>}
+                    placeholder="Pilih Desa/Kelurahan Tempat Tugas"
+                    options={subDistricts.data?.data || []}
+                    isLoading={subDistricts.isFetching}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    disabled={!form.watch("userJob.districtCode")}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="userJob.address"
+                render={({ field, fieldState }) => (
+                  <TextField
+                    label={<Required>Alamat Tempat Tugas</Required>}
+                    placeholder="Masukkan Alamat Tempat Tugas"
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-col gap-4">
+              <Controller
+                control={form.control}
+                name="userJob.jobId"
+                render={({ field, fieldState }) => (
+                  <Select
+                    getKey={(v) => v.id.toString()}
+                    getLabel={(v) => v.name}
+                    label="Pekerjaan"
+                    placeholder="Pilih Pekerjaan"
+                    options={jobs.data?.data || []}
+                    isLoading={jobs.isLoading}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="userJob.employmentStatusId"
+                render={({ field, fieldState }) => (
+                  <Select
+                    getKey={(v) => v.id.toString()}
+                    getLabel={(v) => v.name}
+                    label="Status Kepegawaian"
+                    placeholder="Pilih Status Kepegawaian"
+                    options={employmentStatuses?.data?.data || []}
+                    isLoading={employmentStatuses.isLoading}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="userJob.grade"
+                render={({ field, fieldState }) => (
+                  <TextField
+                    label="Pangkat/Golongan"
+                    placeholder="Pilih Pangkat/Golongan"
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="userJob.hasCertification"
+                render={({ field, fieldState }) => (
+                  <Select
+                    label="Sertifikat Pendidik"
+                    placeholder="Pilih Sertifikat Pendidik"
+                    options={certificateOptions}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="userJob.stageId"
+                render={({ field, fieldState }) => (
+                  <Select
+                    getKey={(v) => v.id.toString()}
+                    getLabel={(v) => v.name}
+                    label="Jenjang Mengajar"
+                    placeholder="Pilih Jenjang Mengajar"
+                    options={stages.data?.data || []}
+                    isLoading={stages.isLoading}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="userJob.subjectId"
+                render={({ field, fieldState }) => (
+                  <Select
+                    getKey={(v) => v.id.toString()}
+                    getLabel={(v) => v.name}
+                    label="Mata Pelajaran"
+                    placeholder="Pilih Mata Pelajaran"
+                    options={subjects.data?.data || []}
+                    isLoading={subjects.isLoading}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex w-full justify-end gap-4">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => setStep("CONFIRM")}
+            disabled={userFormData.isLoading || verifyUser.isPending}
+          >
+            Kembali
+          </Button>
+          <Button
+            type="submit"
+            isLoading={verifyUser.isPending}
+            disabled={userFormData.isLoading}
+          >
+            Verifikasi Sekarang
+          </Button>
+        </div>
+      </div>
+    </form>
+  );
+};
+
+export default VerificationForm;

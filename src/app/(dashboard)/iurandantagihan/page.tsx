@@ -9,7 +9,7 @@ const IuranDanTagihan = () => {
   return (
     <>
       {/* {auth.levelId === 1 && <FeeAndBillsAdmin />} */}
-      {auth.levelId === 1 && <FeeAndBillsFinanceAdmin />}
+      <FeeAndBillsFinanceAdmin />
     </>
   )
 }

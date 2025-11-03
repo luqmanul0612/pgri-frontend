@@ -2,7 +2,7 @@
 
 interface Response {
   status: number;
-  data: { id: number; name: string }[];
+  data: { id: number; name: string; code: string }[];
 }
 
 export type ServiceOptionKey =

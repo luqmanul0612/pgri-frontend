@@ -1,15 +1,12 @@
 import Button from "@/components/customs/button";
 import ValidationImage from "../../assets/validation-done.svg";
-import { useValidationForm } from "../../utils/use-validation-form";
 import { useRouter } from "next/navigation";
 
 const ValidationDone = () => {
   const router = useRouter();
-  const { setStep } = useValidationForm();
 
   const onClickConfirm = () => {
     router.push("/dashboard");
-    setStep("CONFIRM");
   };
 
   return (

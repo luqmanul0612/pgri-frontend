@@ -7,10 +7,10 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const identity = await getAuthMe();
-  if (identity?.status !== 200) {
-    redirect("/login");
-  }
+  // const identity = await getAuthMe();
+  // if (identity?.status !== 200) {
+  //   redirect("/login");
+  // }
 
   return <DashboardLayoutComponent>{children}</DashboardLayoutComponent>;
 }
