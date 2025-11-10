@@ -8,7 +8,14 @@ import { StatusCell } from "./cells/StatusCell";
 import { YesNoCell } from "./cells/YesNoCell";
 import { ktaPrintService } from "@/services/kta-print";
 
-export const columns: ColumnDef<CetakKtaTableData>[] = [
+export const createColumns = (
+  data: CetakKtaTableData[],
+  handleSelectAll: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  handleSelectRow: (
+    rowId: number,
+  ) => (e: React.ChangeEvent<HTMLInputElement>) => void,
+  CheckboxComponent: React.ComponentType<any>,
+): ColumnDef<CetakKtaTableData>[] => [
   {
     accessorKey: "id",
     header: "NO.",
@@ -20,28 +27,48 @@ export const columns: ColumnDef<CetakKtaTableData>[] = [
     size: 50,
   },
   {
+    accessorKey: "selected",
+    header: () => {
+      return (
+        <CheckboxComponent
+          strokeColor="#F5F7FB"
+          className="mx-auto"
+          onChange={handleSelectAll}
+          checked={data.length > 0 && data.every((row) => row.selected)}
+          indeterminate={
+            data.some((row) => row.selected) &&
+            !data.every((row) => row.selected)
+          }
+        />
+      );
+    },
+    cell: ({ row }: { row: { original: CetakKtaTableData } }) => (
+      <CheckboxComponent
+        className="mx-auto"
+        strokeColor="#17191c"
+        checked={!!row.original.selected}
+        onChange={handleSelectRow(row.original.id)}
+      />
+    ),
+    size: 70,
+  },
+  {
     accessorKey: "actions",
     header: "Aksi",
     cell: ({ row }) => {
       const handleCR80Print = async (data: CetakKtaTableData) => {
         try {
-          await ktaPrintService.printKTANonBlanko({
-            data,
-            cardType: 'CR80'
-          });
+          await ktaPrintService.printKTANonBlanko({ data, cardType: "CR80" });
         } catch (error) {
-          console.error('Failed to print CR80 Non-Blanko:', error);
+          console.error("Failed to print CR80 Non-Blanko:", error);
         }
       };
 
       const handleCR79Print = async (data: CetakKtaTableData) => {
         try {
-          await ktaPrintService.printKTANonBlanko({
-            data,
-            cardType: 'CR79'
-          });
+          await ktaPrintService.printKTANonBlanko({ data, cardType: "CR79" });
         } catch (error) {
-          console.error('Failed to print CR79 Non-Blanko:', error);
+          console.error("Failed to print CR79 Non-Blanko:", error);
         }
       };
 

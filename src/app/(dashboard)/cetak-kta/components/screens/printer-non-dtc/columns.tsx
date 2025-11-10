@@ -1,15 +1,19 @@
 import React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { CetakKtaTableData } from "./types";
+import { ActionCell } from "./cells/ActionCell";
 import { PhotoCell } from "./cells/PhotoCell";
 import { QRCodeCell } from "./cells/QRCodeCell";
 import { StatusCell } from "./cells/StatusCell";
+import { ktaPrintService } from "@/services/kta-print";
 
 export const createColumns = (
   data: CetakKtaTableData[],
   handleSelectAll: (e: React.ChangeEvent<HTMLInputElement>) => void,
-  handleSelectRow: (rowId: number) => (e: React.ChangeEvent<HTMLInputElement>) => void,
-  CheckboxComponent: React.ComponentType<any>
+  handleSelectRow: (
+    rowId: number,
+  ) => (e: React.ChangeEvent<HTMLInputElement>) => void,
+  CheckboxComponent: React.ComponentType<any>,
 ): ColumnDef<CetakKtaTableData>[] => [
   {
     accessorKey: "id",
@@ -46,6 +50,36 @@ export const createColumns = (
       />
     ),
     size: 70,
+  },
+  {
+    accessorKey: "actions",
+    header: "Aksi",
+    cell: ({ row }) => {
+      const handleCR80Print = async (data: CetakKtaTableData) => {
+        try {
+          await ktaPrintService.printKTA({ data, cardType: "CR80" });
+        } catch (error) {
+          console.error("Failed to print CR80:", error);
+        }
+      };
+
+      const handleCR79Print = async (data: CetakKtaTableData) => {
+        try {
+          await ktaPrintService.printKTA({ data, cardType: "CR79" });
+        } catch (error) {
+          console.error("Failed to print CR79:", error);
+        }
+      };
+
+      return (
+        <ActionCell
+          data={row.original}
+          onCR80Click={handleCR80Print}
+          onCR79Click={handleCR79Print}
+        />
+      );
+    },
+    size: 150,
   },
   {
     accessorKey: "npa",
@@ -102,11 +136,7 @@ export const createColumns = (
       />
     ),
   },
-  {
-    accessorKey: "qrCode",
-    header: "QR Code",
-    cell: () => <QRCodeCell />,
-  },
+  { accessorKey: "qrCode", header: "QR Code", cell: () => <QRCodeCell /> },
   {
     accessorKey: "status",
     header: "Status",
