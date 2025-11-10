@@ -11,6 +11,7 @@ interface SelectProps<T> {
   onChange?: (value: string) => void;
   options?: T[];
   label?: string | React.ReactNode;
+  className?: string;
   placeholder?: string;
   error?: boolean;
   helperText?: string;
@@ -34,6 +35,7 @@ const Select = <T,>(props: SelectProps<T>) => {
     disabled,
     isLoading,
     onChange,
+    className,
     getKey = getKeyFunc,
     getLabel = getLabelFunc,
   } = props;
@@ -45,7 +47,7 @@ const Select = <T,>(props: SelectProps<T>) => {
   };
 
   return (
-    <div className="select-root">
+    <div className={clsx("select-root", className)}>
       {!!label && <p className={clsx("select-label", { disabled })}>{label}</p>}
       <Lib.Root
         value={value}
