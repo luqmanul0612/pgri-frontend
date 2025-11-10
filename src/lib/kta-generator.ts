@@ -16,11 +16,11 @@ export class KTANonBlankoGenerator {
   private readonly cardHeight = 638; // 5.4cm * 300 DPI / 2.54
 
   // Photo dimensions (2cm x 3cm at 300 DPI)
-  private readonly photoWidth = 236; // 2cm * 300 DPI / 2.54
-  private readonly photoHeight = 354; // 3cm * 300 DPI / 2.54
+  private readonly photoWidth = 270; // 2cm * 300 DPI / 2.54
+  private readonly photoHeight = 370; // 3cm * 300 DPI / 2.54
 
   // QR code dimensions (2x2cm at 300 DPI)
-  private readonly qrSize = 236; // 2cm * 300 DPI / 2.54
+  private readonly qrSize = 500; // 2cm * 300 DPI / 2.54
 
   constructor() {
     this.canvas = document.createElement("canvas");
@@ -153,25 +153,18 @@ export class KTANonBlankoGenerator {
     this.ctx.fillStyle = "#000";
     this.ctx.textAlign = "left";
 
-    // Same text positioning as original
-    const textStartX = 300;
-    const nameY = 309;
-    const npaY = 349;
-    const agamaY = 389;
+    // Text positioning - centered vertically on card
+    const textStartX = 100; // Start from left with some margin
+    const nameY = this.cardHeight / 2 - 30; // Center position - 30px
+    const npaY = this.cardHeight / 2 + 30; // Center position + 30px
 
-    // Draw name (larger, bold)
-    this.ctx.font = "bold 24px Arial";
+    // Draw name with font 30 bold
+    this.ctx.font = "bold 30px Arial";
     this.ctx.fillText(data.namaAnggota, textStartX, nameY);
 
-    // Draw NPA
-    this.ctx.font = "20px Arial";
+    // Draw NPA with font 30 bold
+    this.ctx.font = "bold 30px Arial";
     this.ctx.fillText(`NPA. ${data.npa}`, textStartX, npaY);
-
-    // Draw agama
-    this.ctx.font = "20px Arial";
-    if (data.agama) {
-      this.ctx.fillText(`AGAMA: ${data.agama.toUpperCase()}`, textStartX, agamaY);
-    }
   }
 
   private drawValidityText(): void {
@@ -184,7 +177,7 @@ export class KTANonBlankoGenerator {
     const adjustedPhotoHeight = this.photoHeight * photoScaleHeight;
 
     // Calculate center position of photo
-    const photoCenterX = photoX + (adjustedPhotoWidth / 2);
+    const photoCenterX = photoX + adjustedPhotoWidth / 2;
     const validityY = photoY + adjustedPhotoHeight + 30; // 10px gap + some spacing
 
     this.ctx.fillStyle = "#000";
@@ -212,7 +205,6 @@ export class KTANonBlankoGenerator {
       this.drawUserPhoto();
       this.drawUserData(data);
       this.drawQRCode();
-      this.drawValidityText();
 
       // Return canvas as data URL
       return this.canvas.toDataURL("image/png", 1.0);
@@ -326,10 +318,10 @@ export class KTAGenerator {
 
     // ===== MANUAL ADJUSTMENT AREA - PHOTO =====
     // Ubah nilai-nilai ini untuk menyesuaikan posisi dan ukuran foto:
-    const photoX = 53.5; // Horizontal position foto (semakin besar = ke kanan)
-    const photoY = 289; // Vertical position foto (semakin besar = ke bawah)
-    const photoScaleWidth = 0.865; // Scale lebar foto (0.8 = 80% ukuran asli)
-    const photoScaleHeight = 0.73; // Scale tinggi foto (0.8 = 80% ukuran asli)
+    const photoX = 47; // Horizontal position foto (semakin besar = ke kanan)
+    const photoY = 264.1; // Vertical position foto (semakin besar = ke bawah)
+    const photoScaleWidth = 0.913; // Scale lebar foto (0.8 = 80% ukuran asli)
+    const photoScaleHeight = 0.795; // Scale tinggi foto (0.8 = 80% ukuran asli)
     const borderRadius = 8; // Border radius untuk foto (pixels)
     // ============================================
 
@@ -368,9 +360,9 @@ export class KTAGenerator {
 
     // ===== MANUAL ADJUSTMENT AREA - QR CODE =====
     // Ubah nilai-nilai ini untuk menyesuaikan posisi dan ukuran QR:
-    const qrScale = 0.65; // Scale QR code (0.7 = 70% ukuran asli)
-    const qrMarginRight = 47; // Margin dari kanan (semakin besar = lebih ke kiri)
-    const qrMarginBottom = 48; // Margin dari bawah (semakin besar = lebih ke atas)
+    const qrScale = 0.965; // Scale QR code (0.7 = 70% ukuran asli)
+    const qrMarginRight = 42; // Margin dari kanan (semakin besar = lebih ke kiri)
+    const qrMarginBottom = 42; // Margin dari bawah (semakin besar = lebih ke atas)
     const borderWidth = 2; // Lebar border QR code (pixels)
     const borderColor = "#000"; // Warna border QR code
     // =============================================
@@ -398,25 +390,18 @@ export class KTAGenerator {
     this.ctx.fillStyle = "#000";
     this.ctx.textAlign = "left";
 
-    // ===== MANUAL ADJUSTMENT AREA =====
-    // Ubah nilai-nilai ini untuk menyesuaikan posisi text:
-    const textStartX = 300; // Horizontal position (semakin besar = ke kanan)
-    const nameY = 309; // Vertical position nama (semakin besar = ke bawah)
-    const npaY = 349; // Vertical position NPA (semakin besar = ke bawah)
-    const tempatLahirY = 389; // Vertical position tempat lahir (semakin besar = ke bawah)
-    // ====================================
+    // Text positioning - centered vertically on card
+    const textStartX = 300; // Start from left with some margin
+    const nameY = this.cardHeight / 2 - 30; // Center position - 30px
+    const npaY = this.cardHeight / 2 + 30; // Center position + 30px
 
-    // Draw name (larger, bold)
-    this.ctx.font = "bold 24px Arial";
+    // Draw name with font 30 bold
+    this.ctx.font = "bold 30px Arial";
     this.ctx.fillText(data.namaAnggota, textStartX, nameY);
 
-    // Draw NPA
-    this.ctx.font = "20px Arial";
+    // Draw NPA with font 30 bold
+    this.ctx.font = "bold 30px Arial";
     this.ctx.fillText(`NPA. ${data.npa}`, textStartX, npaY);
-
-    // Draw tempat lahir
-    this.ctx.font = "20px Arial";
-    this.ctx.fillText(`TEMPAT LAHIR: ${data.tempatLahir.toUpperCase()}`, textStartX, tempatLahirY);
   }
 
   public async generateKTA(options: KTAGeneratorOptions): Promise<string> {
