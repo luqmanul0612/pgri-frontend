@@ -1,12 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useEffect, useState, Fragment, useRef } from "react";
+import React, { useEffect, useState, Fragment, useRef, useMemo } from "react";
 import { useTable, Column } from "react-table";
 import Card from "@/app/components/Card";
 import { IoFemaleOutline, IoMaleOutline } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-import { getMembers } from "../serverActions/member";
+import {
+  getMembers,
+  GetMembersParams,
+  getMembersV2,
+} from "../serverActions/member";
 import { IMember } from "@/interfaces/IMemberResponse";
 import dummyProfile from "@/../public/assets/profileNew.png";
 import { FaPlus, FaRegCopy, FaRegCreditCard } from "react-icons/fa6";
@@ -29,169 +34,183 @@ import LoadingDotTable from "@/components/loading/LoadingDotTable";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import clsx from "clsx";
+import useQuery from "@/utils/hooks/use-query";
+import { toast } from "sonner";
 
 interface TableProps {
   searchQuery: string;
-  filterRegions: any;
   filterByStatus?: string;
+  filters: GetMembersParams;
 }
 
 const initialPageSize = 10;
 
-const columns: Column<IMember>[] = [
-  {
-    Header: "No.",
-    Cell: (row) => row.row.index + 1,
-  },
-  { Header: "Nama Anggota", accessor: "name" },
-  {
-    Header: "NPA",
-    accessor: "npa_number",
-    Cell: ({ row, value }) =>
-      value ? (row.original.status === 1 ? value : "***") : "-",
-  },
-  { Header: "NIK", accessor: "nik" },
-  { Header: "Tempat Lahir", accessor: "birth_place" },
-  { Header: "Tanggal Lahir", accessor: "dob" },
-  { Header: "Provinsi", accessor: "province" },
-  {
-    Header: "Foto",
-    accessor: "profile",
-    Cell: ({ value }) => (
-      <div className="flex items-center justify-center">
-        <div className="relative flex h-[24px] w-[24px] items-center justify-center rounded-md border border-primary">
-          <img
-            src={value ?? dummyProfile}
-            alt="Foto"
-            className="h-[23px] w-[23px] rounded-md border-transparent object-cover"
-            // layout="fill"
-            // objectFit="cover"
-          />
-        </div>
-      </div>
-    ),
-  },
-  {
-    Header: "QR Code",
-    accessor: "qr",
-    Cell: ({ value }) => (
-      <div className="flex items-center justify-center">
-        <div className="relative flex h-[24px] w-[24px] items-center justify-center rounded-md border border-primary">
-          <img
-            src={value}
-            alt="QR Code"
-            className="h-[23px] w-[23px] rounded-md border-transparent object-cover"
-            //  layout="fill"
-            //  objectFit="cover"
-          />
-        </div>
-      </div>
-    ),
-  },
-  {
-    Header: "Whatsapp",
-    accessor: "email",
-    Cell: ({ value }) => (
-      <div className="flex items-center justify-center">
-        <div className="relative flex h-[25px] w-[25px] items-center justify-center rounded-md">
-          <img src="/assets/wa.png" alt="QR Code" className="object-cover" />
-        </div>
-      </div>
-    ),
-  },
-  {
-    Header: "Status",
-    accessor: "status",
-    Cell: ({ value }: { value: number }) => (
-      <div className="flex items-center justify-center">
-        <Popover className="relative">
-          {/* Tooltip Trigger */}
-          <PopoverButton
-            onMouseEnter={(e) => e.currentTarget.click()}
-            onMouseLeave={(e) => e.currentTarget.click()}
-            className="cursor-default border-none outline-none ring-0 focus:outline-none"
-          >
-            {value === 1 ? (
-              <IoIosCheckmarkCircle color="green" fontSize={18} />
-            ) : (
-              <IoIosCloseCircle color="red" fontSize={18} />
-            )}
-          </PopoverButton>
-
-          {/* Tooltip Panel */}
-          <Transition
-            as={Fragment}
-            enter="transition ease-out duration-200"
-            enterFrom="opacity-0 translate-y-1"
-            enterTo="opacity-100 translate-y-0"
-            leave="transition ease-in duration-150"
-            leaveFrom="opacity-100 translate-y-0"
-            leaveTo="opacity-0 translate-y-1"
-          >
-            <PopoverPanel
-              className={`absolute bottom-full left-1/2 mb-2 w-32 -translate-x-1/2 transform rounded-3xl border border-gray-100 bg-white shadow-xl ${value === 1 ? "text-green-600" : "text-red-600"} rounded-lg p-2 text-sm shadow-lg`}
-            >
-              {value === 1 ? "Sudah diverifikasi" : "Belum diverifikasi"}
-            </PopoverPanel>
-          </Transition>
-        </Popover>
-      </div>
-    ),
-  },
-  {
-    Header: "Opsi",
-    Cell: ({ row }) => <ActionOptions row={row} />,
-  },
-];
-
 const Table: React.FC<TableProps> = ({
   searchQuery,
-  filterRegions,
   filterByStatus,
+  filters,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [tableData, setTableData] = useState<IMember[]>([]);
-  const [pageCount, setPageCount] = useState<number>();
+  const [pageCount, setPageCount] = useState<number>(0);
   const [isModalAddOpen, setIsModalAddOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [countMale, setCountMale] = useState<number>(0);
   const [countFemale, setCountFemale] = useState<number>(0);
   const printRef = useRef<HTMLDivElement | null>(null);
   const [filterGender, setFilterGender] = useState<string>("");
-  const defaultFilterMale: string = "laki-laki";
-  const defaultFilterFemale: string = "perempuan";
+  const defaultFilterMale: string = "M";
+  const defaultFilterFemale: string = "P";
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const memberData = await getMembers(
-          currentPage + 1,
-          pageSize,
-          searchQuery,
-          filterRegions,
-          filterByStatus,
-          filterGender,
-        );
-        setTableData(memberData.data.data);
-        setPageCount(memberData.data.total_page);
-        setCountMale(memberData.data?.counter?.laki_laki);
-        setCountFemale(memberData.data?.counter?.perempuan);
-      } catch (error) {
-        console.error("Failed to fetch members data:", error);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [
-    currentPage,
-    pageSize,
-    searchQuery,
-    filterRegions,
-    filterByStatus,
-    filterGender,
-  ]);
+  const columns: Column<IMember>[] = useMemo(
+    () => [
+      {
+        Header: "No.",
+        Cell: (row) => currentPage * pageSize + row.row.index + 1,
+      },
+      { Header: "Nama Anggota", accessor: "name" },
+      {
+        Header: "NPA",
+        accessor: "npa_number",
+        Cell: ({ row, value }) =>
+          value ? (row.original.status === 1 ? value : "***") : "-",
+      },
+      { Header: "NIK", accessor: "nik" },
+      { Header: "Tempat Lahir", accessor: "birth_place" },
+      { Header: "Tanggal Lahir", accessor: "dob" },
+      { Header: "Provinsi", accessor: "province" },
+      {
+        Header: "Foto",
+        accessor: "profile",
+        Cell: ({ value }) => (
+          <div className="flex items-center justify-center">
+            <div className="relative flex h-[24px] w-[24px] items-center justify-center rounded-md border border-primary">
+              <img
+                src={value ?? dummyProfile}
+                alt="Foto"
+                className="h-[23px] w-[23px] rounded-md border-transparent object-cover"
+                // layout="fill"
+                // objectFit="cover"
+              />
+            </div>
+          </div>
+        ),
+      },
+      {
+        Header: "QR Code",
+        accessor: "qr",
+        Cell: ({ value }) => (
+          <div className="flex items-center justify-center">
+            <div className="relative flex h-[24px] w-[24px] items-center justify-center rounded-md border border-primary">
+              <img
+                src={value}
+                alt="QR Code"
+                className="h-[23px] w-[23px] rounded-md border-transparent object-cover"
+                //  layout="fill"
+                //  objectFit="cover"
+              />
+            </div>
+          </div>
+        ),
+      },
+      {
+        Header: "Whatsapp",
+        accessor: "email",
+        Cell: ({ value }) => (
+          <div className="flex items-center justify-center">
+            <div className="relative flex h-[25px] w-[25px] items-center justify-center rounded-md">
+              <img
+                src="/assets/wa.png"
+                alt="QR Code"
+                className="object-cover"
+              />
+            </div>
+          </div>
+        ),
+      },
+      {
+        Header: "Status",
+        accessor: "status",
+        Cell: ({ value }: { value: number }) => (
+          <div className="flex items-center justify-center">
+            <Popover className="relative">
+              {/* Tooltip Trigger */}
+              <PopoverButton
+                onMouseEnter={(e) => e.currentTarget.click()}
+                onMouseLeave={(e) => e.currentTarget.click()}
+                className="cursor-default border-none outline-none ring-0 focus:outline-none"
+              >
+                {value === 1 ? (
+                  <IoIosCheckmarkCircle color="green" fontSize={18} />
+                ) : (
+                  <IoIosCloseCircle color="red" fontSize={18} />
+                )}
+              </PopoverButton>
+
+              {/* Tooltip Panel */}
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-200"
+                enterFrom="opacity-0 translate-y-1"
+                enterTo="opacity-100 translate-y-0"
+                leave="transition ease-in duration-150"
+                leaveFrom="opacity-100 translate-y-0"
+                leaveTo="opacity-0 translate-y-1"
+              >
+                <PopoverPanel
+                  className={`absolute bottom-full left-1/2 mb-2 w-32 -translate-x-1/2 transform rounded-3xl border border-gray-100 bg-white shadow-xl ${value === 1 ? "text-green-600" : "text-red-600"} rounded-lg p-2 text-sm shadow-lg`}
+                >
+                  {value === 1 ? "Sudah diverifikasi" : "Belum diverifikasi"}
+                </PopoverPanel>
+              </Transition>
+            </Popover>
+          </div>
+        ),
+      },
+      {
+        Header: "Opsi",
+        Cell: ({ row }) => <ActionOptions row={row} />,
+      },
+    ],
+    [currentPage, pageSize],
+  );
+
+  const members = useQuery({
+    queryKey: [
+      currentPage,
+      pageSize,
+      searchQuery,
+      filterByStatus,
+      filterGender,
+      filters.province_id,
+      filters.city_id,
+      filters.district_id,
+      filters.employment_status_id
+    ],
+    queryFn: () =>
+      getMembersV2({
+        q: searchQuery,
+        page: currentPage + 1,
+        limit: pageSize,
+        province_id: filters.province_id,
+        city_id: filters.city_id,
+        district_id: filters.province_id,
+        employment_status_id: filters.employment_status_id,
+        gender: filterGender,
+        membership_status_id: filterByStatus || "",
+        order: "desc",
+        sort_by: "created_at",
+      }),
+    onSuccess: (res) => {
+      setTableData(res.data.data);
+      setPageCount(res.data?.pagination?.total_page);
+      setCountMale(res.data?.counter?.M);
+      setCountFemale(res.data?.counter?.F);
+    },
+    onError: () => {
+      toast.error("Terjadi kesalahan");
+    },
+  });
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
@@ -309,7 +328,7 @@ const Table: React.FC<TableProps> = ({
               ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-              {loading ? (
+              {members.isFetching ? (
                 <tr className="mt-4">
                   <td
                     colSpan={headerGroups[0].headers.length}
