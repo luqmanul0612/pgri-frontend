@@ -27,7 +27,7 @@ const defaultValues: BodyLogin = {
 
 export const RightSection: FC<RightSectionProps> = () => {
   const router = useRouter();
-  const { setUser, setRenewPassword } = useAuth();
+  const { setUser } = useAuth();
   const { resetRegisterState } = useRegistrationState();
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -42,7 +42,6 @@ export const RightSection: FC<RightSectionProps> = () => {
     onSuccess: (res) => {
       toast({ title: "Berhasil Login" });
       if (res.data?.renew_password) {
-        setRenewPassword(true);
         router.push("/renew-password");
       } else {
         setUser(res.data.user);
