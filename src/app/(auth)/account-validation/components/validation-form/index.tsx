@@ -11,7 +11,6 @@ import useQuery from "@/utils/hooks/use-query";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import {
   getUsersFormData,
-  getUsersMe,
 } from "../../serverActions/get-form-data";
 import { toast } from "sonner";
 import {
@@ -54,10 +53,10 @@ const defaultValues: UserValidationForm = {
     latestEducationId: "",
   },
   userJob: {
-    provinceCode: "",
-    cityCode: "",
-    districtCode: "",
-    subDistrictCode: "",
+    provinceId: "",
+    cityId: "",
+    districtId: "",
+    subDistrictId: "",
     stageId: "",
     jobId: "",
     name: "",
@@ -83,11 +82,6 @@ const ValidationForm = () => {
   const userFormData = useQuery({
     queryFn: getUsersFormData,
     onSuccess: (res) => {
-      const location = res.data.institution.subdistrict_code.split(".");
-      const provinceCode = location[0] ? location[0] : "";
-      const cityCode = location[1] ? location.slice(0, 2).join(".") : "";
-      const districtCode = location[2] ? location.slice(0, 3).join(".") : "";
-      const subDistrictCode = location[3] ? location.slice(0, 4).join(".") : "";
       form.reset({
         user: {
           name: res.data.user.name,
@@ -106,10 +100,18 @@ const ValidationForm = () => {
         userJob: {
           name: res.data.institution.name,
           address: res.data.institution.address,
-          provinceCode,
-          cityCode,
-          districtCode,
-          subDistrictCode,
+          provinceId: res.data.institution.province_id
+            ? String(res.data.institution.province_id)
+            : "",
+          cityId: res.data.institution.city_id
+            ? String(res.data.institution.city_id)
+            : "",
+          districtId: res.data.institution.district_id
+            ? String(res.data.institution.district_id)
+            : "",
+          subDistrictId: res.data.institution.subdistrict_id
+            ? String(res.data.institution.subdistrict_id)
+            : "",
           stageId: res.data.institution.stage_id
             ? String(res.data.institution.stage_id)
             : "",
@@ -149,45 +151,28 @@ const ValidationForm = () => {
   });
 
   const cities = useQuery({
-    queryKey: [values.userJob?.provinceCode],
-    queryFn: () => {
-      const province = provinces.data?.data.find(
-        (province) => province.code === form.getValues("userJob.provinceCode"),
-      );
-      return getLocation({
+    queryKey: [values.userJob?.provinceId],
+    queryFn: () =>
+      getLocation({
         type: "cities",
-        id: province ? String(province.id) : "",
-      });
-    },
-    enabled: !!values.userJob?.provinceCode && !!provinces.data?.data?.length,
+        id: form.getValues("userJob.provinceId"),
+      }),
+
+    enabled: !!values.userJob?.provinceId && !!provinces.data?.data?.length,
   });
 
   const districts = useQuery({
-    queryKey: [values.userJob?.cityCode],
-    queryFn: () => {
-      const city = cities.data?.data.find(
-        (city) => city.code === form.getValues("userJob.cityCode"),
-      );
-      return getLocation({
-        type: "districts",
-        id: city ? String(city.id) : "",
-      });
-    },
-    enabled: !!values.userJob?.cityCode && !!cities.data?.data?.length,
+    queryKey: [values.userJob?.cityId],
+    queryFn: () =>
+      getLocation({ type: "districts", id: form.getValues("userJob.cityId") }),
+    enabled: !!values.userJob?.cityId && !!cities.data?.data?.length,
   });
 
   const subDistricts = useQuery({
-    queryKey: [values.userJob?.districtCode],
-    queryFn: () => {
-      const district = districts.data?.data.find(
-        (district) => district.code === form.getValues("userJob.districtCode"),
-      );
-      return getLocation({
-        type: "subdistricts",
-        id: district ? String(district.id) : "",
-      });
-    },
-    enabled: !!values.userJob?.districtCode && !!districts.data?.data?.length,
+    queryKey: [values.userJob?.districtId],
+    queryFn: () =>
+      getLocation({ type: "subdistricts", id: values.userJob?.districtId }),
+    enabled: !!values.userJob?.districtId && !!districts.data?.data?.length,
   });
 
   const jobs = useQuery({
@@ -221,12 +206,11 @@ const ValidationForm = () => {
     mutationFn: postUpdateUser,
     onSuccess: () => {
       const values = form.getValues();
-      const subDistrict = subDistricts.data?.data.find(
-        (subDistrict) => subDistrict.code === values.userJob.subDistrictCode,
-      );
       updateInstitution.mutate({
         name: values.userJob.name,
-        subdistrict_id: subDistrict ? Number(subDistrict.id) : undefined,
+        subdistrict_id: values.userJob.subDistrictId
+          ? Number(values.userJob.subDistrictId)
+          : undefined,
         address: values.userJob.address,
         job_id: values.userJob.jobId ? Number(values.userJob.jobId) : undefined,
         stage_id: values.userJob.stageId
@@ -391,7 +375,7 @@ const ValidationForm = () => {
                 name="user.gender"
                 render={({ field, fieldState }) => (
                   <Select
-                    label="Jenis Kelamin"
+                    label={<Required>Jenis Kelamin</Required>}
                     placeholder="Pilih Jenis Kelamin"
                     options={genderOptions}
                     onChange={field.onChange}
@@ -408,7 +392,7 @@ const ValidationForm = () => {
                   <Select
                     getKey={(v) => v.id.toString()}
                     getLabel={(v) => v.name}
-                    label="Pendidikan/Ijazah Terakhir"
+                    label={<Required>Pendidikan/Ijazah Terakhir</Required>}
                     placeholder="Pilih Pendidikan/Ijazah Terakhir"
                     options={educations.data?.data || []}
                     isLoading={educations.isLoading}
@@ -426,7 +410,7 @@ const ValidationForm = () => {
                   <Select
                     getKey={(v) => v.id.toString()}
                     getLabel={(v) => v.name}
-                    label="Agama"
+                    label={<Required>Agama</Required>}
                     placeholder="Pilih Agama"
                     options={religions?.data?.data || []}
                     isLoading={religions.isLoading}
@@ -444,7 +428,7 @@ const ValidationForm = () => {
                   <Select
                     getKey={(v) => v.id.toString()}
                     getLabel={(v) => v.name}
-                    label="Golongan Darah"
+                    label={<Required>Golongan Darah</Required>}
                     placeholder="Pilih Golongan Darah"
                     options={bloodTypes.data?.data || []}
                     isLoading={bloodTypes.isLoading}
@@ -460,7 +444,7 @@ const ValidationForm = () => {
                 name="user.address"
                 render={({ field, fieldState }) => (
                   <TextField
-                    label="Alamat KTP"
+                    label={<Required>Alamat KTP</Required>}
                     placeholder="Masukkan Alamat Sesuai KTP"
                     onChange={field.onChange}
                     value={field.value}
@@ -474,7 +458,7 @@ const ValidationForm = () => {
                 name="user.postalCode"
                 render={({ field, fieldState }) => (
                   <NumericFormat
-                    label="Kode Pos"
+                    label={<Required>Kode Pos</Required>}
                     placeholder="Masukkan Kode Pos"
                     onChange={field.onChange}
                     value={field.value}
@@ -510,10 +494,10 @@ const ValidationForm = () => {
               />
               <Controller
                 control={form.control}
-                name="userJob.provinceCode"
+                name="userJob.provinceId"
                 render={({ field, fieldState }) => (
                   <Select
-                    getKey={(v) => v.code}
+                    getKey={(v) => v.id.toString()}
                     getLabel={(v) => v.name}
                     label={<Required>Provinsi Tempat Tugas</Required>}
                     placeholder="Pilih Provinsi"
@@ -521,9 +505,9 @@ const ValidationForm = () => {
                     isLoading={provinces.isLoading}
                     onChange={(v) => {
                       field.onChange(v);
-                      form.setValue("userJob.cityCode", "");
-                      form.setValue("userJob.districtCode", "");
-                      form.setValue("userJob.subDistrictCode", "");
+                      form.setValue("userJob.cityId", "");
+                      form.setValue("userJob.districtId", "");
+                      form.setValue("userJob.subDistrictId", "");
                     }}
                     value={field.value}
                     error={!!fieldState.error}
@@ -533,10 +517,10 @@ const ValidationForm = () => {
               />
               <Controller
                 control={form.control}
-                name="userJob.cityCode"
+                name="userJob.cityId"
                 render={({ field, fieldState }) => (
                   <Select
-                    getKey={(v) => v.code}
+                    getKey={(v) => v.id.toString()}
                     getLabel={(v) => v.name}
                     label={
                       <Required>
@@ -548,22 +532,22 @@ const ValidationForm = () => {
                     isLoading={cities.isFetching}
                     onChange={(v) => {
                       field.onChange(v);
-                      form.setValue("userJob.districtCode", "");
-                      form.setValue("userJob.subDistrictCode", "");
+                      form.setValue("userJob.districtId", "");
+                      form.setValue("userJob.subDistrictId", "");
                     }}
                     value={field.value}
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
-                    disabled={!form.watch("userJob.provinceCode")}
+                    disabled={!form.watch("userJob.provinceId")}
                   />
                 )}
               />
               <Controller
                 control={form.control}
-                name="userJob.districtCode"
+                name="userJob.districtId"
                 render={({ field, fieldState }) => (
                   <Select
-                    getKey={(v) => v.code}
+                    getKey={(v) => v.id.toString()}
                     getLabel={(v) => v.name}
                     label={
                       <Required>Kecamatan/Cabang/Distrik Tempat Tugas</Required>
@@ -573,21 +557,21 @@ const ValidationForm = () => {
                     isLoading={districts.isFetching}
                     onChange={(v) => {
                       field.onChange(v);
-                      form.setValue("userJob.subDistrictCode", "");
+                      form.setValue("userJob.subDistrictId", "");
                     }}
                     value={field.value}
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
-                    disabled={!form.watch("userJob.cityCode")}
+                    disabled={!form.watch("userJob.cityId")}
                   />
                 )}
               />
               <Controller
                 control={form.control}
-                name="userJob.subDistrictCode"
+                name="userJob.subDistrictId"
                 render={({ field, fieldState }) => (
                   <Select
-                    getKey={(v) => v.code}
+                    getKey={(v) => v.id.toString()}
                     getLabel={(v) => v.name}
                     label={<Required>Desa/Kelurahan Tempat Tugas</Required>}
                     placeholder="Pilih Desa/Kelurahan Tempat Tugas"
@@ -597,7 +581,7 @@ const ValidationForm = () => {
                     value={field.value}
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
-                    disabled={!form.watch("userJob.districtCode")}
+                    disabled={!form.watch("userJob.districtId")}
                   />
                 )}
               />
@@ -624,7 +608,7 @@ const ValidationForm = () => {
                   <Select
                     getKey={(v) => v.id.toString()}
                     getLabel={(v) => v.name}
-                    label="Pekerjaan"
+                    label={<Required>Pekerjaan</Required>}
                     placeholder="Pilih Pekerjaan"
                     options={jobs.data?.data || []}
                     isLoading={jobs.isLoading}
@@ -642,7 +626,7 @@ const ValidationForm = () => {
                   <Select
                     getKey={(v) => v.id.toString()}
                     getLabel={(v) => v.name}
-                    label="Status Kepegawaian"
+                    label={<Required>Status Kepegawaian</Required>}
                     placeholder="Pilih Status Kepegawaian"
                     options={employmentStatuses?.data?.data || []}
                     isLoading={employmentStatuses.isLoading}
@@ -658,7 +642,7 @@ const ValidationForm = () => {
                 name="userJob.grade"
                 render={({ field, fieldState }) => (
                   <TextField
-                    label="Pangkat/Golongan"
+                    label={<Required>Pangkat/Golongan</Required>}
                     placeholder="Pilih Pangkat/Golongan"
                     onChange={field.onChange}
                     value={field.value}
@@ -672,7 +656,7 @@ const ValidationForm = () => {
                 name="userJob.hasCertification"
                 render={({ field, fieldState }) => (
                   <Select
-                    label="Sertifikat Pendidik"
+                    label={<Required>Sertifikat Pendidik</Required>}
                     placeholder="Pilih Sertifikat Pendidik"
                     options={certificateOptions}
                     onChange={field.onChange}
@@ -689,7 +673,7 @@ const ValidationForm = () => {
                   <Select
                     getKey={(v) => v.id.toString()}
                     getLabel={(v) => v.name}
-                    label="Jenjang Mengajar"
+                    label={<Required>Jenjang Mengajar</Required>}
                     placeholder="Pilih Jenjang Mengajar"
                     options={stages.data?.data || []}
                     isLoading={stages.isLoading}
@@ -707,7 +691,7 @@ const ValidationForm = () => {
                   <Select
                     getKey={(v) => v.id.toString()}
                     getLabel={(v) => v.name}
-                    label="Mata Pelajaran"
+                    label={<Required>Mata Pelajaran</Required>}
                     placeholder="Pilih Mata Pelajaran"
                     options={subjects.data?.data || []}
                     isLoading={subjects.isLoading}
@@ -726,7 +710,11 @@ const ValidationForm = () => {
             type="button"
             variant="secondary"
             onClick={() => setStep("CONFIRM")}
-            disabled={userFormData.isLoading || updateUser.isPending || updateInstitution.isPending}
+            disabled={
+              userFormData.isLoading ||
+              updateUser.isPending ||
+              updateInstitution.isPending
+            }
           >
             Kembali
           </Button>
