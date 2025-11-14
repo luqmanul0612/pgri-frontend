@@ -14,10 +14,10 @@ export default function AccountValidation() {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user.is_verified) {
+    if (user.is_validated) {
       router.push("/dashboard");
     }
-  }, [user.is_verified]);
+  }, [user.is_validated]);
   
   return (
     <>
