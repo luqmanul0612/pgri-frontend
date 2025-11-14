@@ -18,7 +18,7 @@ export const provinsiColumns: ColumnDef<ProvinsiData>[] = [
     },
   },
   {
-    accessorKey: "kodeProvinsi",
+    accessorKey: "code",
     header: "Kode Provinsi",
     size: 150,
     cell: ({ getValue }) => {
@@ -30,7 +30,7 @@ export const provinsiColumns: ColumnDef<ProvinsiData>[] = [
     },
   },
   {
-    accessorKey: "namaProvinsi",
+    accessorKey: "name",
     header: "Nama Provinsi",
     cell: ({ getValue }) => {
       return (

@@ -1,25 +1,25 @@
 export interface ProvinsiData {
   id: number;
-  kodeProvinsi: string;
-  namaProvinsi: string;
+  code: string;
+  name: string;
 }
 
 export interface KabupatenData {
   id: number;
-  kodeKabupaten: string;
-  namaKabupaten: string;
+  code: string;
+  name: string;
 }
 
 export interface KecamatanData {
   id: number;
-  kodeKecamatan: string;
-  namaKecamatan: string;
+  code: string;
+  name: string;
 }
 
 export interface KelurahanData {
   id: number;
-  kodeKelurahan: string;
-  namaKelurahan: string;
+  code: string;
+  name: string;
 }
 
 export type WilayahData = ProvinsiData | KabupatenData | KecamatanData | KelurahanData;

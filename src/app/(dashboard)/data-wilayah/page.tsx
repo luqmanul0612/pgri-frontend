@@ -2,13 +2,9 @@
 
 import { FC } from "react";
 import Link from "next/link";
-import { useWilayahStore, Wilayah } from "./store/wilayah-store";
+import { Wilayah } from "./store/wilayah-store";
 import { wilayah } from "./store/wilayah-store";
 import MapIllustration from "@/assets/icons/data-wilayah/map-illustration";
-import { Provinsi } from "./screens/provinsi";
-import { Kabupaten } from "./screens/kabupaten";
-import { Kecamatan } from "./screens/kecamatan";
-import { Kelurahan } from "./screens/kelurahan";
 
 interface RegionButtonProps {
   label: string;
@@ -17,13 +13,6 @@ interface RegionButtonProps {
 }
 
 const Page: FC = () => {
-  const { selectedWilayah, setSelectedWilayah } = useWilayahStore();
-
-  if (selectedWilayah === "Provinsi") return <Provinsi />;
-  if (selectedWilayah === "Kabupaten/Kota") return <Kabupaten />;
-  if (selectedWilayah === "Kecamatan") return <Kecamatan />;
-  if (selectedWilayah === "Desa/Kelurahan") return <Kelurahan />;
-
   return (
     <div className="-mt-4 flex flex-col items-center gap-4 px-4 md:gap-4 md:px-6">
       <MapIllustration />
@@ -49,7 +38,7 @@ const Page: FC = () => {
         </p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {wilayah.map((item: Wilayah, i: number) => {
-            const href = `/data-wilayah/${item.toLowerCase().replace(/[\/]/g, "-").replace("kabupaten/kota", "kabupaten").replace("desa/kelurahan", "kelurahan")}`;
+            const href = `/data-wilayah/${item.toLowerCase().replace(/[\/]/g, "-").replace("kabupaten-kota", "kabupaten").replace("desa/kelurahan", "kelurahan")}`;
             return (
               <Link key={i} href={href}>
                 <RegionButton label={item} />
