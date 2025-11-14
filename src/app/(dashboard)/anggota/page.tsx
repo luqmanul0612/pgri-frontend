@@ -28,13 +28,6 @@ const defaultValuesFilters: GetMembersParams = {
   order: "",
 };
 
-const membershipOptions = [
-  { key: "", label: "Semua Anggota" },
-  { key: "0", label: "Belum Terverifikasi" },
-  { key: "1", label: "Terverifikasi" },
-  { key: "2", label: "Nonaktif" },
-];
-
 const MemberTable: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filterByStatus, setFilterByStatus] = useState<string>("");

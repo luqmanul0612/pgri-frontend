@@ -1,5 +1,7 @@
 "use server";
 
+import { cookies } from "next/headers";
+
 export interface PostAuthRegisterBody {
   password: string;
   name: string;
@@ -28,37 +30,37 @@ export interface PostAuthRegisterBody {
 }
 
 export interface PostAuthRegisterResponse {
-  id: string;
-  name: string;
+  address: string;
+  birth_date: string;
+  birth_place: string;
+  blood_type: string;
+  city: string;
+  created_at: string;
+  district: string;
   email: string;
-  phone_number: string;
+  employee_status: string;
+  expired: number;
+  gender: string;
+  has_paid: boolean;
+  id: string;
+  is_printed: boolean;
+  is_validated: boolean;
+  is_verified: boolean;
+  latest_education: string;
+  level_id: number;
+  member_photo: string;
+  membership_status: string;
+  name: string;
   nik: string;
   npa: string;
-  birth_place: string;
-  birth_date: string;
-  gender: string;
-  blood_type: string;
-  religion: string;
-  latest_education: string;
-  address: string;
-  province: string;
-  city: string;
-  district: string;
-  subdistrict: string;
+  phone_number: string;
   postal_code: string;
-  employee_status: string;
-  member_photo: string;
   profile: string;
-  membership_status: string;
-  has_paid: boolean;
-  is_verified: boolean;
-  is_validated: boolean;
-  is_printed: boolean;
-  expired: number;
-  level_id: number;
+  province: string;
+  religion: string;
+  subdistrict: string;
   token: string;
   token_ppob: string;
-  created_at: string;
 }
 
 export async function postAuthRegister(body: PostAuthRegisterBody) {
@@ -69,6 +71,11 @@ export async function postAuthRegister(body: PostAuthRegisterBody) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  const res = { ...(await response.json()), pathname, ok: response.ok };
+  const result = await response.json();
+  const { token, token_ppob, ...data } = (result.data ||
+    {}) as PostAuthRegisterResponse;
+  cookies().set("auth", JSON.stringify(data), { path: "/" });
+  cookies().set("token", token, { path: "/" });
+  const res = { data, pathname, ok: response.ok };
   return res;
 }

@@ -52,6 +52,7 @@ export interface PostLoginResponse {
     token: string;
     token_ppob: string;
     expired: number;
+    change_token: string;
   };
 }
 
@@ -67,41 +68,18 @@ export async function postLogin(body: BodyLogin) {
       body: JSON.stringify(body),
     });
     const result = await response.json();
-    const user = result.data;
-    const token = result.data.token;
+    const { token, change_token, token_ppob, ...user } = (result.data ||
+      {}) as PostLoginResponse["data"];
+    const renew_password = !!change_token;
+    if (renew_password) {
+      cookies().set("renew_password", "1", { path: "/" });
+      cookies().set("token", change_token, { path: "/" });
+    } else {
+      cookies().set("auth", JSON.stringify(user), { path: "/" });
+      cookies().set("token", token, { path: "/" });
+    }
 
-    cookies().set("auth", JSON.stringify(user), {
-      path: "/",
-    });
-
-    cookies().set("token", token, {
-      path: "/",
-    });
-
-    return {
-      data: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        phoneNumber: user.phone_number,
-        isVerified: !!user?.is_verified,
-        isValidated: !!user?.is_validated,
-        levelId: user.level_id,
-        createdAt: user.created_at,
-        address: user?.address,
-        birthPlace: user?.birth_place,
-        bloodType: user?.blood_type,
-        dob: user?.dob,
-        gender: user?.gender,
-        latestEducation: user?.latest_education,
-        nik: user?.nik,
-        npaNumber: user?.npa_number,
-        postalCode: user?.postal_code,
-        religion: user?.religion,
-      },
-      pathname,
-      ok: response.ok,
-    };
+    return { data: { user, renew_password }, pathname, ok: response.ok };
   } catch (error) {
     throw error;
   }

@@ -11,13 +11,13 @@ import { useRouter } from "next/navigation";
 export default function AccountValidation() {
   const router = useRouter();
   const { step } = useValidationForm();
-  const { auth } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
-    if (auth.isVerified) {
+    if (user.is_verified) {
       router.push("/dashboard");
     }
-  }, [auth.isVerified]);
+  }, [user.is_verified]);
   
   return (
     <>

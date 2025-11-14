@@ -27,7 +27,7 @@ const defaultValues: BodyLogin = {
 
 export const RightSection: FC<RightSectionProps> = () => {
   const router = useRouter();
-  const { setAuth } = useAuth();
+  const { setUser, setRenewPassword } = useAuth();
   const { resetRegisterState } = useRegistrationState();
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -41,13 +41,18 @@ export const RightSection: FC<RightSectionProps> = () => {
     mutationFn: postLogin,
     onSuccess: (res) => {
       toast({ title: "Berhasil Login" });
-      setAuth(res.data);
-      if (!res.data.isValidated) {
-        router.push("/account-validation");
-      } else if (!res.data.isVerified) {
-        router.push("/account-verification");
+      if (res.data?.renew_password) {
+        setRenewPassword(true);
+        router.push("/renew-password");
       } else {
-        router.push("/dashboard");
+        setUser(res.data.user);
+        if (!res.data?.user?.is_validated) {
+          router.push("/account-validation");
+        } else if (!res.data?.user?.is_verified) {
+          router.push("/account-verification");
+        } else {
+          router.push("/dashboard");
+        }
       }
     },
     onError: (err: { message: string }) => {

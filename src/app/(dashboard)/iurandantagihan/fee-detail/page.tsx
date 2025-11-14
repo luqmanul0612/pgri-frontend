@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import useAuth from "@/store/useAuth";
 import PgriLogo from "../../../../../public/pgri-logo.svg";
 import Button from "@/components/customs/button";
 import DownloadIcon from "../assets/document-download.svg";
@@ -19,7 +18,6 @@ const dataFees = [
 ];
 
 const FeesDetail = () => {
-  const { auth } = useAuth();
   const router = useRouter();
   return (
     <div className="flex flex-col">

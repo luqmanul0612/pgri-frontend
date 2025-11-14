@@ -2,59 +2,54 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 export interface AuthProps {
-  auth: {
+  user: {
     id: string;
-    isVerified: boolean;
-    levelId: number;
+    npa: string;
     name: string;
-    email: string;
-    phoneNumber: string;
-    createdAt: string;
-    nik: string;
-    npaNumber: string;
-    dob: string;
-    birthPlace: string;
-    latestEducation: string;
+    birth_place: string;
+    birth_date: string;
     gender: string;
+    blood_type: string;
     religion: string;
-    bloodType: string;
+    phone_number: string;
+    email: string;
+    nik: string;
     address: string;
-    postalCode: string;
+    postal_code: string;
+    province: string;
+    city: string;
+    district: string;
+    subdistrict: string;
+    employee_status: string;
+    membership_status: string;
+    latest_education: string;
+    member_photo: string;
+    has_paid: boolean;
+    is_verified: boolean;
+    is_printed: boolean;
+    is_validated: boolean;
+    created_at: string;
+    level_id: number;
+    profile: string;
+    expired: number;
+    change_token: string;
   };
 }
 
 interface AuthState extends AuthProps {
-  setAuth: (auth: Partial<AuthProps["auth"]>) => void;
+  setUser: (auth: Partial<AuthProps["user"]>) => void;
 }
 
 const initialData: AuthProps = {
-  auth: {
-    id: "",
-    name: "",
-    email: "",
-    phoneNumber: "",
-    isVerified: false,
-    levelId: 0,
-    createdAt: "",
-    address: "",
-    nik: "",
-    npaNumber: "",
-    dob: "",
-    birthPlace: "",
-    latestEducation: "",
-    gender: "",
-    religion: "",
-    bloodType: "",
-    postalCode: "",
-  },
+  user: {} as AuthProps["user"],
 };
 
 const useAuth = create<AuthState>()(
   persist(
     (set, get) => ({
       ...initialData,
-      setAuth: (values) =>
-        set({ ...values, auth: { ...get().auth, ...values } }),
+      setUser: (values) =>
+        set({ ...values, user: { ...get().user, ...values } }),
     }),
     {
       name: "auth-state",

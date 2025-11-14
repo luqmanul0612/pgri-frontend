@@ -1,13 +1,11 @@
 "use client";
 import React from "react";
-import useAuth from "@/store/useAuth";
 import { useRouter } from "next/navigation";
 import TextField from "@/components/customs/textfield";
 import DocumentUploadIcon from "../assets/document-upload.svg";
 import Button from "@/components/customs/button";
 
 const EditFee = () => {
-  const { auth } = useAuth();
   const router = useRouter();
   return (
     <div className="flex flex-col">

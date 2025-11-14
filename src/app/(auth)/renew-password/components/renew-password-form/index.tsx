@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Button from "@/components/customs/button";
 import Datepicker from "@/components/customs/datepicker";
 import TextField from "@/components/customs/textfield";
@@ -11,10 +12,12 @@ import {
   UpdatePasswordForm,
   updatePasswordValidationSchema,
 } from "../../utils/validation-schema";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { toast } from "sonner";
 import Danger from "../../assets/danger.svg";
 import Checkbox from "@/components/customs/checkbox";
+import { checkRenewPassword } from "../../serverActions/check-renew-password";
+import { useRouter } from "next/navigation";
 
 const defaultValues: UpdatePasswordForm = {
   oldPassword: "",
@@ -28,7 +31,8 @@ interface Props {
   setStep: (step: "FORM" | "DONE") => void;
 }
 
-const RenewPasswordForm: FC<Props> = ({ setStep, step }) => {
+const RenewPasswordForm: FC<Props> = ({ setStep }) => {
+  const router = useRouter();
   const form = useForm<UpdatePasswordForm>({
     mode: "all",
     defaultValues,
@@ -50,14 +54,24 @@ const RenewPasswordForm: FC<Props> = ({ setStep, step }) => {
 
   const handleSubmit = form.handleSubmit(async (values) => {
     updatePassword.mutate({
-      oldPassword: values.oldPassword,
-      newPassword: values.password,
+      old_password: values.oldPassword,
+      new_password: values.password,
+      confirm_new_password: values.confirmPassword,
     });
   });
 
+  useEffect(() => {
+    (async () => {
+      const { renew_password } = await checkRenewPassword();
+      if (!renew_password) {
+        router.push("/dashboard");
+      }
+    })();
+  }, []);
+
   return (
     <form
-      className="flex min-h-dvh flex-col items-center bg-slate-200 justify-stretch"
+      className="flex min-h-dvh flex-col items-center justify-stretch bg-slate-200"
       onSubmit={handleSubmit}
     >
       <div className="flex w-full flex-col items-center gap-2 bg-primary-500 p-[10px]">
@@ -67,7 +81,7 @@ const RenewPasswordForm: FC<Props> = ({ setStep, step }) => {
           sandi baru
         </p>
       </div>
-      <div className="flex flex-col flex-1 items-center justify-center py-[40px]">
+      <div className="flex flex-1 flex-col items-center justify-center py-[40px]">
         <div className="flex w-full max-w-[500px] flex-col items-start justify-center gap-6 rounded-2xl border border-[#17a3b8]/20 bg-white p-4">
           <div className="flex w-full flex-col items-start justify-start gap-4">
             <div className="flex flex-col items-start justify-start gap-1">
@@ -159,14 +173,6 @@ const RenewPasswordForm: FC<Props> = ({ setStep, step }) => {
             </div>
           </div>
           <div className="flex w-full gap-4">
-            <Button
-              type="button"
-              fullWidth
-              variant="secondary"
-              disabled={updatePassword.isPending}
-            >
-              Kembali
-            </Button>
             <Button
               fullWidth
               type="submit"

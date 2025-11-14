@@ -6,7 +6,7 @@ const RenewPasswordDone = () => {
   const router = useRouter();
 
   const onClickConfirm = () => {
-    router.push("/dashboard");
+    router.push("/login");
   };
 
   return (
