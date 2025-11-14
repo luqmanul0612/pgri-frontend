@@ -5,11 +5,11 @@ import FeeAndBillsAdmin from './components/fee-and-bills-admin';
 import FeeAndBillsFinanceAdmin from './components/fee-and-bills-finance-admin';
 
 const IuranDanTagihan = () => {
-  const { auth } = useAuth();
+  const { user } = useAuth();
   return (
     <>
-      {/* {auth.levelId === 1 && <FeeAndBillsAdmin />} */}
-      <FeeAndBillsFinanceAdmin />
+      {user.level_id === 1 && <FeeAndBillsAdmin />}
+      {user.level_id === 2 && <FeeAndBillsFinanceAdmin />}
     </>
   )
 }

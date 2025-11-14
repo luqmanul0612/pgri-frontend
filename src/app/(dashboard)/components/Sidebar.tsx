@@ -1,7 +1,6 @@
 "use client";
 import { FC, MouseEventHandler, SVGProps } from "react";
 import { IoIosArrowForward } from "react-icons/io";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import PgriLogo from "../../../../public/pgri-logo.svg";
@@ -175,10 +174,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
   handleSidebarToggle,
 }) => {
-  const { auth } = useAuth();
+  const { user } = useAuth();
   const filteredMenu = menu.filter((item) => {
-    if (!auth.levelId) return false;
-    return item.access.includes(auth.levelId);
+    if (!user.level_id) return false;
+    return item.access.includes(user.level_id);
   });
 
   return (
@@ -241,14 +240,14 @@ export const MenuItem: FC<MenuItemProps> = (props) => {
     verify,
     className,
   } = props;
-  const { auth } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   const isActive = pathname.startsWith(menuPathname || "");
   const onClickLink: MouseEventHandler<HTMLAnchorElement> = (e) => {
     if (verify) {
-      if (!auth.isVerified) {
+      if (!user.is_verified) {
         e.preventDefault();
         router.push("/account-verification");
         return;

@@ -22,38 +22,38 @@ interface pageProps {
 }
 
 const Page: FC<pageProps> = ({ params: {} }) => {
-  const { auth } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
-  const joinYear = dayjs(auth.createdAt).year();
+  const joinYear = dayjs(user.created_at).year();
 
   const getInstitution = useQuery({
     queryFn: () => getUserInstitution(),
   });
 
   const userData = [
-    { label: "Nama & Gelar", value: auth.name || "-" },
-    { label: "NIK", value: auth.nik || "-" },
+    { label: "Nama & Gelar", value: user.name || "-" },
+    { label: "NIK", value: user.nik || "-" },
     {
       label: "NPA (Nomor Pokok Anggota)",
-      value: auth.isVerified ? (
-        auth.npaNumber
+      value: user.is_verified ? (
+        user.npa
       ) : (
         <div className="text-red-500">Belum Tersedia</div>
       ),
     },
-    { label: "Email", value: auth.email || "-" },
-    { label: "Tempat Lahir", value: auth.birthPlace || "-" },
+    { label: "Email", value: user.email || "-" },
+    { label: "Tempat Lahir", value: user.birth_place || "-" },
     {
       label: "Tanggal Lahir",
-      value: auth.dob ? dayjs(auth.dob).format("DD/MM/YYYY") : "-",
+      value: user.birth_date ? dayjs(user.birth_date).format("DD/MM/YYYY") : "-",
     },
-    { label: "Pendidikan/Ijazah Terakhir", value: auth.latestEducation || "-" },
-    { label: "Jenis Kelamin", value: auth.gender || "-" },
-    { label: "Agama", value: auth.religion || "-" },
-    { label: "Golongan Darah", value: auth.bloodType || "-" },
-    { label: "Alamat KTP", value: auth.address || "-" },
-    { label: "Kode Pos", value: auth.postalCode || "-" },
-    { label: "No Handphone", value: auth.phoneNumber || "-" },
+    { label: "Pendidikan/Ijazah Terakhir", value: user.latest_education || "-" },
+    { label: "Jenis Kelamin", value: user.gender || "-" },
+    { label: "Agama", value: user.religion || "-" },
+    { label: "Golongan Darah", value: user.blood_type || "-" },
+    { label: "Alamat KTP", value: user.address || "-" },
+    { label: "Kode Pos", value: user.postal_code || "-" },
+    { label: "No Handphone", value: user.phone_number || "-" },
   ];
 
   const institution = getInstitution.data?.data;
@@ -88,14 +88,14 @@ const Page: FC<pageProps> = ({ params: {} }) => {
   ];
 
   const handlePrint = () => {
-    if (!auth.isVerified) {
+    if (!user.is_verified) {
       router.push("/account-verification");
       return;
     }
   };
 
   const handleEditProfile = () => {
-    if (!auth.isVerified) {
+    if (!user.is_verified) {
       router.push("/account-verification");
       return;
     }
@@ -119,18 +119,18 @@ const Page: FC<pageProps> = ({ params: {} }) => {
               className={cn(
                 "flex items-center gap-1 rounded-[26px] px-2 py-1 text-white",
                 {
-                  "bg-red-500": !auth.isVerified,
-                  "bg-primary-500": auth.isVerified,
+                  "bg-red-500": !user.is_verified,
+                  "bg-primary-500": user.is_verified,
                 },
               )}
             >
               <VerifyIcon width={18} height={18} />
               <p className="text-xs font-bold">
-                {auth.isVerified ? "Terverifikasi" : "Belum Diverifikasi"}
+                {user.is_verified ? "Terverifikasi" : "Belum Diverifikasi"}
               </p>
             </div>
-            <p className="mt-3 text-base font-bold text-black">{auth.name}</p>
-            <p className="mt-2 text-sm font-normal text-black">{auth.email}</p>
+            <p className="mt-3 text-base font-bold text-black">{user.name}</p>
+            <p className="mt-2 text-sm font-normal text-black">{user.email}</p>
             <p className="mt-1 text-[10px] font-normal text-primary-500">
               Anggota Sejak {joinYear}
             </p>

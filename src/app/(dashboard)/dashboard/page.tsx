@@ -10,12 +10,13 @@ interface pageProps {
 }
 
 const Page: FC<pageProps> = ({ params: {} }) => {
-  const { auth } = useAuth();
+  const { user } = useAuth();
+  
   return (
     <div>
-      {auth.levelId === 1 && <UserAdminSection />}
-      {auth.levelId === 2 && <FinanceAdminSection />}
-      {auth.levelId === 3 && <UserSection />}
+      {user.level_id === 1 && <UserAdminSection />}
+      {user.level_id === 2 && <FinanceAdminSection />}
+      {user.level_id === 3 && <UserSection />}
     </div>
   );
 };

@@ -11,7 +11,11 @@ export const userSchema = yup.object().shape({
     .string()
     .required("NIK wajib diisi")
     .min(16, "NIK harus 16 digit angka"),
-  email: yup.string().required("Email wajib diisi").email("Email tidak valid"),
+  email: yup
+    .string()
+    .required("Email wajib diisi")
+    .email("Email tidak valid")
+    .matches(/.+\..+$/, "Email tidak valid"),
   birthPlace: yup.string().required("Tempat lahir wajib diisi"),
   birthDate: yup.string().required("Tanggal lahir wajib diisi"),
   gender: yup.string().notRequired(),
@@ -61,9 +65,6 @@ export const userPasswordSchema = yup.object().shape({
   confirmPassword: yup
     .string()
     .required("Kata sandi wajib diisi")
-    .oneOf(
-      [yup.ref("password")],
-      "Kata sandi tidak sesuai",
-    ),
+    .oneOf([yup.ref("password")], "Kata sandi tidak sesuai"),
   isAgreed: yup.boolean(),
 }) as yup.ObjectSchema<UserPasswordData>;

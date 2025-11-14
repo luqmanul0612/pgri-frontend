@@ -49,7 +49,7 @@ const initialPaymentStatus: PaymentStatusResponse["data"] = {
 };
 
 const Page: FC<PageProps> = ({ params: {} }) => {
-  const { auth } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const { resetRegisterState } = useRegistrationState();
   const [paymentMethod, setPaymentMethod] = useState<IPaymentMethods[]>([]);
@@ -190,7 +190,7 @@ const Page: FC<PageProps> = ({ params: {} }) => {
               <TextField
                 className="w-full"
                 label="Nama Anggota"
-                value={auth?.name}
+                value={user?.name}
                 readOnly
                 startIcon={
                   <UserIcon
@@ -203,7 +203,7 @@ const Page: FC<PageProps> = ({ params: {} }) => {
               <TextField
                 className="w-full"
                 label="Email"
-                value={auth?.email}
+                value={user?.email}
                 readOnly
                 startIcon={
                   <EmailIcon
@@ -216,7 +216,7 @@ const Page: FC<PageProps> = ({ params: {} }) => {
               <TextField
                 className="w-full"
                 label="Nomor Handphone"
-                value={auth?.phoneNumber}
+                value={user?.phone_number}
                 readOnly
                 startIcon={
                   <PhoneIcon

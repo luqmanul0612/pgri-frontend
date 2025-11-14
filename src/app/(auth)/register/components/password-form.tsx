@@ -16,9 +16,6 @@ import dayjs from "dayjs";
 import TextField from "@/components/customs/textfield";
 import Required from "@/components/customs/required";
 import Danger from "../../../../../public/assets/danger";
-import { setCookies } from "@/serverActions/setCookies";
-import { decodeJwt } from "@/lib/utils";
-import { TokenValue } from "../serverActions/payment";
 import useAuth from "@/store/useAuth";
 
 const defaultValues: UserPasswordData = {
@@ -31,7 +28,7 @@ const PasswordForm = () => {
   const { setStep, setIsSubmited, isSubmited, jobData, userData } =
     useRegistrationState();
 
-  const { setAuth } = useAuth();
+  const { setUser } = useAuth();
 
   const form = useForm<UserPasswordData>({
     mode: "all",
@@ -45,29 +42,7 @@ const PasswordForm = () => {
     mutationFn: postAuthRegister,
     onSuccess: (res) => {
       setIsSubmited();
-      const token = res.data.token;
-      setCookies("token", token);
-      setCookies("auth", res.data);
-      const tokenValue = decodeJwt<TokenValue>(token as string);
-      setAuth({
-        id: res?.data?.id,
-        name: res?.data?.name,
-        email: res?.data?.email,
-        phoneNumber: res?.data?.phone_number,
-        isVerified: !!tokenValue?.is_verified,
-        levelId: tokenValue?.level_id ?? 3,
-        createdAt: res?.data?.created_at,
-        address: res?.data?.address,
-        birthPlace: res?.data?.birth_place,
-        bloodType: res?.data?.blood_type,
-        dob: res?.data?.dob,
-        gender: res?.data?.gender,
-        latestEducation: res?.data?.latest_education,
-        nik: res?.data?.nik,
-        npaNumber: res?.data?.npa_number,
-        postalCode: res?.data?.postal_code,
-        religion: res?.data?.religion,
-      });
+      setUser(res.data);
     },
     onError: (err: { message: string }) => {
       toast.error(err.message);

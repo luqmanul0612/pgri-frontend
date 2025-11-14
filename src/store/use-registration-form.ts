@@ -210,25 +210,7 @@ const handlerSubmitRegisterForm = async (
     setCookies("token", token);
     setCookies("auth", res.data);
     const tokenValue = decodeJwt<TokenValue>(token as string);
-    useAuth.getState().setAuth({
-      id: res?.data?.id,
-      name: res?.data?.name,
-      email: res?.data?.email,
-      phoneNumber: res?.data?.phone_number,
-      isVerified: !!tokenValue?.is_verified,
-      levelId: tokenValue?.level_id ?? 3,
-      createdAt: res?.data?.created_at,
-      address: res?.data?.address,
-      birthPlace: res?.data?.birth_place,
-      bloodType: res?.data?.blood_type,
-      dob: res?.data?.dob,
-      gender: res?.data?.gender,
-      latestEducation: res?.data?.latest_education,
-      nik: res?.data?.nik,
-      npaNumber: res?.data?.npa_number,
-      postalCode: res?.data?.postal_code,
-      religion: res?.data?.religion,
-    });
+    useAuth.getState().setUser(res.data);
     set({
       isLoading: false,
       passwordFormData: { ...get().passwordFormData, isSubmited: true },

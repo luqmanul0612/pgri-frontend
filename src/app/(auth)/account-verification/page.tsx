@@ -11,13 +11,13 @@ import { useEffect } from "react";
 export default function AccountVerification() {
   const { step } = useVerificationForm();
   const router = useRouter();
-  const { auth } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
-    if (auth.isVerified) {
+    if (user.is_verified) {
       router.push("/dashboard");
     }
-  }, [auth.isVerified]);
+  }, [user.is_verified]);
   
   return (
     <>

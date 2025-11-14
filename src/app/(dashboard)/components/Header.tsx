@@ -13,7 +13,7 @@ export const Header: React.FC<TopNavbarProps> = ({
   isSidebarOpen,
   handleSidebarToggle,
 }) => {
-  const { auth } = useAuth();
+  const { user } = useAuth();
 
   return (
     <div
@@ -50,7 +50,7 @@ export const Header: React.FC<TopNavbarProps> = ({
           <button className="flex items-center rounded-[8px] px-3 py-1 transition-all hover:bg-primary-600">
             <div>
               <h1 className="text-[12px] font-semibold text-white">
-                {auth?.name}
+                {user?.name}
               </h1>
               <h5 className="text-right text-[10px] text-[#FFC107]">Online</h5>
             </div>

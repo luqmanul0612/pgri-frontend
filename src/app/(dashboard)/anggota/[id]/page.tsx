@@ -20,7 +20,7 @@ interface pageProps {
 
 const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
   const router = useRouter();
-  const { auth } = useAuth();
+  const { user } = useAuth();
   const [memberData, setMemberData] = useState<IMemberByIdResponse | null>(
     null,
   );
@@ -372,7 +372,7 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
       </TabGroup>
 
       {/* button verify */}
-      {auth.levelId === 1 && (
+      {user.level_id === 1 && (
         <div className="mt-5 flex space-x-4">
           <button
             onClick={() => {
