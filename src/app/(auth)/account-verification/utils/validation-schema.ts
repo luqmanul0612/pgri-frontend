@@ -11,7 +11,8 @@ export const userVerificationSchema = yup.object().shape({
     email: yup
       .string()
       .required("Field ini wajib diisi")
-      .email("Email tidak valid"),
+      .email("Email tidak valid")
+      .matches(/.+\..+$/, "Email tidak valid"),
     birthPlace: yup.string().required("Field ini wajib diisi"),
     birthDate: yup.string().required("Field ini wajib diisi"),
     gender: yup.string().required("Field ini wajib diisi"),
