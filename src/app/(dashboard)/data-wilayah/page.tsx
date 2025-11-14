@@ -1,6 +1,7 @@
 "use client";
 
 import { FC } from "react";
+import Link from "next/link";
 import { useWilayahStore, Wilayah } from "./store/wilayah-store";
 import { wilayah } from "./store/wilayah-store";
 import MapIllustration from "@/assets/icons/data-wilayah/map-illustration";
@@ -48,14 +49,11 @@ const Page: FC = () => {
         </p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {wilayah.map((item: Wilayah, i: number) => {
+            const href = `/data-wilayah/${item.toLowerCase().replace(/[\/]/g, "-").replace("kabupaten/kota", "kabupaten").replace("desa/kelurahan", "kelurahan")}`;
             return (
-              <RegionButton
-                key={i}
-                label={item}
-                onClick={() => {
-                  setSelectedWilayah(item);
-                }}
-              />
+              <Link key={i} href={href}>
+                <RegionButton label={item} />
+              </Link>
             );
           })}
         </div>
@@ -69,7 +67,7 @@ export default Page;
 const RegionButton: FC<RegionButtonProps> = ({ label, onClick }) => (
   <button
     onClick={onClick}
-    className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-[#f5f7fb] transition-colors hover:opacity-90`}
+    className={`flex w-full flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-[#f5f7fb] transition-colors hover:opacity-90`}
   >
     <span className="truncate">{label}</span>
   </button>
