@@ -1,7 +1,20 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const skipPaths: string[] = [];
+const skipPaths: string[] = [
+  "/permohonan",
+  "/karyaguru",
+  "/pelatihan",
+  "/lindungiguru",
+  "/aspirasiguru",
+  "/mutasianggota",
+  "/role",
+  "/iurandantagihan",
+  "/training-funds",
+  "/idcard-printing-fee",
+  "/financial-report",
+  "/management",
+];
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

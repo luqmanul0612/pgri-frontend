@@ -1,11 +1,14 @@
 import Button from "@/components/customs/button";
 import ValidationImage from "../../assets/validation-done.svg";
 import { useRouter } from "next/navigation";
+import useAuth from "@/store/useAuth";
 
 const ValidationDone = () => {
+  const { setUser } = useAuth();
   const router = useRouter();
 
   const onClickConfirm = () => {
+    setUser({ is_verified: true });
     router.push("/dashboard");
   };
 

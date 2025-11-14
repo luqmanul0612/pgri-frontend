@@ -25,10 +25,10 @@ export interface UserVerificationForm {
     latestEducationId: string;
   };
   userJob: {
-    provinceCode: string;
-    cityCode: string;
-    districtCode: string;
-    subDistrictCode: string;
+    provinceId: string;
+    cityId: string;
+    districtId: string;
+    subDistrictId: string;
     stageId: string;
     jobId: string;
     name: string;

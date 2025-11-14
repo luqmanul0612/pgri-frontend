@@ -11,10 +11,10 @@ interface pageProps {
 
 const Page: FC<pageProps> = ({ params: {} }) => {
   const { user } = useAuth();
-  
+
   return (
     <div>
-      {user.level_id === 1 && <UserAdminSection />}
+      {[1, 4, 5, 6, 7, 8, 9].includes(user.level_id) && <UserAdminSection />}
       {user.level_id === 2 && <FinanceAdminSection />}
       {user.level_id === 3 && <UserSection />}
     </div>
