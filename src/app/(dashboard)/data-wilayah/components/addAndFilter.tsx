@@ -1,10 +1,22 @@
+"use client";
 import { useState } from "react";
-import { useWilayahStore } from "../store/wilayah-store";
+import { useRouter } from "next/navigation";
+import { WilayahBreadcrumb } from "./WilayahBreadcrumb";
 
-export const AddAndFilterWilayah = ({ wilayah }: { wilayah: string }) => {
+export interface AddAndFilterWilayahProps {
+  wilayah: string;
+  currentLevel?: "kabupaten" | "kecamatan" | "kelurahan";
+  onShowParentModal?: () => void;
+}
+
+export const AddAndFilterWilayah = ({
+  wilayah,
+  currentLevel,
+  onShowParentModal
+}: AddAndFilterWilayahProps) => {
   const [kodeWilayah, setKodeWilayah] = useState("");
   const [namaWilayah, setNamaWilayah] = useState("");
-  const { deleteSelectedWilayah } = useWilayahStore();
+  const router = useRouter();
 
   const handleSimpanData = () => {
     console.log({ kodeWilayah, namaWilayah });
@@ -16,7 +28,7 @@ export const AddAndFilterWilayah = ({ wilayah }: { wilayah: string }) => {
         <div
           className="flex cursor-pointer items-center gap-2.5"
           onClick={() => {
-            deleteSelectedWilayah();
+            router.push("/data-wilayah");
           }}
         >
           <svg
@@ -60,6 +72,15 @@ export const AddAndFilterWilayah = ({ wilayah }: { wilayah: string }) => {
           </button>
         </div>
       </div>
+
+      {/* Floating Parent Selector Button */}
+      {currentLevel && onShowParentModal && (
+        <WilayahBreadcrumb
+          onShowParentModal={onShowParentModal}
+          currentLevel={currentLevel}
+        />
+      )}
+
       <div className="mt-4 flex items-center gap-4">
         <div className="flex flex-1 items-center gap-2.5">
           <div className="flex-1 text-base font-semibold text-[#17191c]">

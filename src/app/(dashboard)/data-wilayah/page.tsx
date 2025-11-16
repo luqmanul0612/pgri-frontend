@@ -2,8 +2,7 @@
 
 import { FC } from "react";
 import Link from "next/link";
-import { Wilayah } from "./store/wilayah-store";
-import { wilayah } from "./store/wilayah-store";
+import { wilayah } from "./config/wilayah-types";
 import MapIllustration from "@/assets/icons/data-wilayah/map-illustration";
 
 interface RegionButtonProps {
@@ -37,8 +36,8 @@ const Page: FC = () => {
           Pilih Data Wilayah:
         </p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {wilayah.map((item: Wilayah, i: number) => {
-            const href = `/data-wilayah/${item.toLowerCase().replace(/[\/]/g, "-").replace("kabupaten-kota", "kabupaten").replace("desa/kelurahan", "kelurahan")}`;
+          {wilayah.map((item: string, i: number) => {
+            const href = `/data-wilayah/${item.toLowerCase()}`;
             return (
               <Link key={i} href={href}>
                 <RegionButton label={item} />

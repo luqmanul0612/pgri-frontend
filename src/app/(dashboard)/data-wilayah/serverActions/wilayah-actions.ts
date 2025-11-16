@@ -54,16 +54,16 @@ export async function getProvinces() {
   return makeApiRequest(WILAYAH_ENDPOINTS.PROVINCES);
 }
 
-export async function getCities(provinceCode: string) {
-  return makeApiRequest(`${WILAYAH_ENDPOINTS.CITIES}/${provinceCode}`);
+export async function getCities(provinceId: string) {
+  return makeApiRequest(`${WILAYAH_ENDPOINTS.CITIES}/${provinceId}`);
 }
 
-export async function getDistricts(cityCode: string) {
-  return makeApiRequest(`${WILAYAH_ENDPOINTS.DISTRICTS}/${cityCode}`);
+export async function getDistricts(cityId: string) {
+  return makeApiRequest(`${WILAYAH_ENDPOINTS.DISTRICTS}/${cityId}`);
 }
 
-export async function getSubdistricts(districtCode: string) {
-  return makeApiRequest(`${WILAYAH_ENDPOINTS.SUBDISTRICTS}/${districtCode}`);
+export async function getSubdistricts(districtId: string) {
+  return makeApiRequest(`${WILAYAH_ENDPOINTS.SUBDISTRICTS}/${districtId}`);
 }
 
 // Server action untuk single item (jika diperlukan)
