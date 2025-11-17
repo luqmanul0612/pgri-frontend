@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { WilayahBreadcrumb } from "./WilayahBreadcrumb";
 
@@ -12,15 +11,9 @@ export interface AddAndFilterWilayahProps {
 export const AddAndFilterWilayah = ({
   wilayah,
   currentLevel,
-  onShowParentModal
+  onShowParentModal,
 }: AddAndFilterWilayahProps) => {
-  const [kodeWilayah, setKodeWilayah] = useState("");
-  const [namaWilayah, setNamaWilayah] = useState("");
   const router = useRouter();
-
-  const handleSimpanData = () => {
-    console.log({ kodeWilayah, namaWilayah });
-  };
 
   return (
     <div>
@@ -44,32 +37,8 @@ export const AddAndFilterWilayah = ({
             />
           </svg>
           <div className="flex-1 text-base font-semibold text-[#17191c]">
-            Tambah Wilayah {wilayah}
+            Data Wilayah
           </div>
-        </div>
-        <div className="flex items-end gap-4 rounded-2xl bg-white p-4 outline outline-1 outline-offset-[-1px] outline-[#17a3b8]/20">
-          <ReusableInput
-            label={"Kode " + wilayah}
-            placeholder={`Masukkan Kode ${wilayah} (Contoh: 11)`}
-            value={kodeWilayah}
-            onChange={setKodeWilayah}
-            required
-          />
-          <ReusableInput
-            label={`Nama ${wilayah}`}
-            placeholder={`Tuliskan Nama ${wilayah} (Contoh: Aceh)`}
-            value={namaWilayah}
-            onChange={setNamaWilayah}
-            required
-          />
-          <button
-            onClick={handleSimpanData}
-            className="flex w-[180px] items-center justify-center gap-2.5 rounded-[10px] bg-[#17a3b8] px-2.5 py-3 transition-colors hover:bg-[#138a9e]"
-          >
-            <div className="text-sm font-normal text-[#f5f7fb]">
-              Simpan Data
-            </div>
-          </button>
         </div>
       </div>
 
@@ -123,44 +92,3 @@ export const AddAndFilterWilayah = ({
     </div>
   );
 };
-
-// ANCHOR: InnerComponents
-// #region InnerComponents
-
-interface ReusableInputProps {
-  label: string;
-  placeholder: string;
-  value: string;
-  onChange: (value: string) => void;
-  required?: boolean;
-}
-
-const ReusableInput = ({
-  label,
-  placeholder,
-  value,
-  onChange,
-  required = false,
-}: ReusableInputProps) => {
-  return (
-    <div className="flex flex-1 flex-col gap-1">
-      <div className="flex gap-1">
-        <div className="text-xs font-normal text-[#17191c]">{label}</div>
-        {required && (
-          <div className="text-xs font-normal text-[#ff0000]">*</div>
-        )}
-      </div>
-      <div className="flex h-11 items-center gap-2.5 rounded-lg pl-4 pr-3 outline outline-1 outline-offset-[-1px] outline-[#d3d3d3]">
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          className="flex-1 bg-transparent text-sm font-normal text-[#17191c] outline-none placeholder:text-[#919191]"
-        />
-      </div>
-    </div>
-  );
-};
-
-// #endregion
