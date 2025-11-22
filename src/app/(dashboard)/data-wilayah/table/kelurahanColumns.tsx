@@ -18,7 +18,7 @@ export const kelurahanColumns: ColumnDef<KelurahanData>[] = [
     },
   },
   {
-    accessorKey: "kodeKelurahan",
+    accessorKey: "code",
     header: "Kode Kelurahan",
     size: 150,
     cell: ({ getValue }) => {
@@ -30,7 +30,7 @@ export const kelurahanColumns: ColumnDef<KelurahanData>[] = [
     },
   },
   {
-    accessorKey: "namaKelurahan",
+    accessorKey: "name",
     header: "Nama Kelurahan",
     cell: ({ getValue }) => {
       return (

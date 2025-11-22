@@ -18,7 +18,7 @@ export const kabupatenColumns: ColumnDef<KabupatenData>[] = [
     },
   },
   {
-    accessorKey: "kodeKabupaten",
+    accessorKey: "code",
     header: "Kode Kabupaten/Kota",
     size: 150,
     cell: ({ getValue }) => {
@@ -30,7 +30,7 @@ export const kabupatenColumns: ColumnDef<KabupatenData>[] = [
     },
   },
   {
-    accessorKey: "namaKabupaten",
+    accessorKey: "name",
     header: "Nama Kabupaten/Kota",
     cell: ({ getValue }) => {
       return (

@@ -1,13 +1,9 @@
 "use client";
 
 import { FC } from "react";
-import { useWilayahStore, Wilayah } from "./store/wilayah-store";
-import { wilayah } from "./store/wilayah-store";
+import Link from "next/link";
+import { wilayah } from "./config/wilayah-types";
 import MapIllustration from "@/assets/icons/data-wilayah/map-illustration";
-import { Provinsi } from "./screens/provinsi";
-import { Kabupaten } from "./screens/kabupaten";
-import { Kecamatan } from "./screens/kecamatan";
-import { Kelurahan } from "./screens/kelurahan";
 
 interface RegionButtonProps {
   label: string;
@@ -16,13 +12,6 @@ interface RegionButtonProps {
 }
 
 const Page: FC = () => {
-  const { selectedWilayah, setSelectedWilayah } = useWilayahStore();
-
-  if (selectedWilayah === "Provinsi") return <Provinsi />;
-  if (selectedWilayah === "Kabupaten/Kota") return <Kabupaten />;
-  if (selectedWilayah === "Kecamatan") return <Kecamatan />;
-  if (selectedWilayah === "Desa/Kelurahan") return <Kelurahan />;
-
   return (
     <div className="-mt-4 flex flex-col items-center gap-4 px-4 md:gap-4 md:px-6">
       <MapIllustration />
@@ -47,15 +36,12 @@ const Page: FC = () => {
           Pilih Data Wilayah:
         </p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {wilayah.map((item: Wilayah, i: number) => {
+          {wilayah.map((item: string, i: number) => {
+            const href = `/data-wilayah/${item.toLowerCase()}`;
             return (
-              <RegionButton
-                key={i}
-                label={item}
-                onClick={() => {
-                  setSelectedWilayah(item);
-                }}
-              />
+              <Link key={i} href={href}>
+                <RegionButton label={item} />
+              </Link>
             );
           })}
         </div>
@@ -69,7 +55,7 @@ export default Page;
 const RegionButton: FC<RegionButtonProps> = ({ label, onClick }) => (
   <button
     onClick={onClick}
-    className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-[#f5f7fb] transition-colors hover:opacity-90`}
+    className={`flex w-full flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-[#f5f7fb] transition-colors hover:opacity-90`}
   >
     <span className="truncate">{label}</span>
   </button>

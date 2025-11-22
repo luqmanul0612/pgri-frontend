@@ -105,8 +105,8 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
             <div className="flex flex-col gap-1 text-white">
               <div>
                 {memberData?.data?.user?.name}{" "}
-                {memberData?.data?.user?.npa_number
-                  ? "(" + memberData?.data?.user.npa_number + ")"
+                {memberData?.data?.user?.npa
+                  ? "(" + memberData?.data?.user.npa + ")"
                   : ""}{" "}
               </div>
               <div className="text-xs">{memberData?.data?.user?.email}</div>
@@ -152,7 +152,7 @@ const AnggotaDetail: FC<pageProps> = ({ params: { id } }) => {
                       NPA (Nomor Pokok Anggota)
                     </span>
                     <span className="text-sm">
-                      {memberData?.data?.user?.npa_number || "-"}
+                      {memberData?.data?.user?.npa || "-"}
                     </span>
                   </div>
                   <div className="mb-3 flex flex-col">

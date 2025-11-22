@@ -160,6 +160,25 @@ export const getMemberById = async (id: string) => {
   return result;
 };
 
+// GET BY NPA
+export const getMemberByNpa = async (npa: string) => {
+  const token = cookies().get("token")?.value;
+
+  const headers: Record<string, any> = {
+    Authorization: token,
+  };
+  const response = await fetch(
+    `${process.env.HOST}/api/v2/members/npa/${npa}`,
+    {
+      headers,
+      cache: "no-cache",
+    },
+  );
+  const result: IMemberByIdResponse = await response.json();
+  console.log(result);
+  return result;
+};
+
 // GET PROVINCES
 export const getProvinces = async () => {
   const response: Response = await fetch(

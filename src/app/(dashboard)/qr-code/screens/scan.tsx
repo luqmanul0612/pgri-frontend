@@ -15,10 +15,10 @@ export const Scan = ({ onBackToMain, selectedActivity, activities }: ScanProps) 
   const [cameraDevices, setCameraDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>("");
   const [isScanning, setIsScanning] = useState(false);
-  const [scanResult, setScanResult] = useState<string>("");
   const [cameraError, setCameraError] = useState<string>("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [manualNPA, setManualNPA] = useState<string>("");
+  const [scanSuccess, setScanSuccess] = useState(false);
   const readerRef = useRef<BrowserMultiFormatReader | null>(null);
 
   // Get available camera devices
@@ -44,7 +44,13 @@ export const Scan = ({ onBackToMain, selectedActivity, activities }: ScanProps) 
   useEffect(() => {
     readerRef.current = new BrowserMultiFormatReader();
     return () => {
-      // Cleanup handled by component unmount
+      // Cleanup on component unmount
+      if ((window as any).scanInterval) {
+        clearInterval((window as any).scanInterval);
+        delete (window as any).scanInterval;
+      }
+      // BrowserMultiFormatReader doesn't have reset method
+      readerRef.current = null;
     };
   }, []);
 
@@ -53,51 +59,94 @@ export const Scan = ({ onBackToMain, selectedActivity, activities }: ScanProps) 
     if (!webcamRef.current || !readerRef.current) return;
 
     setIsScanning(true);
-    const videoElement = webcamRef.current.video;
+    console.log("Starting scanning...");
 
-    if (videoElement) {
-      const scanInterval = setInterval(() => {
-        if (videoElement.readyState === 4 && readerRef.current) {
-          try {
-            const canvas = document.createElement("canvas");
-            const context = canvas.getContext("2d");
-            if (context) {
-              canvas.width = videoElement.videoWidth;
-              canvas.height = videoElement.videoHeight;
-              context.drawImage(videoElement, 0, 0);
+    let attempts = 0;
+    const maxAttempts = 100; // Prevent infinite scanning
 
-              try {
-                const result = readerRef.current.decode(videoElement);
-                if (result) {
-                  setScanResult(result.getText());
-                  setIsScanning(false);
-                  clearInterval(scanInterval);
-                }
-              } catch (decodeError) {
-                // Continue scanning - no QR code found
-              }
+    const scanInterval = setInterval(() => {
+      attempts++;
+
+      if (attempts > maxAttempts) {
+        console.log("Max scanning attempts reached");
+        clearInterval(scanInterval);
+        return;
+      }
+
+      const videoElement = webcamRef.current?.video;
+      if (videoElement && videoElement.readyState === 4 && readerRef.current) {
+        try {
+          console.log(`Scanning attempt ${attempts}...`);
+
+          // Create canvas from video frame
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+          if (context) {
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+            // Try to decode from canvas
+            const result = readerRef.current.decodeFromCanvas(canvas);
+            if (result) {
+              const qrText = result.getText();
+              console.log("QR Code detected:", qrText);
+              setScanSuccess(true);
+              setIsScanning(false);
+              clearInterval(scanInterval);
+
+              // Navigate to verification page
+              const params = new URLSearchParams({
+  activity: selectedActivity,
+  method: 'qr'
+});
+window.location.href = `/qr-code/verification/${qrText}?${params.toString()}`;
+              return;
             }
-          } catch (error) {
-            // Continue scanning
           }
+        } catch (error) {
+          // No QR code found in this frame, continue scanning
+          // console.log("No QR code found, trying again...");
         }
-      }, 500); // Reduced frequency to improve performance
+      } else {
+        console.log("Video element not ready");
+      }
+    }, 500); // Scanning every 500ms
 
-      return () => clearInterval(scanInterval);
-    }
-  }, []);
+    // Store interval ID for cleanup
+    (window as any).scanInterval = scanInterval;
+  }, [selectedDeviceId]);
 
   // Stop scanning
   const stopScanning = useCallback(() => {
+    console.log("Stopping scanning");
     setIsScanning(false);
+    if ((window as any).scanInterval) {
+      clearInterval((window as any).scanInterval);
+      delete (window as any).scanInterval;
+    }
+    // BrowserMultiFormatReader doesn't have reset method
+    // No need to explicitly stop, just clear the interval
   }, []);
 
   // Handle manual check
   const handleManualCheck = () => {
     if (manualNPA.trim()) {
-      setScanResult(manualNPA.trim());
+      const npa = manualNPA.trim();
+      setScanSuccess(true);
+      setIsScanning(false);
+
+      // Navigate to verification page
+      const params = new URLSearchParams({
+  activity: selectedActivity,
+  method: 'manual'
+});
+window.location.href = `/qr-code/verification/${npa}?${params.toString()}`;
     }
   };
+
+  
+    
   return (
     <main className="-mx-4 inline-flex w-[1200px] flex-col items-center justify-start gap-5">
       <section className="flex w-[1160px] flex-col items-start justify-start gap-4">
@@ -210,7 +259,10 @@ export const Scan = ({ onBackToMain, selectedActivity, activities }: ScanProps) 
                       facingMode: "environment",
                     }}
                     className="h-full w-full object-cover"
-                    onUserMedia={startScanning}
+                    onUserMedia={() => {
+                      console.log("Webcam user media ready");
+                      startScanning();
+                    }}
                     onUserMediaError={(error) => {
                       const errorMessage =
                         typeof error === "string"
@@ -219,10 +271,10 @@ export const Scan = ({ onBackToMain, selectedActivity, activities }: ScanProps) 
                       setCameraError("Gagal mengakses kamera: " + errorMessage);
                     }}
                   />
-                  {scanResult && (
+                  {scanSuccess && (
                     <div className="absolute left-4 right-4 top-4 rounded-lg bg-green-500 p-3 text-white">
-                      <p className="font-semibold">QR Code Terdeteksi:</p>
-                      <p className="text-sm">{scanResult}</p>
+                      <p className="font-semibold">QR Code Terdeteksi</p>
+                      <p className="text-sm">Mengalihkan ke halaman verifikasi...</p>
                     </div>
                   )}
                   {isScanning && (

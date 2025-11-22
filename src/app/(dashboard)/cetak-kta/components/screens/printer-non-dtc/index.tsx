@@ -1,15 +1,169 @@
-import React, { FC, useState } from "react";
-import { DataTable } from "@/components/table/DataTable";
+"use client";
+import { FC, useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  flexRender,
+  ColumnDef,
+} from "@tanstack/react-table";
 import { Checkbox } from "../../icons/checkbox";
-import { CetakKtaTableData, PrinterDtcProps } from "./types";
+import { PrinterDtcProps } from "./types";
 import { createColumns } from "./columns";
-import { sampleData } from "./data";
 import { ktaPrintService } from "@/services/kta-print";
+import {
+  getMembersV2,
+  GetMembersParams,
+  MemberItem,
+} from "../../../../anggota/serverActions/member";
+import { IMember } from "@/interfaces/IMemberResponse";
+import { CetakKtaTableData } from "./types";
+import { toast } from "sonner";
+import useQuery from "@/utils/hooks/use-query";
+import {
+  getLocation,
+  getServiceOptions,
+} from "@/app/(auth)/register/serverActions/get-register-form-data";
+import Select from "@/components/customs/select";
+import Button from "@/components/customs/button";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
+
+const defaultParams: GetMembersParams = {
+  q: "",
+  page: 1,
+  limit: 10,
+  province_id: "",
+  city_id: "",
+  district_id: "",
+  employment_status_id: "",
+  membership_status_id: "1", // Filter only verified members
+  gender: "",
+  sort_by: "created_at",
+  order: "desc",
+};
 
 const PrinterNonDtc: FC<PrinterDtcProps> = ({ onBack }) => {
-  const [data, setData] = useState<CetakKtaTableData[]>(sampleData);
-  const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
+  // State management
+  const [data, setData] = useState<CetakKtaTableData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isChangingPage, setIsChangingPage] = useState(false);
+  const [totalData, setTotalData] = useState(0);
+  const [tempFilters, setTempFilters] =
+    useState<GetMembersParams>(defaultParams);
+
+  // URL sync - get current params from URL
+  const currentParams: GetMembersParams = {
+    q: searchParams.get("q") || "",
+    page: parseInt(searchParams.get("page") || "1"),
+    limit: parseInt(searchParams.get("limit") || "10"),
+    province_id: searchParams.get("province_id") || "",
+    city_id: searchParams.get("city_id") || "",
+    district_id: searchParams.get("district_id") || "",
+    employment_status_id: searchParams.get("employment_status_id") || "",
+    membership_status_id: searchParams.get("membership_status_id") || "1",
+    gender: searchParams.get("gender") || "",
+    sort_by: searchParams.get("sort_by") || "created_at",
+    order: searchParams.get("order") || "desc",
+  };
+
+  // Update URL with new params
+  const updateURL = (newParams: Partial<GetMembersParams>) => {
+    const params = new URLSearchParams(searchParams);
+
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value && value !== defaultParams[key as keyof GetMembersParams]) {
+        params.set(key, value.toString());
+      } else {
+        params.delete(key);
+      }
+    });
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    router.push(newUrl, { scroll: false });
+  };
+
+  // Transform IMember to CetakKtaTableData
+  const transformMemberToKtaData = (member: MemberItem): CetakKtaTableData => ({
+    id: Number(member.id),
+    npa: member.npa || "",
+    nik: member.nik || "",
+    namaAnggota: member.name || "",
+    tempatLahir: member.birth_place || "",
+    tanggalLahir: member.birth_place || "",
+    agama: "", // Field tidak ada di IMember, default empty
+    foto: member.profile,
+    qrCode: member.qr,
+    cetakKtaBiasa: false,
+    cetakKtaMultiPayment: false,
+    status: member.membership_status === "Aktif" ? "active" : "inactive",
+    selected: false,
+  });
+
+  // Fetch data
+  const fetchData = async (isPageChange = false) => {
+    // Only set loading to true if it's not already loading
+    if (!isLoading) {
+      setIsLoading(true);
+      if (isPageChange) {
+        setIsChangingPage(true);
+      }
+    }
+
+    try {
+      const result = await getMembersV2(currentParams);
+      const transformedData = (result.data?.data || []).map(transformMemberToKtaData);
+      setData(transformedData);
+
+      // Extract total data and pagination info
+      const pagination = result.data?.pagination;
+      const totalPages =
+        pagination?.total_page ||
+        Math.ceil((result.data?.pagination?.total_items || 0) / currentParams.limit);
+      const totalItems = result.data?.pagination?.total_items || pagination?.total_items || 0;
+
+      setTotalData(totalItems);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+      toast.error("Gagal memuat data");
+      setData([]);
+      setTotalData(0);
+    } finally {
+      setIsLoading(false);
+      setIsChangingPage(false);
+    }
+  };
+
+  // Data fetching
+  useEffect(() => {
+    fetchData();
+  }, [searchParams]);
+
+  // Location data for filters
+  const provinces = useQuery({
+    queryFn: () => getLocation({ type: "provinces" }),
+  });
+
+  const cities = useQuery({
+    queryKey: [tempFilters.province_id],
+    queryFn: () => getLocation({ type: "cities", id: tempFilters.province_id }),
+    enabled: !!tempFilters.province_id,
+  });
+
+  const districts = useQuery({
+    queryKey: [tempFilters.city_id],
+    queryFn: () => getLocation({ type: "districts", id: tempFilters.city_id }),
+    enabled: !!tempFilters.city_id,
+  });
+
+  const employmentStatuses = useQuery({
+    queryFn: () => getServiceOptions("employment-statuses"),
+  });
+
+  // Table handlers
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
     setData((prev) => prev.map((row) => ({ ...row, selected: checked })));
@@ -28,13 +182,11 @@ const PrinterNonDtc: FC<PrinterDtcProps> = ({ onBack }) => {
   const handleCetak = async () => {
     const selectedData = data.filter((row) => row.selected);
 
-    // Validasi minimal 1 KTA dipilih
     if (selectedData.length === 0) {
-      alert("Pilih minimal 1 KTA untuk dicetak");
+      toast.error("Pilih minimal 1 KTA untuk dicetak");
       return;
     }
 
-    // Konfirmasi sebelum cetak multiple
     const confirmMessage = `Anda akan mencetak ${selectedData.length} KTA. Lanjutkan?`;
     if (!confirm(confirmMessage)) {
       return;
@@ -43,41 +195,100 @@ const PrinterNonDtc: FC<PrinterDtcProps> = ({ onBack }) => {
     setIsLoading(true);
 
     try {
-      // Transform data ke format yang dibutuhkan KTAGeneratorOptions
+      // Transform data to format needed for KTAGeneratorOptions
       const ktaOptions = selectedData.map((item) => ({
-        data: item,
-        cardType: 'CR80' as const // Default ke CR80 untuk printer non-DTC
+        data: { ...item },
+        cardType: "CR80" as const, // Default ke CR80 untuk printer non-DTC
       }));
 
       await ktaPrintService.printMultipleKTA(ktaOptions);
 
-      // Update status cetak setelah berhasil
       setData((prev) =>
-        prev.map((row) =>
-          row.selected ? { ...row, selected: false, status: 'active' as const } : row
-        )
+        prev.map((row) => (row.selected ? { ...row, selected: false } : row)),
       );
 
+      toast.success("KTA berhasil dicetak");
     } catch (error) {
-      console.error('Failed to print multiple KTA:', error);
+      console.error("Failed to print multiple KTA:", error);
 
-      let errorMessage = 'Gagal mencetak KTA. ';
+      let errorMessage = "Gagal mencetak KTA. ";
       if (error instanceof Error) {
-        if (error.message.includes('popup')) {
-          errorMessage += 'Silakan aktifkan popup untuk browser ini.';
-        } else if (error.message.includes('template')) {
-          errorMessage += 'Template kartu tidak dapat dimuat.';
+        if (error.message.includes("popup")) {
+          errorMessage += "Silakan aktifkan popup untuk browser ini.";
+        } else if (error.message.includes("template")) {
+          errorMessage += "Template kartu tidak dapat dimuat.";
         } else {
-          errorMessage += 'Silakan coba lagi.';
+          errorMessage += "Silakan coba lagi.";
         }
       }
-      alert(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const columnsNonDtc = createColumns(data, handleSelectAll, handleSelectRow, Checkbox);
+  // Filter handlers
+  const onClickApply = () => {
+    updateURL({
+      province_id: tempFilters.province_id,
+      city_id: tempFilters.city_id,
+      district_id: tempFilters.district_id,
+      employment_status_id: tempFilters.employment_status_id,
+    });
+  };
+
+  const handleSearch = (query: string) => {
+    // For search, add a small delay to avoid too many requests while typing
+    const timeoutId = setTimeout(() => {
+      updateURL({ q: query, page: 1 });
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  };
+
+  const columnsNonDtc = createColumns(
+    data,
+    handleSelectAll,
+    handleSelectRow,
+    Checkbox,
+  );
+
+  // Calculate pagination values
+  const currentPage = currentParams.page - 1;
+  const pageSize = currentParams.limit;
+  const totalPages = Math.ceil(totalData / pageSize) || 1;
+  const startIndex = currentPage * pageSize + 1;
+  const endIndex = Math.min((currentPage + 1) * pageSize, totalData);
+
+  // Create table instance with manual pagination
+  const table = useReactTable({
+    data,
+    columns: columnsNonDtc,
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true, // Use manual pagination
+    pageCount: totalPages,
+    state: {
+      pagination: {
+        pageSize,
+        pageIndex: currentPage,
+      },
+    },
+  });
+
+  // Handle pagination changes
+  const handlePageChange = (newPageIndex: number) => {
+    // Set loading state immediately for better UX
+    setIsChangingPage(true);
+    setIsLoading(true);
+    updateURL({ page: newPageIndex + 1 });
+  };
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    // Set loading state immediately for better UX
+    setIsChangingPage(true);
+    setIsLoading(true);
+    updateURL({ limit: newPageSize, page: 1 });
+  };
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -101,30 +312,76 @@ const PrinterNonDtc: FC<PrinterDtcProps> = ({ onBack }) => {
 
       {/* Filter Section */}
       <div className="flex w-full flex-wrap items-end gap-4 rounded-2xl bg-white p-4 outline outline-1 outline-offset-[-1px] outline-primary/20">
-        {[
-          { label: "Provinsi", placeholder: "Pilih Provinsi" },
-          { label: "Kab/Kota", placeholder: "Pilih Kabupaten/Kota" },
-          { label: "Kecamatan", placeholder: "Pilih Kecamatan" },
-          { label: "Status Pegawai", placeholder: "Pilih Status Pegawai" },
-        ].map(({ label, placeholder }) => (
-          <div key={label} className="flex min-w-[180px] flex-1 flex-col gap-2">
-            <div className="text-xs font-normal text-[#17191c]">{label}</div>
-            <div className="flex items-center gap-2.5 rounded-[10px] px-4 py-2 outline outline-1 outline-offset-[-1px] outline-[#d3d3d3]">
-              <div className="flex-1 text-xs font-normal text-[#919191]">
-                {placeholder}
-              </div>
-              <div className="relative">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 16L6 10H18L12 16Z" fill="#919191" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        ))}
-
-        <div className="flex w-[180px] items-center justify-center rounded-[10px] bg-primary px-2.5 py-3">
-          <div className="text-sm font-normal text-[#f5f7fb]">Cek Data</div>
+        <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+          <Select
+            getKey={(v) => v.id.toString()}
+            getLabel={(v) => v.name}
+            label="Provinsi"
+            placeholder="Pilih Provinsi"
+            options={provinces.data?.data || []}
+            isLoading={provinces.isLoading}
+            onChange={(v) => {
+              setTempFilters({
+                ...tempFilters,
+                province_id: v,
+                city_id: "",
+                district_id: "",
+              });
+            }}
+            value={tempFilters.province_id}
+          />
+          <Select
+            getKey={(v) => v.id.toString()}
+            getLabel={(v) => v.name}
+            label="Kabupaten/Kota"
+            placeholder="Pilih Kabupaten/Kota"
+            options={cities.data?.data || []}
+            isLoading={cities.isFetching}
+            onChange={(v) => {
+              setTempFilters({
+                ...tempFilters,
+                city_id: v,
+                district_id: "",
+              });
+            }}
+            value={tempFilters.city_id}
+            disabled={!tempFilters.province_id}
+          />
+          <Select
+            getKey={(v) => v.id.toString()}
+            getLabel={(v) => v.name}
+            label="Kecamatan"
+            placeholder="Pilih Kecamatan"
+            options={districts.data?.data || []}
+            isLoading={districts.isFetching}
+            onChange={(v) => {
+              setTempFilters({
+                ...tempFilters,
+                district_id: v,
+              });
+            }}
+            value={tempFilters.district_id}
+            disabled={!tempFilters.city_id}
+          />
+          <Select
+            getKey={(v) => v.id.toString()}
+            getLabel={(v) => v.name}
+            label="Status Kepegawaian"
+            placeholder="Pilih Status Kepegawaian"
+            options={employmentStatuses?.data?.data || []}
+            isLoading={employmentStatuses.isLoading}
+            onChange={(v) => {
+              setTempFilters({
+                ...tempFilters,
+                employment_status_id: v,
+              });
+            }}
+            value={tempFilters.employment_status_id}
+          />
         </div>
+        <Button className="!h-[44px]" onClick={onClickApply}>
+          Cek Data
+        </Button>
       </div>
 
       {/* Legend and Search */}
@@ -134,13 +391,15 @@ const PrinterNonDtc: FC<PrinterDtcProps> = ({ onBack }) => {
             onClick={handleCetak}
             disabled={isLoading}
             className={`inline-flex items-center gap-2 rounded-[10px] p-3 outline outline-1 -outline-offset-1 transition-colors ${
-              data.filter(row => row.selected).length > 0 && !isLoading
-                ? "bg-primary text-white outline-primary cursor-pointer hover:bg-primary/90"
-                : "outline-primary text-primary bg-transparent cursor-not-allowed opacity-50"
+              data.filter((row) => row.selected).length > 0 && !isLoading
+                ? "cursor-pointer bg-primary text-white outline-primary hover:bg-primary/90"
+                : "cursor-not-allowed bg-transparent text-primary opacity-50 outline-primary"
             }`}
           >
             <div className="text-xs font-medium">
-              {isLoading ? "Mencetak..." : `Cetak ${data.filter(row => row.selected).length > 0 ? `(${data.filter(row => row.selected).length})` : ""}`}
+              {isLoading
+                ? "Mencetak..."
+                : `Cetak ${data.filter((row) => row.selected).length > 0 ? `(${data.filter((row) => row.selected).length})` : ""}`}
             </div>
             <div data-svg-wrapper className="relative">
               <svg
@@ -170,9 +429,13 @@ const PrinterNonDtc: FC<PrinterDtcProps> = ({ onBack }) => {
           </div>
         </div>
         <div className="flex w-full items-center gap-2 rounded-[10px] p-3 outline outline-1 outline-offset-[-1px] outline-primary sm:w-[300px]">
-          <div className="flex-1 text-xs font-normal text-[#a7a7a7]">
-            Ketik Nama, NPA
-          </div>
+          <input
+            type="text"
+            placeholder="Ketik Nama, NPA"
+            className="flex-1 bg-transparent text-xs font-normal outline-none"
+            value={currentParams.q}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
           <div className="relative">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path
@@ -184,12 +447,79 @@ const PrinterNonDtc: FC<PrinterDtcProps> = ({ onBack }) => {
         </div>
       </div>
 
-      <div className="w-full max-w-7xl overflow-x-scroll">
-        <DataTable
-          data={data}
-          columns={columnsNonDtc}
-          pageSize={10}
-          paginationLabel="Orang"
+      {/* Table Container */}
+      <div className="w-full max-w-7xl relative">
+        {/* Loading Overlay */}
+        {(isLoading || isChangingPage) && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-2xl transition-opacity duration-200">
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#17a3b8] border-t-transparent"></div>
+              <span className="text-sm font-medium text-gray-700">
+                Memuat Data...
+              </span>
+            </div>
+          </div>
+        )}
+        <div className="overflow-x-scroll rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-[#17a3b8]/20">
+          <table className="w-full table-auto">
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      className="bg-[#17a3b8] px-4 py-3 text-left text-sm font-semibold text-white"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {!isLoading && table.getRowModel().rows.length > 0 ? (
+                table.getRowModel().rows.map((row) => (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className="px-4 py-2 text-xs">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : (
+                !isLoading && (
+                  <tr>
+                    <td
+                      colSpan={columnsNonDtc.length}
+                      className="px-4 py-8 text-center text-sm text-gray-500"
+                    >
+                      Tidak ada data yang tersedia
+                    </td>
+                  </tr>
+                )
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Professional Pagination Component */}
+        <DataTablePagination
+          currentPage={currentPage + 1}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={totalData}
+          onPageChange={(page) => handlePageChange(page - 1)}
+          onPageSizeChange={handlePageSizeChange}
+          isLoading={isLoading}
         />
       </div>
     </div>

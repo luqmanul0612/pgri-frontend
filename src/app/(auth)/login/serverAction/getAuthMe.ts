@@ -17,5 +17,6 @@ export async function getAuthMe(): Promise<any> {
     headers,
     cache: "no-cache",
   });
+
   return await response.json();
 }

@@ -62,20 +62,9 @@ export const Combobox: React.FC<ComboboxProps> = ({
 
   const calculateDropdownPosition = () => {
     if (!triggerRef.current) return;
-    
-    const triggerRect = triggerRef.current.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const dropdownHeight = Math.min(300, filteredOptions.length * 44 + 100); // Estimate dropdown height
-    
-    const spaceBelow = viewportHeight - triggerRect.bottom;
-    const spaceAbove = triggerRect.top;
-    
-    // Use bottom position if there's enough space, otherwise use top
-    if (spaceBelow >= dropdownHeight || spaceBelow >= spaceAbove) {
-      setDropdownPosition("bottom");
-    } else {
-      setDropdownPosition("top");
-    }
+
+    // Always show dropdown below to avoid covering header
+    setDropdownPosition("bottom");
   };
 
   const handleToggle = () => {

@@ -18,7 +18,7 @@ export const kecamatanColumns: ColumnDef<KecamatanData>[] = [
     },
   },
   {
-    accessorKey: "kodeKecamatan",
+    accessorKey: "code",
     header: "Kode Kecamatan",
     size: 150,
     cell: ({ getValue }) => {
@@ -30,7 +30,7 @@ export const kecamatanColumns: ColumnDef<KecamatanData>[] = [
     },
   },
   {
-    accessorKey: "namaKecamatan",
+    accessorKey: "name",
     header: "Nama Kecamatan",
     cell: ({ getValue }) => {
       return (
