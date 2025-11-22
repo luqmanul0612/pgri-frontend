@@ -1,4 +1,5 @@
 import { ActionError, getLogActionServer } from "@/utils/action-error";
+import { useDebouncedCallback } from "@/utils/use-debounce-callback";
 import { useEffect, useState, useRef } from "react";
 
 interface UseQueryProps<RES, ERR, VAR> {
@@ -22,7 +23,7 @@ const useQuery = <RES, ERR, VAR = unknown>({
   const [isFetching, setIsFetching] = useState(false);
   const isFirstLoad = useRef(true);
 
-  const fetchData = async (variables?: VAR) => {
+  const fetchData = useDebouncedCallback(async (variables?: VAR) => {
     setIsFetching(true);
     if (isFirstLoad.current) setIsLoading(true);
 
@@ -52,7 +53,7 @@ const useQuery = <RES, ERR, VAR = unknown>({
       setIsFetching(false);
       setIsLoading(false);
     }
-  };
+  }, 500);
 
   useEffect(() => {
     if (enabled) fetchData();

@@ -65,9 +65,14 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+body > * {
+  font-family: "Roboto", sans-serif;
 }
 
 .custom-select {
@@ -80,11 +85,15 @@
 
 /* Hide scrollbar but allow scrolling */
 .scroll-hidden {
-  overflow: auto; /* Enable scrolling */
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  overflow: auto;
+  /* Enable scrolling */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .scroll-hidden::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for Chrome, Safari, and Edge */
+  display: none;
+  /* Hide scrollbar for Chrome, Safari, and Edge */
 }

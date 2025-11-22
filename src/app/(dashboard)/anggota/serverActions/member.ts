@@ -7,6 +7,7 @@ import {
   IApiResponse,
 } from "@/interfaces/IAdministrativeRegions";
 import { cache } from "sharp";
+import { GetUserInstitution } from "@/app/(auth)/account-verification/serverActions/get-form-data";
 
 export const getMembers = async (
   page: number,
@@ -58,7 +59,49 @@ export interface GetMembersParams {
   order: string;
 }
 
-export const getMembersV2 = async (params: GetMembersParams) => {
+export type MemberItem = {
+  birth_date: string;
+  birth_place: string;
+  blood_type: string;
+  city: string;
+  created_at: string;
+  district: string;
+  email: string;
+  employee_status: string;
+  gender: string;
+  id: string;
+  is_printed: boolean;
+  is_validated: boolean;
+  is_verified: boolean;
+  latest_education: string;
+  member_photo: string;
+  membership_status: string;
+  name: string;
+  nik: string;
+  npa: string;
+  phone_number: string;
+  profile: string;
+  province: string;
+  qr: string;
+  subdistrict: string;
+};
+export interface GetMembersResponse {
+  data: {
+    counter: { M: number; F: number; total: number };
+    data: MemberItem[];
+    pagination: {
+      limit: number;
+      next_page: number;
+      page: number;
+      prev_page: number;
+      total_items: number;
+      total_page: number;
+    };
+  };
+  status: number;
+}
+
+export const getMembersV2 = async (params: Partial<GetMembersParams>) => {
   const token = cookies().get("token")?.value;
   const headers: Record<string, any> = {
     Authorization: token,
@@ -66,7 +109,7 @@ export const getMembersV2 = async (params: GetMembersParams) => {
   const pathname = "/api/v2/members";
   const url = new URL(`${process.env.HOST}` + pathname);
   Object.entries(params).forEach(([key, value]) => {
-    if (value) url.searchParams.append(key, value);
+    if (value) url.searchParams.append(key, value as string);
   });
 
   const response = await fetch(url, {
@@ -74,9 +117,33 @@ export const getMembersV2 = async (params: GetMembersParams) => {
     cache: "no-cache",
   });
 
-  const result: any = await response.json();
+  const result = (await response.json()) as GetMembersResponse;
   return { ...result, pathname, ok: response.ok };
 };
+
+export async function getInstitution() {
+  const cookieStore = cookies();
+  const token = cookieStore.get("token")?.value || "";
+  const pathname = "/api/v2/users/institution";
+  const url = process.env.HOST + pathname;
+  const headers: Record<string, any> = {
+    "Content-Type": "application/json",
+    authorization: token,
+  };
+  const requestOptions: RequestInit = {
+    method: "GET",
+    headers,
+    redirect: "follow",
+  };
+
+  const response = await fetch(url, { ...requestOptions, cache: "no-store" });
+  const result = {
+    ...((await response.json()) as GetUserInstitution),
+    pathname,
+    ok: response.ok,
+  };
+  return result;
+}
 
 // GET BY ID
 export const getMemberById = async (id: string) => {

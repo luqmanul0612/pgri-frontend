@@ -185,13 +185,11 @@ const Table: React.FC<TableProps> = ({
       filters.province_id,
       filters.city_id,
       filters.district_id,
-      filters.employment_status_id
+      filters.employment_status_id,
     ],
     queryFn: () =>
       getMembersV2({
         q: searchQuery,
-        page: currentPage + 1,
-        limit: pageSize,
         province_id: filters.province_id,
         city_id: filters.city_id,
         district_id: filters.province_id,
@@ -200,9 +198,10 @@ const Table: React.FC<TableProps> = ({
         membership_status_id: filterByStatus || "",
         order: "desc",
         sort_by: "created_at",
+        limit: 10,
+        page: 1,
       }),
     onSuccess: (res) => {
-      setTableData(res.data.data);
       setPageCount(res.data?.pagination?.total_page);
       setCountMale(res.data?.counter?.M);
       setCountFemale(res.data?.counter?.F);

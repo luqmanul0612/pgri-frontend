@@ -42,7 +42,7 @@ const Select = <T,>(props: SelectProps<T>) => {
   const [open, setOpen] = React.useState(false);
 
   const onValueChange = (value: string) => {
-    if(!options?.length) return
+    if (!options?.length) return;
     onChange?.(value);
   };
 
@@ -57,7 +57,7 @@ const Select = <T,>(props: SelectProps<T>) => {
         onOpenChange={setOpen}
       >
         <Lib.Trigger
-          className={clsx("select-trigger", { error })}
+          className={clsx("select-trigger", { error, open })}
           aria-label="select-trigger"
         >
           {!!options?.length && (

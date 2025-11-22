@@ -36,6 +36,9 @@
     0.2s box-shadow ease-in-out,
     0.2s background-color ease-in-out;
 }
+.select-trigger.open {
+  border: 1px solid #17a3b8;
+}
 .select-trigger.error {
   border: 1px solid #ef4444;
 }
@@ -50,6 +53,7 @@
 }
 .select-trigger:disabled {
   cursor: default;
+  color: #94a3b8;
   background-color: #e2e8f0;
 }
 .select-placeholder {

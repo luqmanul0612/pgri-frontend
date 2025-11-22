@@ -1,74 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
-import Table from "./component/Table";
-import { GetMembersParams } from "./serverActions/member";
-import { Filter } from "../components/Filter";
-import { FilterByKeyword } from "../components/FilterByKeyword";
-import { SearchInput } from "@/app/components/SearchInput";
-import useQuery from "@/utils/hooks/use-query";
-import {
-  getLocation,
-  getServiceOptions,
-} from "@/app/(auth)/register/serverActions/get-register-form-data";
 import Select from "@/components/customs/select";
 import Button from "@/components/customs/button";
+import useMembers from "./hooks/use-members";
+import { FC } from "react";
+import TextField from "@/components/customs/textfield";
+import { Search, Printer } from "lucide-react";
+import GenderButton from "./component/gender-button";
+import Table from "@/components/customs/table";
+import TablePagination from "@/components/customs/table-pagination";
 
-const defaultValuesFilters: GetMembersParams = {
-  q: "",
-  page: 1,
-  limit: 20,
-  province_id: "",
-  city_id: "",
-  district_id: "",
-  employment_status_id: "",
-  membership_status_id: "",
-  gender: "",
-  sort_by: "",
-  order: "",
-};
-
-const MemberTable: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filterByStatus, setFilterByStatus] = useState<string>("");
-  const [tempFilters, setTempFilters] =
-    useState<GetMembersParams>(defaultValuesFilters);
-  const [filters, setFilters] =
-    useState<GetMembersParams>(defaultValuesFilters);
-
-  const provinces = useQuery({
-    queryFn: () => getLocation({ type: "provinces" }),
-  });
-
-  const cities = useQuery({
-    queryKey: [tempFilters.province_id],
-    queryFn: () => getLocation({ type: "cities", id: tempFilters.province_id }),
-    enabled: !!tempFilters.province_id,
-  });
-
-  const districts = useQuery({
-    queryKey: [tempFilters.city_id],
-    queryFn: () => getLocation({ type: "districts", id: tempFilters.city_id }),
-    enabled: !!tempFilters.city_id,
-  });
-
-  const employmentStatuses = useQuery({
-    queryFn: () => getServiceOptions("employment-statuses"),
-  });
-
-  const onClickApply = () => {
-    setFilters({
-      ...filters,
-      province_id: tempFilters.province_id,
-      city_id: tempFilters.city_id,
-      district_id: tempFilters.district_id,
-      employment_status_id: tempFilters.employment_status_id,
-    });
-  };
+const MemberTable: FC = () => {
+  const {
+    provinces,
+    cities,
+    districts,
+    employmentStatuses,
+    filters,
+    setFilters,
+    onClickApplyFilters,
+    onChangeGender,
+    tableInstance,
+    params,
+    onChangeSearch,
+    members,
+    user,
+  } = useMembers();
 
   return (
-    <div className="space-y-4">
-      <p className="font-semibold text-primary">Data Tabel Anggota PGRI</p>
+    <div className="flex flex-col gap-5">
+      <p className="text-base font-semibold text-primary">
+        Data Tabel Anggota PGRI
+      </p>
       <div className="flex w-full items-end gap-4 rounded-[16px] border border-primary-100 bg-white p-4">
         <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
           <Select
@@ -79,14 +42,15 @@ const MemberTable: React.FC = () => {
             options={provinces.data?.data || []}
             isLoading={provinces.isLoading}
             onChange={(v) => {
-              setTempFilters({
-                ...tempFilters,
+              setFilters({
+                ...filters,
                 province_id: v,
                 city_id: "",
                 district_id: "",
               });
             }}
-            value={tempFilters.province_id}
+            value={filters.province_id}
+            disabled={[4, 5, 6].includes(user.level_id)}
           />
           <Select
             getKey={(v) => v.id.toString()}
@@ -96,14 +60,10 @@ const MemberTable: React.FC = () => {
             options={cities.data?.data || []}
             isLoading={cities.isFetching}
             onChange={(v) => {
-              setTempFilters({
-                ...tempFilters,
-                city_id: v,
-                district_id: "",
-              });
+              setFilters({ ...filters, city_id: v, district_id: "" });
             }}
-            value={tempFilters.city_id}
-            disabled={!tempFilters.province_id}
+            value={filters.city_id}
+            disabled={!filters.province_id || [5, 6].includes(user.level_id)}
           />
           <Select
             getKey={(v) => v.id.toString()}
@@ -113,13 +73,10 @@ const MemberTable: React.FC = () => {
             options={districts.data?.data || []}
             isLoading={districts.isFetching}
             onChange={(v) => {
-              setTempFilters({
-                ...tempFilters,
-                district_id: v,
-              });
+              setFilters({ ...filters, district_id: v });
             }}
-            value={tempFilters.district_id}
-            disabled={!tempFilters.city_id}
+            value={filters.district_id}
+            disabled={!filters.city_id || [6].includes(user.level_id)}
           />
           <Select
             getKey={(v) => v.id.toString()}
@@ -129,31 +86,63 @@ const MemberTable: React.FC = () => {
             options={employmentStatuses?.data?.data || []}
             isLoading={employmentStatuses.isLoading}
             onChange={(v) => {
-              setTempFilters({
-                ...tempFilters,
-                employment_status_id: v,
-              });
+              setFilters({ ...filters, employment_status_id: v });
             }}
-            value={tempFilters.employment_status_id}
+            value={filters.employment_status_id}
           />
         </div>
-        <Button className="!h-[44px]" onClick={onClickApply}>Cek Data</Button>
+        <Button type="button" onClick={onClickApplyFilters}>
+          Cek Data
+        </Button>
       </div>
-      <div className="flex items-end justify-between">
-        <p className="font-semibold text-primary">Semua Anggota</p>
-        <div className="flex items-center justify-center gap-4">
-          <FilterByKeyword filterByStatusProps={setFilterByStatus} />
-          <SearchInput
-            onSearch={setSearchQuery}
-            className="border border-primary"
+      <p className="text-base font-semibold text-primary">Semua Anggota</p>
+      <div className="flex w-full flex-col items-end gap-4 rounded-[16px] border border-primary-100 bg-white">
+        <div className="flex w-full flex-wrap justify-between gap-4 p-4">
+          <div className="flex gap-4">
+            <Button variant="secondary">Tambah Anggota</Button>
+            <Button
+              variant="secondary"
+              endIcon={<Printer className="w-[20px]" />}
+            >
+              Cetak
+            </Button>
+          </div>
+          <div className="flex gap-4">
+            <GenderButton
+              variant="M"
+              checked={["M", "ALL"].includes(params.gender)}
+              onClick={() => onChangeGender("M")}
+            >
+              Laki-Laki: {members.data?.data?.counter?.M || 0}
+            </GenderButton>
+            <GenderButton
+              variant="F"
+              checked={["F", "ALL"].includes(params.gender)}
+              onClick={() => onChangeGender("F")}
+            >
+              Perempuan: {members.data?.data?.counter?.F || 0}
+            </GenderButton>
+            <TextField
+              placeholder="Ketik Nama, NPA"
+              endIcon={<Search className="w-[20px] text-slate-400" />}
+              className="w-[300px]"
+              onChange={(e) => {
+                onChangeSearch(e.target.value);
+              }}
+              value={params.q}
+            />
+          </div>
+        </div>
+        <div className="flex w-full flex-col">
+          <Table
+            tableInstance={tableInstance}
+            isLoading={members.isLoading || members.isFetching}
           />
+          <div className="px-4 py-3">
+            <TablePagination tableInstance={tableInstance} />
+          </div>
         </div>
       </div>
-      <Table
-        searchQuery={searchQuery}
-        filterByStatus={filterByStatus}
-        filters={filters}
-      />
     </div>
   );
 };

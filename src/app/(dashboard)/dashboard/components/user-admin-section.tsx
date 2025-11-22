@@ -77,10 +77,10 @@ const UserAdminSection = () => {
   return (
     <div>
       <div className="flex gap-6">
-        <CardDashboard name="Data Anggota" total={1000} />
-        <CardDashboard name="Karya Guru" total={200} />
-        <CardDashboard name="Aspirasi Guru" total={230} />
-        <CardDashboard name="Lindungi Guru" total={400} />
+        <CardDashboard name="Data Anggota" total={0} />
+        <CardDashboard name="Karya Guru" total={0} />
+        <CardDashboard name="Aspirasi Guru" total={0} />
+        <CardDashboard name="Lindungi Guru" total={0} />
       </div>
       <div className="mt-5">
         <BannerSlider banners={banners} />

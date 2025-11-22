@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
-import "./globals.css";
+import "@/utils/styles/fonts.scss";
+import "@/utils/styles/globals.scss";
 import { Toaster } from "@/components/ui/sonner";
-
-const inter = Roboto({
-  subsets: ["latin"],
-  weight: ["400", "500", "700", "900"],
-});
 
 export const metadata: Metadata = {
   title: "PGRI",
@@ -23,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         {children}
         <Toaster
           position="top-center"
