@@ -18,7 +18,7 @@ import Button from "@/components/customs/button";
 import { useRouter } from "next/navigation";
 import banner1 from "@/assets/images/banner-1.webp";
 import CardDashboard from "@/app/components/CardDashboard";
-import BannerSlider from "@/app/components/molecules/banner-slider";
+import BannerSlider from "@/app/(dashboard)/dashboard/components/dashboard-banner-slider";
 
 const exampleActivities = [
   {

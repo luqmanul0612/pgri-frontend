@@ -15,9 +15,11 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   banners: { key: string; image: StaticImageData }[];
+  className?: string;
 }
 
-const BannerSlider: FC<Props> = ({ banners }) => {
+const DashboardBannerSlider: FC<Props> = (props) => {
+  const { banners, className } = props;
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>(
@@ -79,7 +81,7 @@ const BannerSlider: FC<Props> = ({ banners }) => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className={cn("flex flex-col", className)}>
       <div className="relative w-full overflow-hidden rounded-[16px]">
         <div
           ref={sliderRef}
@@ -140,7 +142,7 @@ const BannerSlider: FC<Props> = ({ banners }) => {
   );
 };
 
-export default BannerSlider;
+export default DashboardBannerSlider;
 
 type NavigationButtonProps = {
   children?: ReactNode;

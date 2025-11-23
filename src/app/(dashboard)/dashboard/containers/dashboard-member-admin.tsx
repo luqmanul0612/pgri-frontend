@@ -3,77 +3,23 @@ import DashboardGrowthCard from "@/app/components/molecules/dashboard-growth-car
 import DashboardPieChart from "@/app/components/molecules/dashboard-pie-charts";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Filter } from "../../components/Filter";
 import { IoIosArrowDown } from "react-icons/io";
 import CardDashboard from "@/app/components/CardDashboard";
-import BannerSlider from "@/app/components/molecules/banner-slider";
-import banner1 from "@/assets/images/banner-1.webp";
-
-const registerGrowthData = [
-  { value: 100 },
-  { value: 200 },
-  { value: 150 },
-  { value: 250 },
-  { value: 180 },
-  { value: 300 },
-  { value: 230 },
-];
-
-const asnGrowthData = [
-  { value: 100 },
-  { value: 200 },
-  { value: 150 },
-  { value: 250 },
-  { value: 180 },
-  { value: 300 },
-  { value: 230 },
-];
-
-const nonAsnGrowthData = [
-  { value: 100 },
-  { value: 200 },
-  { value: 150 },
-  { value: 250 },
-  { value: 180 },
-  { value: 300 },
-  { value: 230 },
-  { value: 50 },
-];
-
-const trainingData = [
-  { name: "Training A", value: 250 },
-  { name: "Training B", value: 850 },
-  { name: "Training C", value: 250 },
-  { name: "Training D", value: 50 },
-  { name: "Training E", value: 150 },
-];
-
-const membershipData = [
-  { name: "Training A", value: 250 },
-  { name: "Training B", value: 850 },
-  { name: "Training C", value: 250 },
-  { name: "Training D", value: 50 },
-  { name: "Training E", value: 150 },
-];
-
-const COLORS = ["#BF19B8", "#DC3545", "#007BFF", "#FFC107", "#0EC516"];
-
-const banners = [
-  {
-    key: "banner-1",
-    image: banner1,
-  },
-  {
-    key: "banner-2",
-    image: banner1,
-  },
-  {
-    key: "banner-3",
-    image: banner1,
-  },
-];
+import DashboardBannerSlider from "@/app/(dashboard)/dashboard/components/dashboard-banner-slider";
+import useDashboardMemberAdmin from "../hooks/use-dashboard-member-admin";
+import MemberCharts from "../components/member-charts";
 
 const UserAdminSection = () => {
+  const {
+    asnGrowthData,
+    nonAsnGrowthData,
+    registerGrowthData,
+    trainingData,
+    membershipData,
+    pieChartColors,
+    banners,
+  } = useDashboardMemberAdmin();
+
   return (
     <div>
       <div className="flex gap-6">
@@ -82,12 +28,8 @@ const UserAdminSection = () => {
         <CardDashboard name="Aspirasi Guru" total={0} />
         <CardDashboard name="Lindungi Guru" total={0} />
       </div>
-      <div className="mt-5">
-        <BannerSlider banners={banners} />
-      </div>
-      <div className="mt-10">
-        <Filter />
-      </div>
+      <DashboardBannerSlider banners={banners} className="mt-5" />
+      <MemberCharts className="mt-5" />
       <div className="mt-5 flex flex-row gap-4">
         <Card className="w-full p-6">
           <div className="flex flex-row justify-between">
@@ -120,7 +62,7 @@ const UserAdminSection = () => {
                 Lihat Detail
               </Button>
             </div>
-            <DashboardPieChart data={trainingData} colors={COLORS} />
+            <DashboardPieChart data={trainingData} colors={pieChartColors} />
           </div>
         </Card>
 
@@ -154,7 +96,7 @@ const UserAdminSection = () => {
                 Lihat Detail
               </Button>
             </div>
-            <DashboardPieChart data={membershipData} colors={COLORS} />
+            <DashboardPieChart data={membershipData} colors={pieChartColors} />
           </div>
         </Card>
       </div>
