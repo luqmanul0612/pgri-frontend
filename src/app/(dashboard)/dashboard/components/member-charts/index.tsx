@@ -220,7 +220,7 @@ const MemberCharts: FC<Props> = (props) => {
           <Select placeholder="Pilih Provinsi" />
         </div>
       </div>
-      <div className="mt-4 h-[100px] w-full">
+      <div className="mt-4 h-[150px] w-full">
         <Bar options={options} data={data} />
       </div>
       <div className="mt-4 flex">
