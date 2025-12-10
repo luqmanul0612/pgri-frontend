@@ -17,7 +17,7 @@ import Image from "next/image";
 import Button from "@/components/customs/button";
 import { useRouter } from "next/navigation";
 import banner1 from "@/assets/images/banner-1.webp";
-import CardDashboard from "@/app/components/CardDashboard";
+import CardDashboard from "@/app/(dashboard)/dashboard/components/card-dashboard";
 import BannerSlider from "@/app/(dashboard)/dashboard/components/dashboard-banner-slider";
 
 const exampleActivities = [
@@ -78,10 +78,10 @@ const UserSection = () => {
   return (
     <div className="flex flex-col">
       <div className="flex gap-6">
-        <CardDashboard name="Data Anggota" total={1000} />
-        <CardDashboard name="Karya Guru" total={200} />
-        <CardDashboard name="Aspirasi Guru" total={230} />
-        <CardDashboard name="Lindungi Guru" total={400} />
+        <CardDashboard idx={0} value={0} />
+        <CardDashboard idx={1} value={0} />
+        <CardDashboard idx={2} value={0} />
+        <CardDashboard idx={3} value={0} />
       </div>
       <div className="mt-5">
         <BannerSlider banners={banners} />

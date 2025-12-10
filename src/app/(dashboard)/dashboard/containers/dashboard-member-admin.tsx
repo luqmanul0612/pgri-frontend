@@ -1,13 +1,13 @@
 import Card from "@/app/components/Card";
 import DashboardGrowthCard from "@/app/components/molecules/dashboard-growth-card";
-import DashboardPieChart from "@/app/components/molecules/dashboard-pie-charts";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { IoIosArrowDown } from "react-icons/io";
-import CardDashboard from "@/app/components/CardDashboard";
+import CardDashboard from "@/app/(dashboard)/dashboard/components/card-dashboard";
 import DashboardBannerSlider from "@/app/(dashboard)/dashboard/components/dashboard-banner-slider";
 import useDashboardMemberAdmin from "../hooks/use-dashboard-member-admin";
 import MemberCharts from "../components/member-charts";
+import DashboardPieChart from "../components/dashboard-pie-chart";
+import Button from "@/components/customs/button";
 
 const UserAdminSection = () => {
   const {
@@ -15,18 +15,19 @@ const UserAdminSection = () => {
     nonAsnGrowthData,
     registerGrowthData,
     trainingData,
-    membershipData,
-    pieChartColors,
+    genderData,
+    trainingColors,
+    genderColors,
     banners,
   } = useDashboardMemberAdmin();
 
   return (
     <div>
       <div className="flex gap-6">
-        <CardDashboard name="Data Anggota" total={0} />
-        <CardDashboard name="Karya Guru" total={0} />
-        <CardDashboard name="Aspirasi Guru" total={0} />
-        <CardDashboard name="Lindungi Guru" total={0} />
+        <CardDashboard idx={0} value={0} />
+        <CardDashboard idx={1} value={0} />
+        <CardDashboard idx={2} value={0} />
+        <CardDashboard idx={3} value={0} />
       </div>
       <DashboardBannerSlider banners={banners} className="mt-5" />
       <MemberCharts className="mt-5" />
@@ -47,22 +48,34 @@ const UserAdminSection = () => {
             </div>
           </div>
 
-          <div className="mt-4 flex justify-between">
-            <div className="flex flex-col justify-between">
+          <div className="mt-4 flex justify-between gap-4">
+            <div className="flex flex-col flex-1">
               <div>
                 <h1 className="mb-4 text-2xl font-bold text-primary">
                   2.500 Pelatihan
                 </h1>
-                <h4>Pelatihan Kabupaten/Kota</h4>
-                <h4>Pelatihan Provinsi</h4>
-                <h4>Pelatihan Nasional</h4>
+                <div className="flex max-h-[100px] flex-col gap-2 overflow-y-auto">
+                  {trainingData.map((item, idx) => (
+                    <div key={item.label} className="flex items-center gap-2">
+                      <div
+                        className="h-[12px] min-h-[12px] w-[12px] min-w-[12px] rounded-[4px]"
+                        style={{ backgroundColor: trainingColors[idx] }}
+                      ></div>
+                      <p className="text-[12px] font-normal">{item.label}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <Button className="w-[124px] rounded-xl bg-primary">
-                Lihat Detail
-              </Button>
+              <Button className="mt-4">Lihat Detail</Button>
             </div>
-            <DashboardPieChart data={trainingData} colors={pieChartColors} />
+            <div className="h-[200px] w-[200px]">
+              <DashboardPieChart
+                key="training"
+                data={trainingData}
+                colors={trainingColors}
+              />
+            </div>
           </div>
         </Card>
 
@@ -70,14 +83,14 @@ const UserAdminSection = () => {
           <div className="flex flex-row justify-between">
             <div>
               <h2 className="text-[16px] font-semibold text-primaryBlack">
-                Iuran Anggota PGRI
+                Gender Anggota
               </h2>
               <h4 className="text-xs font-normal">
-                Iuran dari Daerah, Kabupaten/Kota, Provinsi dan Pusat
+                Daerah, Kabupaten/Kota, Provinsi dan Pusat
               </h4>
             </div>
             <div className="flex justify-center text-primary">
-              <span className="text-xs font-semibold">Sudah Bayar</span>
+              <span className="text-xs font-semibold">Pilih Provinsi</span>
               <IoIosArrowDown />
             </div>
           </div>
@@ -87,16 +100,27 @@ const UserAdminSection = () => {
                 <h1 className="mb-4 text-2xl font-bold text-primary">
                   Rp. 1.500.000
                 </h1>
-                <h4>Pelatihan Kabupaten/Kota</h4>
-                <h4>Pelatihan Provinsi</h4>
-                <h4>Pelatihan Nasional</h4>
+                <div className="flex flex-col gap-2">
+                  {genderData.map((item, idx) => (
+                    <div key={item.label} className="flex items-center gap-2">
+                      <div
+                        className="h-[12px] min-h-[12px] w-[12px] min-w-[12px] rounded-[4px]"
+                        style={{ backgroundColor: genderColors[idx] }}
+                      ></div>
+                      <p className="text-[12px] font-normal">{item.label}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-
-              <Button className="w-[124px] rounded-xl bg-primary">
-                Lihat Detail
-              </Button>
+              <Button className="mt-4">Lihat Detail</Button>
             </div>
-            <DashboardPieChart data={membershipData} colors={pieChartColors} />
+            <div className="h-[200px] w-[200px]">
+              <DashboardPieChart
+                key="gender"
+                data={genderData}
+                colors={genderColors}
+              />
+            </div>
           </div>
         </Card>
       </div>

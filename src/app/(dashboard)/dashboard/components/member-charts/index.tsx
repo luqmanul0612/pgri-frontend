@@ -65,6 +65,9 @@ const colors = [
 export const options: ChartOptions<"bar"> = {
   responsive: true,
   plugins: {
+    datalabels: {
+      display: false,
+    },
     tooltip: {
       callbacks: {
         title: (items) => {

@@ -1,4 +1,5 @@
 import banner1 from "@/assets/images/banner-1.webp";
+import { ChartData } from "chart.js";
 
 const registerGrowthData = [
   { value: 100 },
@@ -32,22 +33,20 @@ const nonAsnGrowthData = [
 ];
 
 const trainingData = [
-  { name: "Training A", value: 250 },
-  { name: "Training B", value: 850 },
-  { name: "Training C", value: 250 },
-  { name: "Training D", value: 50 },
-  { name: "Training E", value: 150 },
+  { label: "Training A", value: 250 },
+  { label: "Training B", value: 850 },
+  { label: "Training C", value: 250 },
+  { label: "Training D", value: 50 },
+  { label: "Training E", value: 150 },
 ];
 
-const membershipData = [
-  { name: "Training A", value: 250 },
-  { name: "Training B", value: 850 },
-  { name: "Training C", value: 250 },
-  { name: "Training D", value: 50 },
-  { name: "Training E", value: 150 },
+const genderData = [
+  { label: "Laki - Laki", value: 250 },
+  { label: "Perempuan", value: 850 },
 ];
 
-const pieChartColors = ["#BF19B8", "#DC3545", "#007BFF", "#FFC107", "#0EC516"];
+const trainingColors = ["#BF19B8", "#DC3545", "#007BFF", "#FFC107", "#0EC516"];
+const genderColors = ["#0EC516", "#FFC107"];
 
 const banners = [
   {
@@ -70,9 +69,10 @@ const useDashboardMemberAdmin = () => {
     asnGrowthData,
     nonAsnGrowthData,
     trainingData,
-    membershipData,
-    pieChartColors,
+    genderData,
+    trainingColors,
     banners,
+    genderColors,
   };
 };
 
