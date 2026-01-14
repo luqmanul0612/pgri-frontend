@@ -4,6 +4,7 @@ echo "Pulling latest code from Git..."
 git pull || { echo "Git pull failed"; exit 1; }
 
 echo "Installing dependencies..."
+npm install
 npm ci
 
 echo "Building the app..."
