@@ -25,6 +25,12 @@ import { toast } from "sonner";
 import useQuery from "@/utils/hooks/use-query";
 import useMutation from "@/utils/hooks/use-mutation";
 
+declare global {
+  interface Window {
+    loadJokulCheckout: (value: string) => void;
+  }
+}
+
 interface PageProps {
   params: {};
 }

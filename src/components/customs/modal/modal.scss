@@ -1,0 +1,79 @@
+.dialog-overlay {
+  background-color: #0f1214bf;
+  position: fixed;
+  inset: 0;
+  animation: modal-overlay-show 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1000;
+}
+
+.dialog-content {
+  background-color: #fff;
+  border-radius: 26px;
+  box-shadow: 0px 4px 24px 0px #0000000d;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  padding: 25px;
+  animation: modal-content-show 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1001;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+
+.modal-close-button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: 10px;
+  transition: background-color 0.2s ease-in-out;
+  &:hover {
+    background-color: #ffd7d7;
+  }
+}
+
+.modal-close-icon {
+  color: #ff0000;
+}
+
+.dialog-content:focus {
+  outline: none;
+}
+
+.dialog-title {
+  margin: 0;
+  font-weight: 600;
+  color: #17191c;
+  font-size: 17px;
+  min-width: max-content;
+}
+
+@keyframes modal-overlay-show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-content-show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

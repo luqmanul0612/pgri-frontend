@@ -67,6 +67,8 @@ export const getPaymentRegister = async (): Promise<PaymentStatusResponse> => {
   const userId = tokenValue?.sub;
 
   if (!userId) {
+    cookieStore.delete("auth");
+    cookieStore.delete("token");
     return {
       status: 401,
       message: "User ID not found. Please login again.",

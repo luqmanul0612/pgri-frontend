@@ -14,8 +14,11 @@ import TextField from "@/components/customs/textfield";
 import useMutation from "@/utils/hooks/use-mutation";
 import Button from "@/components/customs/button";
 import useRegistrationState from "../../register/utils/use-registration-state";
+import useModalConfirmPayment from "@/store/use-modal-confirm-payment";
 
-interface RightSectionProps {}
+interface RightSectionProps {
+  hasPaid: boolean;
+}
 
 const defaultValues: BodyLogin = {
   npa: "",
@@ -25,11 +28,12 @@ const defaultValues: BodyLogin = {
   phone: "",
 };
 
-export const RightSection: FC<RightSectionProps> = () => {
+export const RightSection: FC<RightSectionProps> = ({ hasPaid }) => {
   const router = useRouter();
   const { setUser } = useAuth();
   const { resetRegisterState } = useRegistrationState();
   const [errorMessage, setErrorMessage] = useState("");
+  const { setOpenModalConfirmPayment } = useModalConfirmPayment();
 
   const loginForm = useForm({
     mode: "all",
@@ -49,6 +53,8 @@ export const RightSection: FC<RightSectionProps> = () => {
           router.push("/account-validation");
         } else if (!res.data?.user?.is_verified) {
           router.push("/account-verification");
+        } else if (!res.data?.user?.has_paid) {
+          setOpenModalConfirmPayment(true);
         } else {
           router.push("/dashboard");
         }
@@ -85,8 +91,8 @@ export const RightSection: FC<RightSectionProps> = () => {
           name="npa"
           render={({ field, fieldState }) => (
             <TextField
-              label="NPA"
-              placeholder="Masukkan NPA"
+              label="NPA / Email"
+              placeholder="Masukkan NPA / Email"
               onChange={field.onChange}
               value={field.value}
               error={!!fieldState.error}

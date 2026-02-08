@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "@/utils/styles/fonts.scss";
 import "@/utils/styles/globals.scss";
 import { Toaster } from "@/components/ui/sonner";
+import ModalConfirmPayment from "@/components/modal-confirm-payment";
 
 export const metadata: Metadata = {
   title: "PGRI",
@@ -27,6 +28,7 @@ export default function RootLayout({
             duration: 5000,
           }}
         />
+        <ModalConfirmPayment />
       </body>
     </html>
   );
