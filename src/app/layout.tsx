@@ -3,6 +3,7 @@ import "@/utils/styles/fonts.scss";
 import "@/utils/styles/globals.scss";
 import { Toaster } from "@/components/ui/sonner";
 import ModalConfirmPayment from "@/components/modal-confirm-payment";
+import ModalUnderDevelopment from "@/components/modal-underdevelopment";
 
 export const metadata: Metadata = {
   title: "PGRI",
@@ -29,6 +30,7 @@ export default function RootLayout({
           }}
         />
         <ModalConfirmPayment />
+        <ModalUnderDevelopment />
       </body>
     </html>
   );

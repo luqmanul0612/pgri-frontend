@@ -35,6 +35,7 @@ import { getMembers } from "../anggota/serverActions/member";
 import TambahAnggotaModal from "../anggota/component/TambahAnggotaModal";
 import { SearchInput } from "@/app/components/SearchInput";
 import LoadingDots from "@/components/loading/LoadingDots";
+import useModalUnderDevelopment from "@/store/use-modal-underdevelopment";
 // import TambahAnggotaModal from "./TambahAnggotaModal";
 
 const initialPageSize = 10;
@@ -48,8 +49,8 @@ const columns: Column<IMember>[] = [
   { Header: "NIK", accessor: "nik" },
   { Header: "Nama Anggota", accessor: "name" },
   { Header: "Email", accessor: "email" },
-//   { Header: "Tempat Lahir", accessor: "birth_place" },
-//   { Header: "Tanggal Lahir", accessor: "dob" },
+  //   { Header: "Tempat Lahir", accessor: "birth_place" },
+  //   { Header: "Tanggal Lahir", accessor: "dob" },
   { Header: "Provinsi", accessor: "province" },
   { Header: "Tanggal Pengajuan", accessor: "dob" },
 
@@ -87,7 +88,7 @@ const columns: Column<IMember>[] = [
       </div>
     ),
   },
-//   { Header: "Whatsapp", accessor: "email" },
+  //   { Header: "Whatsapp", accessor: "email" },
   {
     Header: "Status",
     accessor: "status",
@@ -162,14 +163,14 @@ const Table: React.FC = () => {
   const [pageCount, setPageCount] = useState<number>();
   const [isModalAddOpen, setIsModalAddOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [SearchQuery, setSearchQuery] = useState<string>('');
+  const [SearchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
         const memberData = await getMembers(currentPage + 1, pageSize);
-        setTableData(memberData.data.data);
+        setTableData(memberData.data.data || []);
         setPageCount(memberData.data.total_page);
       } catch (error) {
         console.error("Failed to fetch members data:", error);
@@ -201,14 +202,24 @@ const Table: React.FC = () => {
     <div className="">
       <Card className="">
         <div className="flex justify-between p-5">
-          <div className="flex items-center space-x-3 text-[16px] text-primary font-semibold">
+          <div className="flex items-center space-x-3 text-[16px] font-semibold text-primary">
             Cetak KTA Biasa
           </div>
           <div className="flex gap-4">
-            <button className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary">
+            <button
+              onClick={() =>
+                useModalUnderDevelopment
+                  .getState()
+                  .setOpenModalUnderDevelopment(true)
+              }
+              className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary"
+            >
               <span>Cetak</span> <MdOutlineLocalPrintshop size={18} />
             </button>
-            <SearchInput onSearch={setSearchQuery} className="border border-primary" />
+            <SearchInput
+              onSearch={setSearchQuery}
+              className="border border-primary"
+            />
           </div>
         </div>
 
@@ -235,34 +246,37 @@ const Table: React.FC = () => {
               ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-              {
-              loading ? (
-                <tr className="mt-4 ">
-                  <td colSpan={headerGroups[0].headers.length} className="text-center py-6 ">
-                  <LoadingDots/>
+              {loading ? (
+                <tr className="mt-4">
+                  <td
+                    colSpan={headerGroups[0].headers.length}
+                    className="py-6 text-center"
+                  >
+                    <LoadingDots />
                   </td>
                 </tr>
-              ) :
-              rows.map((row, index) => {
-                prepareRow(row);
-                return (
-                  <tr
-                    {...row.getRowProps()}
-                    key={index}
-                    className={`border-t text-xs font-light ${row.index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
-                  >
-                    {row.cells.map((cell, cellIndex) => (
-                      <td
-                        {...cell.getCellProps()}
-                        key={cellIndex}
-                        className="px-4 py-2"
-                      >
-                        {cell.render("Cell")}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
+              ) : (
+                rows.map((row, index) => {
+                  prepareRow(row);
+                  return (
+                    <tr
+                      {...row.getRowProps()}
+                      key={index}
+                      className={`border-t text-xs font-light ${row.index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+                    >
+                      {row.cells.map((cell, cellIndex) => (
+                        <td
+                          {...cell.getCellProps()}
+                          key={cellIndex}
+                          className="px-4 py-2"
+                        >
+                          {cell.render("Cell")}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -302,11 +316,11 @@ const Table: React.FC = () => {
             breakClassName="px-3 py-1 border"
           /> */}
 
-<Pagination
+          <Pagination
             count={pageCount}
             page={currentPage + 1}
             onChange={(_, newPage) => setCurrentPage(newPage - 1)}
-             color="standard"
+            color="standard"
             shape="rounded"
             sx={{
               "& .MuiPaginationItem-root": {
@@ -331,20 +345,30 @@ const Table: React.FC = () => {
               },
             }}
             renderItem={(item) => (
-<PaginationItem
-      {...item}
-      sx={{
-        borderTopLeftRadius: item.type === "previous" ? "15px !important" : "0px",
-        borderBottomLeftRadius: item.type === "previous" ? "15px !important" : "0px",
-        borderTopRightRadius: item.type === "next" ? "15px !important" : "0px",
-        borderBottomRightRadius: item.type === "next" ? "15px !important" : "0px",
-        paddingLeft:  item.type === "previous" || item.type === "next" ?  "20px !important" : "10px",
-        paddingRight:  item.type === "previous" || item.type === "next" ?  "20px !important" : "10px",
-      }}
-      components={{
-        previous: () => <span>Sebelumnya</span>,
-        next: () => <span>Selanjutnya</span>,
-      }}
+              <PaginationItem
+                {...item}
+                sx={{
+                  borderTopLeftRadius:
+                    item.type === "previous" ? "15px !important" : "0px",
+                  borderBottomLeftRadius:
+                    item.type === "previous" ? "15px !important" : "0px",
+                  borderTopRightRadius:
+                    item.type === "next" ? "15px !important" : "0px",
+                  borderBottomRightRadius:
+                    item.type === "next" ? "15px !important" : "0px",
+                  paddingLeft:
+                    item.type === "previous" || item.type === "next"
+                      ? "20px !important"
+                      : "10px",
+                  paddingRight:
+                    item.type === "previous" || item.type === "next"
+                      ? "20px !important"
+                      : "10px",
+                }}
+                components={{
+                  previous: () => <span>Sebelumnya</span>,
+                  next: () => <span>Selanjutnya</span>,
+                }}
               />
             )}
           />

@@ -5,7 +5,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { SlOptionsVertical } from "react-icons/sl";
@@ -21,12 +21,13 @@ import { PaginationItem } from "@mui/material";
 import Card from "@/app/components/Card";
 import { SearchInput } from "@/app/components/SearchInput";
 import IconPdf from "../../../../../public/iconDokumenPendukung/IconPdf";
+import useModalUnderDevelopment from "@/store/use-modal-underdevelopment";
 
 const initialPageSize = 10;
 const columns: Column<IMember>[] = [
   {
     Header: "No.",
-    Cell: (row) => row.row.index + 1
+    Cell: (row) => row.row.index + 1,
   },
   // { Header: "NPA", accessor: "npa_number" },
   { Header: "NIK", accessor: "nik" },
@@ -37,29 +38,36 @@ const columns: Column<IMember>[] = [
     Header: "Document Pendukung",
     accessor: "email",
     Cell: ({ value }) => (
-      <div className={'flex flex-row gap-4'}>
+      <div className={"flex flex-row gap-4"}>
         <IconPdf />
-        { value }
+        {value}
       </div>
-    )
+    ),
   },
   {
     Header: "Status",
     accessor: "npa_number",
     Cell: ({ value }) => (
       <div>
-        {
-          value ?
-            (<span className={'bg-primary w-fit bg-opacity-20 text-primary py-2 px-3 rounded-full text-[10px] leading-none'}>
-              Terkirim
-            </span>)
-            :
-            (<span className={'bg-red-500 w-fit bg-opacity-20 text-red-500 py-2 px-3 rounded-full text-[10px] leading-none'}>
-              Ditolak
-            </span>)
-        }
+        {value ? (
+          <span
+            className={
+              "w-fit rounded-full bg-primary bg-opacity-20 px-3 py-2 text-[10px] leading-none text-primary"
+            }
+          >
+            Terkirim
+          </span>
+        ) : (
+          <span
+            className={
+              "w-fit rounded-full bg-red-500 bg-opacity-20 px-3 py-2 text-[10px] leading-none text-red-500"
+            }
+          >
+            Ditolak
+          </span>
+        )}
       </div>
-    )
+    ),
   },
   {
     Header: "Opsi",
@@ -94,16 +102,14 @@ const columns: Column<IMember>[] = [
             <span>Ubah</span>
             <PiPencilSimpleLine className="" size={18} />
           </DropdownMenuItem>
-          <DropdownMenuItem
-            className="flex justify-between rounded-lg bg-red-500 px-3 py-3 text-xs text-white hover:!bg-red-400 hover:!text-white/90"
-          >
+          <DropdownMenuItem className="flex justify-between rounded-lg bg-red-500 px-3 py-3 text-xs text-white hover:!bg-red-400 hover:!text-white/90">
             <span>Hapus</span>
             <FaRegTrashAlt className="" size={18} />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    )
-  }
+    ),
+  },
 ];
 
 const TableLindungiGuru: React.FC<any> = (props) => {
@@ -119,7 +125,7 @@ const TableLindungiGuru: React.FC<any> = (props) => {
       setLoading(true);
       try {
         const memberData = await getMembers(currentPage + 1, pageSize);
-        setTableData(memberData.data.data);
+        setTableData(memberData.data.data || []);
         setPageCount(memberData.data.total_page);
       } catch (error) {
         console.error("Failed to fetch members data:", error);
@@ -132,7 +138,7 @@ const TableLindungiGuru: React.FC<any> = (props) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
       columns,
-      data: tableData!
+      data: tableData!,
     });
 
   const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -145,68 +151,83 @@ const TableLindungiGuru: React.FC<any> = (props) => {
       <Card>
         <div className="flex justify-between p-5">
           <div className="flex items-center space-x-3">
-            <h3 className={'text-[16px] text-primary font-semibold'}>Perlindungan Guru</h3>
+            <h3 className={"text-[16px] font-semibold text-primary"}>
+              Perlindungan Guru
+            </h3>
             <button
-              className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary">
+              onClick={() =>
+                useModalUnderDevelopment
+                  .getState()
+                  .setOpenModalUnderDevelopment(true)
+              }
+              className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary"
+            >
               <span>Cetak</span> <MdOutlineLocalPrintshop size={18} />
             </button>
           </div>
           <div className="flex gap-4">
-            <SearchInput placeholder={'Pencarian'} onSearch={setSearchQuery} className="border border-primary" />
+            <SearchInput
+              placeholder={"Pencarian"}
+              onSearch={setSearchQuery}
+              className="border border-primary"
+            />
           </div>
         </div>
         <div className={"overflow-y-hidden"}>
           <table {...getTableProps()} className={"min-w-full bg-white"}>
             <thead>
-            {headerGroups.map((headerGroups, index) => (
-              <tr
-                {...headerGroups.getHeaderGroupProps()}
-                key={index}
-                className={"bg-[#17a3b8]"}
-              >
-                {headerGroups.headers.map((column, colIndex) => (
-                  <th
-                    {...column.getHeaderProps()}
-                    key={colIndex}
-                    className={"whitespace-nowrap px-4 py-3 text-left text-sm font-semibold text-white"}
-                  >
-                    {column.render("Header")}
-                  </th>
-                ))}
-              </tr>
-            ))}
+              {headerGroups.map((headerGroups, index) => (
+                <tr
+                  {...headerGroups.getHeaderGroupProps()}
+                  key={index}
+                  className={"bg-[#17a3b8]"}
+                >
+                  {headerGroups.headers.map((column, colIndex) => (
+                    <th
+                      {...column.getHeaderProps()}
+                      key={colIndex}
+                      className={
+                        "whitespace-nowrap px-4 py-3 text-left text-sm font-semibold text-white"
+                      }
+                    >
+                      {column.render("Header")}
+                    </th>
+                  ))}
+                </tr>
+              ))}
             </thead>
-            <tbody
-              {...getTableBodyProps()}
-            >
-            {loading ? (
+            <tbody {...getTableBodyProps()}>
+              {loading ? (
                 <tr className={"mt-4"}>
-                  <td colSpan={headerGroups[0].headers.length} className={"text-center py-6"}>
+                  <td
+                    colSpan={headerGroups[0].headers.length}
+                    className={"py-6 text-center"}
+                  >
                     <LoadingDots />
                   </td>
                 </tr>
-              ) :
-              rows.map((row, index) => {
-                prepareRow(row);
-                return (
-                  <tr
-                    {...row.getRowProps()}
-                    key={index}
-                    className={`border-t text-xs font-light ${row.index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
-                  >
-                    {row.cells.map((cell, cellIndex) => (
-                      <td
-                        {...cell.getCellProps()}
-                        key={cellIndex}
-                        className={"px-4 py-2"}
-                      >
-                        {cell.render("Cell")}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })
-            }
+              ) : (
+                rows.map((row, index) => {
+                  prepareRow(row);
+                  return (
+                    <tr
+                      {...row.getRowProps()}
+                      key={index}
+                      className={`border-t text-xs font-light ${row.index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+                    >
+                      {row.cells.map((cell, cellIndex) => (
+                        <td
+                          {...cell.getCellProps()}
+                          key={cellIndex}
+                          className={"px-4 py-2"}
+                        >
+                          {cell.render("Cell")}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -251,31 +272,41 @@ const TableLindungiGuru: React.FC<any> = (props) => {
                 margin: "0",
                 border: "1px solid lightgray",
                 "&:hover": {
-                  backgroundColor: "#e0f7fa" // Warna saat hover
-                }
+                  backgroundColor: "#e0f7fa", // Warna saat hover
+                },
               },
               "& .Mui-selected": {
                 backgroundColor: "#17a3b8 !important",
                 color: "#ffffff !important",
                 "&:hover": {
-                  backgroundColor: "#138a99 !important"
-                }
-              }
+                  backgroundColor: "#138a99 !important",
+                },
+              },
             }}
             renderItem={(item) => (
               <PaginationItem
                 {...item}
                 sx={{
-                  borderTopLeftRadius: item.type === "previous" ? "15px !important" : "0px",
-                  borderBottomLeftRadius: item.type === "previous" ? "15px !important" : "0px",
-                  borderTopRightRadius: item.type === "next" ? "15px !important" : "0px",
-                  borderBottomRightRadius: item.type === "next" ? "15px !important" : "0px",
-                  paddingLeft: item.type === "previous" || item.type === "next" ? "20px !important" : "10px",
-                  paddingRight: item.type === "previous" || item.type === "next" ? "20px !important" : "10px"
+                  borderTopLeftRadius:
+                    item.type === "previous" ? "15px !important" : "0px",
+                  borderBottomLeftRadius:
+                    item.type === "previous" ? "15px !important" : "0px",
+                  borderTopRightRadius:
+                    item.type === "next" ? "15px !important" : "0px",
+                  borderBottomRightRadius:
+                    item.type === "next" ? "15px !important" : "0px",
+                  paddingLeft:
+                    item.type === "previous" || item.type === "next"
+                      ? "20px !important"
+                      : "10px",
+                  paddingRight:
+                    item.type === "previous" || item.type === "next"
+                      ? "20px !important"
+                      : "10px",
                 }}
                 components={{
                   previous: () => <span>Sebelumnya</span>,
-                  next: () => <span>Selanjutnya</span>
+                  next: () => <span>Selanjutnya</span>,
                 }}
               />
             )}

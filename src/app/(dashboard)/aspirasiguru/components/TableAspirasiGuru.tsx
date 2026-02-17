@@ -11,38 +11,36 @@ import { MdOutlineLocalPrintshop } from "react-icons/md";
 import { SearchInput } from "@/app/components/SearchInput";
 import Pagination from "@mui/material/Pagination";
 import { PaginationItem } from "@mui/material";
+import useModalUnderDevelopment from "@/store/use-modal-underdevelopment";
 
 const initialPageSize = 10;
 
 const columns: Column<IMember>[] = [
   {
-    Header: 'No',
+    Header: "No",
     Cell: (row) => row.row.index + 1,
   },
   {
-    Header: 'Nama Anggota',
-    accessor: 'name'
+    Header: "Nama Anggota",
+    accessor: "name",
   },
   {
-    Header: 'NPA',
-    accessor: 'npa_number'
+    Header: "NPA",
+    accessor: "npa_number",
   },
   {
-    Header: 'NIK',
-    accessor: 'nik'
+    Header: "NIK",
+    accessor: "nik",
   },
   {
-    Header: 'Tempat Lahir',
-    accessor: 'birth_place'
+    Header: "Tempat Lahir",
+    accessor: "birth_place",
   },
   {
-    Header: 'Opsi',
-    Cell: ({ row }) => (
-      <ActionOptions row={row} />
-    )
-  }
-]
-
+    Header: "Opsi",
+    Cell: ({ row }) => <ActionOptions row={row} />,
+  },
+];
 
 const TableAspirasiGuru: React.FC<any> = () => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -50,14 +48,14 @@ const TableAspirasiGuru: React.FC<any> = () => {
   const [tableData, setTableData] = useState<IMember[]>([]);
   const [pageCount, setPageCount] = useState<number>();
   const [loading, setLoading] = useState(true);
-  const [SearchQuery, setSearchQuery] = useState<string>('');
+  const [SearchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
         const memberData = await getMembers(currentPage + 1, pageSize);
-        setTableData(memberData.data.data);
+        setTableData(memberData.data.data || []);
         setPageCount(memberData.data.total_page);
       } catch (error) {
         console.error("Failed to fetch members data:", error);
@@ -81,74 +79,84 @@ const TableAspirasiGuru: React.FC<any> = () => {
   return (
     <>
       <Card>
-
         <div className="flex justify-between p-5">
-          <div className="flex items-center space-x-3 text-[16px] text-primary font-semibold">
+          <div className="flex items-center space-x-3 text-[16px] font-semibold text-primary">
             Aspirasi Guru
           </div>
           <div className="flex gap-4">
             <button
-              className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary">
+              onClick={() =>
+                useModalUnderDevelopment
+                  .getState()
+                  .setOpenModalUnderDevelopment(true)
+              }
+              className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary"
+            >
               <span>Cetak</span> <MdOutlineLocalPrintshop size={18} />
             </button>
-            <SearchInput placeholder={'Pencarian'} onSearch={setSearchQuery} className="border border-primary" />
+            <SearchInput
+              placeholder={"Pencarian"}
+              onSearch={setSearchQuery}
+              className="border border-primary"
+            />
           </div>
         </div>
 
-        <div className={'overflow-y-hidden'}>
-          <table {...getTableProps()}
-                 className={'min-w-full bg-white'}
-          >
+        <div className={"overflow-y-hidden"}>
+          <table {...getTableProps()} className={"min-w-full bg-white"}>
             <thead>
-            {headerGroups.map((headerGroups, index) => (
-              <tr
-                {...headerGroups.getHeaderGroupProps()}
-                key={index}
-                className={"bg-[#17a3b8]"}
-              >
-                {headerGroups.headers.map((column, colIndex) => (
-                  <th
-                    {...column.getHeaderProps()}
-                    key={index}
-                    className={'whitespace-nowrap px-4 py-3 text-left text-sm font-semibold text-white'}
-                  >
-                    {column.render("Header")}
-                  </th>
-                ))}
-              </tr>
-            ))}
+              {headerGroups.map((headerGroups, index) => (
+                <tr
+                  {...headerGroups.getHeaderGroupProps()}
+                  key={index}
+                  className={"bg-[#17a3b8]"}
+                >
+                  {headerGroups.headers.map((column, colIndex) => (
+                    <th
+                      {...column.getHeaderProps()}
+                      key={index}
+                      className={
+                        "whitespace-nowrap px-4 py-3 text-left text-sm font-semibold text-white"
+                      }
+                    >
+                      {column.render("Header")}
+                    </th>
+                  ))}
+                </tr>
+              ))}
             </thead>
-            <tbody
-              {...getTableBodyProps()}
-            >
-            {loading ? (
-                <tr className={'mt-2'}>
-                  <td colSpan={headerGroups[0].headers.length} className={'text-center py-6'}>
+            <tbody {...getTableBodyProps()}>
+              {loading ? (
+                <tr className={"mt-2"}>
+                  <td
+                    colSpan={headerGroups[0].headers.length}
+                    className={"py-6 text-center"}
+                  >
                     <LoadingDots />
                   </td>
                 </tr>
-              ) :
-              rows.map((row, index) => {
-                prepareRow(row);
-                return (
-                  <tr
-                    {...row.getRowProps()}
-                    key={index}
-                    className={`border-t text-xs font-light ${row.index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
-                  >
-                    {row.cells.map((cell, colIndex) => (
-                      <td
-                        {...cell.getCellProps()}
-                        key={index}
-                        className={"px-4 py-2"}
-                      >
-                        {cell.render("Cell")}
-                      </td>
-                    ))}
-                  </tr>
-                )
-              })
-            }
+              ) : (
+                rows.map((row, index) => {
+                  prepareRow(row);
+                  return (
+                    <tr
+                      {...row.getRowProps()}
+                      key={index}
+                      className={`border-t text-xs font-light ${row.index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+                    >
+                      {row.cells.map((cell, colIndex) => (
+                        <td
+                          {...cell.getCellProps()}
+                          key={index}
+                          className={"px-4 py-2"}
+                        >
+                          {cell.render("Cell")}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -219,12 +227,22 @@ const TableAspirasiGuru: React.FC<any> = () => {
               <PaginationItem
                 {...item}
                 sx={{
-                  borderTopLeftRadius: item.type === "previous" ? "15px !important" : "0px",
-                  borderBottomLeftRadius: item.type === "previous" ? "15px !important" : "0px",
-                  borderTopRightRadius: item.type === "next" ? "15px !important" : "0px",
-                  borderBottomRightRadius: item.type === "next" ? "15px !important" : "0px",
-                  paddingLeft: item.type === "previous" || item.type === "next" ? "20px !important" : "10px",
-                  paddingRight: item.type === "previous" || item.type === "next" ? "20px !important" : "10px",
+                  borderTopLeftRadius:
+                    item.type === "previous" ? "15px !important" : "0px",
+                  borderBottomLeftRadius:
+                    item.type === "previous" ? "15px !important" : "0px",
+                  borderTopRightRadius:
+                    item.type === "next" ? "15px !important" : "0px",
+                  borderBottomRightRadius:
+                    item.type === "next" ? "15px !important" : "0px",
+                  paddingLeft:
+                    item.type === "previous" || item.type === "next"
+                      ? "20px !important"
+                      : "10px",
+                  paddingRight:
+                    item.type === "previous" || item.type === "next"
+                      ? "20px !important"
+                      : "10px",
                 }}
                 components={{
                   previous: () => <span>Sebelumnya</span>,
@@ -236,7 +254,7 @@ const TableAspirasiGuru: React.FC<any> = () => {
         </div>
       </Card>
     </>
-  )
-}
+  );
+};
 
 export default TableAspirasiGuru;

@@ -7,11 +7,15 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { SlOptionsVertical } from "react-icons/sl";
-import { MdAdd, MdOutlineLocalPrintshop, MdOutlineRemoveRedEye } from "react-icons/md";
+import {
+  MdAdd,
+  MdOutlineLocalPrintshop,
+  MdOutlineRemoveRedEye,
+} from "react-icons/md";
 import { PiPencilSimpleLine } from "react-icons/pi";
 import { FaRegTrashAlt } from "react-icons/fa";
 import Card from "@/app/components/Card";
@@ -21,6 +25,7 @@ import Pagination from "@mui/material/Pagination";
 import { PaginationItem } from "@mui/material";
 import { getMembers } from "@/app/(dashboard)/anggota/serverActions/member";
 import FilterSVG from "../../../../../public/icon/Filter";
+import useModalUnderDevelopment from "@/store/use-modal-underdevelopment";
 
 const initialPageSize = 10;
 const columns: Column<IMember>[] = [
@@ -150,7 +155,7 @@ const FeeAndBillsAdmin = () => {
       setLoading(true);
       try {
         const memberData = await getMembers(currentPage, pageSize);
-        setTableData(memberData.data.data);
+        setTableData(memberData.data.data || []);
         setPageCount(memberData.data.total_page);
       } catch (e) {
         console.log("Failed to Fetch Member data:", e);
@@ -293,7 +298,14 @@ const FeeAndBillsAdmin = () => {
                 <h3 className={"text-[16px] font-semibold text-primary"}>
                   Iuran Guru
                 </h3>
-                <button className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary">
+                <button
+                  onClick={() =>
+                    useModalUnderDevelopment
+                      .getState()
+                      .setOpenModalUnderDevelopment(true)
+                  }
+                  className="flex flex-row items-center justify-center gap-1 rounded-lg border border-primary px-3 py-2 text-sm text-primary"
+                >
                   <MdAdd size={18} />
                   <span>Tambah Iuran</span>
                 </button>
