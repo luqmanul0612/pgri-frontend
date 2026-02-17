@@ -57,6 +57,7 @@ const initialPaymentStatus: PaymentStatusResponse["data"] = {
 const Page: FC<PageProps> = ({ params: {} }) => {
   const { user } = useAuth();
   const router = useRouter();
+  const [autoRefetch, setAutoRefetch] = useState(true);
   const { resetRegisterState } = useRegistrationState();
   const [paymentMethod, setPaymentMethod] = useState<IPaymentMethods[]>([]);
   const [paymentStatus, setPaymentStatus] =
@@ -91,6 +92,8 @@ const Page: FC<PageProps> = ({ params: {} }) => {
         setPaymentStatus(res.data);
         if (res.data.status === "pending" && !paymentModal) {
           window.loadJokulCheckout(res.data?.payment_page);
+          setAutoRefetch(true);
+          createCloseButton(setAutoRefetch);
         } else if (res.data.status === "succeeded") {
           resetRegisterState();
           if (paymentModal) paymentModal.remove();
@@ -110,6 +113,8 @@ const Page: FC<PageProps> = ({ params: {} }) => {
     mutationFn: postPaymentRegister,
     onSuccess: (res) => {
       window.loadJokulCheckout(res.data?.payment_page);
+      setAutoRefetch(true);
+      createCloseButton(setAutoRefetch);
     },
     onError: (err: { message: string }) => {
       toast.error(err.message);
@@ -129,7 +134,7 @@ const Page: FC<PageProps> = ({ params: {} }) => {
       "https://sandbox.doku.com/jokul-checkout-js/v1/jokul-checkout-1.0.0.js";
     script.async = true;
     script.onerror = () => {
-      console.error("Failed to load script");
+      // console.error("Failed to load script");
     };
     document.body.appendChild(script);
 
@@ -139,10 +144,16 @@ const Page: FC<PageProps> = ({ params: {} }) => {
   }, []);
 
   useEffect(() => {
-    setInterval(async () => {
-      getPayment.refetch();
-    }, 10000);
-  }, []);
+    let interval: NodeJS.Timeout | undefined;
+    if (autoRefetch) {
+      interval = setInterval(() => {
+        getPayment.refetch();
+      }, 10000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [autoRefetch]);
 
   return (
     <div className="bg-slate-100">
@@ -294,6 +305,7 @@ const Page: FC<PageProps> = ({ params: {} }) => {
       <div className="fixed bottom-0 left-0 right-0">
         <Footer />
       </div>
+      x
     </div>
   );
 };
@@ -333,3 +345,22 @@ const AccordionContent = forwardRef<
 ));
 
 AccordionContent.displayName = "AccordionContent";
+
+const createCloseButton = (
+  setAutoRefetch: React.Dispatch<React.SetStateAction<boolean>>,
+) => {
+  const modal = document.getElementById("jokul_checkout_modal");
+  if (!modal) return;
+
+  const closeBtn = document.createElement("button");
+  closeBtn.innerText = "Close";
+  closeBtn.className =
+    "absolute top-2 right-2 z-50 cursor-pointer rounded-[10px] hover:bg-red-600 bg-red-500 px-2 py-1 text-white transition-all";
+
+  closeBtn.onclick = () => {
+    modal.remove();
+    setAutoRefetch(false);
+  };
+
+  modal.appendChild(closeBtn);
+};
