@@ -12,6 +12,7 @@ import InfoIcon from "../assets/info-circle.svg";
 import ArrowRightIcon from "../assets/arrow-right.svg";
 import { BillsColumns } from "../table/bills-column";
 import { useRouter } from "next/navigation";
+import useModalUnderDevelopment from "@/store/use-modal-underdevelopment";
 
 const Fees = [
   {
@@ -45,7 +46,8 @@ const FeeAndBillsFinanceAdmin = () => {
   const [selectedTab, setSelectedTab] = useState<"fees" | "bills">("fees");
 
   const onClickFeeDetail = () => {
-    router.push("/iurandantagihan/fee-detail");
+    // router.push("/iurandantagihan/fee-detail");
+    useModalUnderDevelopment.getState().setOpenModalUnderDevelopment(true);
   };
   return (
     <div className="flex flex-col gap-6">
@@ -125,8 +127,25 @@ const FeeAndBillsFinanceAdmin = () => {
           <div className="flex flex-col gap-5 rounded-[16px] border border-primary-200 bg-white p-3">
             <div className="flex justify-between">
               <div className="flex gap-[16px]">
-                <Button variant="secondary">Bayar Iuran Anggota</Button>
-                <Button variant="secondary" endIcon={<DownloadIcon />}>
+                <Button
+                  onClick={() =>
+                    useModalUnderDevelopment
+                      .getState()
+                      .setOpenModalUnderDevelopment(true)
+                  }
+                  variant="secondary"
+                >
+                  Bayar Iuran Anggota
+                </Button>
+                <Button
+                  onClick={() =>
+                    useModalUnderDevelopment
+                      .getState()
+                      .setOpenModalUnderDevelopment(true)
+                  }
+                  variant="secondary"
+                  endIcon={<DownloadIcon />}
+                >
                   Unduh Data
                 </Button>
               </div>
@@ -169,7 +188,15 @@ const FeeAndBillsFinanceAdmin = () => {
                   Diperbaharui setiap jam{" "}
                   <span className="text-red-500">23:59:00</span> WIB
                 </p>
-                <Button variant="text" endIcon={<ArrowRightIcon />}>
+                <Button
+                  onClick={() =>
+                    useModalUnderDevelopment
+                      .getState()
+                      .setOpenModalUnderDevelopment(true)
+                  }
+                  variant="text"
+                  endIcon={<ArrowRightIcon />}
+                >
                   Lihat Detail
                 </Button>
               </div>
@@ -178,8 +205,26 @@ const FeeAndBillsFinanceAdmin = () => {
           <div className="flex flex-col gap-5 rounded-[16px] border border-primary-200 bg-white p-3">
             <div className="flex justify-between">
               <div className="flex gap-[16px]">
-                <Button variant="secondary">Tambah Tagihan</Button>
-                <Button variant="secondary">Bayar Tagihan Anggota</Button>
+                <Button
+                  onClick={() =>
+                    useModalUnderDevelopment
+                      .getState()
+                      .setOpenModalUnderDevelopment(true)
+                  }
+                  variant="secondary"
+                >
+                  Tambah Tagihan
+                </Button>
+                <Button
+                  onClick={() =>
+                    useModalUnderDevelopment
+                      .getState()
+                      .setOpenModalUnderDevelopment(true)
+                  }
+                  variant="secondary"
+                >
+                  Bayar Tagihan Anggota
+                </Button>
               </div>
               <div className="flex gap-[16px]">
                 <Button variant="secondary" endIcon={<FilterIcon />}>

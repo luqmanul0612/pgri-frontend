@@ -13,6 +13,7 @@ import {
   IAdministrativeRegionValue,
 } from "@/interfaces/IAdministrativeRegions";
 import { EmployeeType } from "@/enum/EmployeeType";
+import useModalUnderDevelopment from "@/store/use-modal-underdevelopment";
 
 interface FilterProps {
   filterRegions?: any;
@@ -87,7 +88,8 @@ export const Filter: FC<FilterProps> = ({ filterRegions }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    filterRegions(formData);
+    // filterRegions(formData);
+    useModalUnderDevelopment.getState().setOpenModalUnderDevelopment(true);
   };
 
   return (

@@ -1,3 +1,5 @@
+"use client";
+
 import HeaderRole from "@/app/(dashboard)/role/components/HeaderRole";
 import ContentRoleAdmin from "@/app/(dashboard)/role/components/ContentRoleAdmin";
 
@@ -7,7 +9,7 @@ const Role = () => {
       <HeaderRole />
       <ContentRoleAdmin />
     </div>
-  )
-}
+  );
+};
 
 export default Role;

@@ -77,6 +77,7 @@ export async function postLogin(body: BodyLogin) {
     } else {
       cookies().set("auth", JSON.stringify(user), { path: "/" });
       cookies().set("token", token, { path: "/" });
+      cookies().delete("renew_password");
     }
 
     return { data: { user, renew_password }, pathname, ok: response.ok };

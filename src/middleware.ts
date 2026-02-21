@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const skipPaths: string[] = [
-  "/mutasianggota",
-  "/role",
   "/training-funds",
   "/idcard-printing-fee",
   "/financial-report",
